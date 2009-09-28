@@ -63,7 +63,7 @@ describe "MongoDoc Connections" do
     it "connects to the database when no passed any additional arguments" do
       name = 'name'
       cnx = stub('connection')
-      cnx.should_receive(:database).with(name)
+      cnx.should_receive(:db).with(name)
       MongoDoc.should_receive(:connection).and_return(cnx)
       MongoDoc.database(name)
     end
@@ -72,7 +72,7 @@ describe "MongoDoc Connections" do
       db = 'db'
       name = 'name'
       cnx = stub('connection')
-      cnx.should_receive(:database).with(name).and_return(db)
+      cnx.should_receive(:db).with(name).and_return(db)
       MongoDoc.should_receive(:connection).and_return(cnx)
       MongoDoc.database(name)
       MongoDoc.database.should == db

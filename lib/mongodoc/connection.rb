@@ -1,7 +1,7 @@
 module MongoDoc
   def self.database(name = nil)
     if name
-      @@database = connection.database(name)
+      @@database = connection.db(name)
     else
       raise NoDatabaseError unless defined? @@database
       @@database
