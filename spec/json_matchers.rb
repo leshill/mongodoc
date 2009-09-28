@@ -25,44 +25,11 @@ module JsonMatchers
     private
 
     def decode(s, which)
-      ignore_json_class_exec {JSON.parse(s)}
-    rescue
-      raise ArgumentError, "Invalid #{which} JSON string: #{s.inspect}"
+      JSON.parse(s, :create_additions => false)
     end
   end
 
   def be_json_eql(expected)
     BeJsonEql.new(expected)
   end
-  
-  module JsonCreatableSwitch
-    module ClassMethods
-      @@json_creatable = true
-      
-      def json_creatable?
-        @@json_creatable
-      end
-    
-      def json_creatable(value)
-        @@json_creatable = value
-      end
-    
-      def ignore_json_class_exec(&block)
-        original = json_creatable?
-        json_creatable(false)
-        yield block
-      ensure
-        json_creatable(original)
-      end
-    end
-    
-    module InstanceMethods
-      def ignore_json_class_exec(&block)
-        self.class.ignore_json_class_exec(&block)
-      end
-    end
-  end
 end
-
-Object.extend(JsonMatchers::JsonCreatableSwitch::ClassMethods)
-Object.send(:include, JsonMatchers::JsonCreatableSwitch::InstanceMethods)
