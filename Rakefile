@@ -11,10 +11,22 @@ begin
     gem.homepage = "http://github.com/leshill/mongodoc"
     gem.authors = ["Les Hill"]
     gem.add_development_dependency "rspec"
+    gem.add_development_dependency "cucumber"
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end
 rescue LoadError
   puts "Jeweler (or a dependency) not available. Install it with: sudo gem install jeweler"
+end
+
+require 'cucumber/rake/task'
+Cucumber::Rake::Task.new(:features) do |t|
+  t.cucumber_opts = "--format pretty --tag ~@wip"
+end
+
+namespace :cucumber do
+  Cucumber::Rake::Task.new(:wip) do |t|
+    t.cucumber_opts = "--format pretty --tag @wip"
+  end
 end
 
 require 'spec/rake/spectask'
