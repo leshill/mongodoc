@@ -1,6 +1,6 @@
 class Object
   def to_json(*args)
-    {'json_class' => self.class.name}.tap do |json_hash|
+    {MongoDoc::JSON::CLASS_KEY => self.class.name}.tap do |json_hash|
       instance_variables.each do |name|
         json_hash[name[1..-1]] = instance_variable_get(name).to_json
       end

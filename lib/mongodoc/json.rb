@@ -1,3 +1,16 @@
+require 'mongodoc/ext/array'
+require 'mongodoc/ext/boolean_class'
+require 'mongodoc/ext/date'
+require 'mongodoc/ext/date_time'
+require 'mongodoc/ext/hash'
+require 'mongodoc/ext/nil_class'
+require 'mongodoc/ext/numeric'
+require 'mongodoc/ext/object'
+require 'mongodoc/ext/regexp'
+require 'mongodoc/ext/string'
+require 'mongodoc/ext/symbol'
+require 'mongodoc/ext/time'
+
 module MongoDoc
   module JSON
     CLASS_KEY = "json_class"
@@ -17,8 +30,8 @@ module MongoDoc
     def self.object_create(json_hash, options = {})
       return json_hash if options[:raw_json]
       klass = json_hash.delete(CLASS_KEY)
-      return json_hash unless klass
-      klass.constantize.object_create(json_hash)
+      return json_hash.each_pair {|key, value| json_hash[key] = decode(value)} unless klass
+      klass.constantize.object_create(json_hash, options)
     end
 
     def self.array_create(json_array, options = {})
@@ -28,7 +41,7 @@ module MongoDoc
 
     module InstanceMethods
       def to_json(*args)
-        {'json_class' => self.class.name}.tap do |json_hash|
+        {MongoDoc::JSON::CLASS_KEY => self.class.name}.tap do |json_hash|
           self.class.keys.each do |name|
             json_hash[name.to_s] = send(name).to_json
           end
