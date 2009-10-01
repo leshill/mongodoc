@@ -12,14 +12,14 @@ require 'mongodoc/ext/symbol'
 require 'mongodoc/ext/time'
 
 module MongoDoc
-  module JSON
+  module BSON
     CLASS_KEY = "json_class"
 
     def self.decode(bson, options = {})
       return bson if options[:raw_json]
       case bson
       when Hash
-        object_create(bson, options)
+        bson_create(bson, options)
       when Array
         array_create(bson, options)
       else
@@ -27,11 +27,11 @@ module MongoDoc
       end
     end
     
-    def self.object_create(bson_hash, options = {})
+    def self.bson_create(bson_hash, options = {})
       return bson_hash if options[:raw_json]
       klass = bson_hash.delete(CLASS_KEY)
       return bson_hash.each_pair {|key, value| bson_hash[key] = decode(value)} unless klass
-      klass.constantize.object_create(bson_hash, options)
+      klass.constantize.bson_create(bson_hash, options)
     end
 
     def self.array_create(bson_array, options = {})
@@ -41,7 +41,7 @@ module MongoDoc
 
     module InstanceMethods
       def to_bson(*args)
-        {MongoDoc::JSON::CLASS_KEY => self.class.name}.tap do |bson_hash|
+        {MongoDoc::BSON::CLASS_KEY => self.class.name}.tap do |bson_hash|
           self.class.keys.each do |name|
             bson_hash[name.to_s] = send(name).to_bson
           end
@@ -50,10 +50,10 @@ module MongoDoc
     end
 
     module ClassMethods
-      def self.object_create(bson_hash, options = {})
+      def self.bson_create(bson_hash, options = {})
         new.tap do |obj|
           bson_hash.each do |name, value|
-            obj.send("#{name}=", MongoDoc::JSON.decode(value))
+            obj.send("#{name}=", MongoDoc::BSON.decode(value))
           end
         end
       end

@@ -1,11 +1,11 @@
 require 'mongodoc/exceptions'
-require 'mongodoc/json'
+require 'mongodoc/bson'
 require 'mongodoc/connection'
 
 module MongoDoc
   class Base
-    include MongoDoc::JSON::InstanceMethods
-    extend MongoDoc::JSON::ClassMethods
+    include MongoDoc::BSON::InstanceMethods
+    extend MongoDoc::BSON::ClassMethods
     
     class_inheritable_array :keys
     self.keys = []

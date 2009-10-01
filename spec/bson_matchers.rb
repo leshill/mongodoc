@@ -1,5 +1,5 @@
-module JsonMatchers
-  class BeJsonEql
+module BsonMatchers
+  class BeBsonEql
     def initialize(expected)
       @expected = expected
     end
@@ -11,17 +11,17 @@ module JsonMatchers
 
     def failure_message
       "expected\...#{@target.inspect}\n" +
-      "to be JSON code equivalent to\...#{@expected.inspect}\n" +
+      "to be BSON code equivalent to\...#{@expected.inspect}\n" +
       "Difference:\...#{@expected.diff(@target).inspect}"
     end
 
     def negative_failure_message
       "expected\...#{@target.inspect}\n" +
-      "to be JSON code different from\...#{@expected.inspect}"
+      "to be BSON code different from\...#{@expected.inspect}"
     end
   end
 
-  def be_json_eql(expected)
-    BeJsonEql.new(expected)
+  def be_bson_eql(expected)
+    BeBsonEql.new(expected)
   end
 end
