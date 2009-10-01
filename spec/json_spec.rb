@@ -1,25 +1,5 @@
 require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
-class EnumerableTester
-  include Enumerable
-  
-  def data
-    @data ||= []
-  end
-  
-  def initialize(*args)
-    args.each {|arg| data << arg}
-  end
-  
-  def each(&block)
-    data.each {|datum| yield datum}
-  end
-  
-  def ==(other)
-    data == other.data
-  end
-end
-
 describe "JSON for Mongo (BSON)" do
   describe "#decode" do
     it "just returns the json if the :raw_json option is used" do
@@ -74,9 +54,9 @@ describe "JSON for Mongo (BSON)" do
     
     it "a class hash extracts the class, and calls class.object_create" do
       base_hash = {'key' => 'value'}
-      json_hash = base_hash.merge(MongoDoc::JSON::CLASS_KEY => 'Date')
+      bson_hash = base_hash.merge(MongoDoc::JSON::CLASS_KEY => 'Date')
       Date.should_receive(:object_create).with(base_hash, {})
-      MongoDoc::JSON.object_create(json_hash)
+      MongoDoc::JSON.object_create(bson_hash)
     end
     
     it "ignores a class hash when the :raw_json option is used" do
@@ -86,76 +66,76 @@ describe "JSON for Mongo (BSON)" do
   end
   
   describe "Hash" do
-    it "#to_json returns the hash" do
+    it "#to_bson returns the hash" do
       hash = {'key' => 1}
-      hash.to_json.should == hash
+      hash.to_bson.should == hash
     end
     
-    it "#to_json returns the hash with symbol keys as strings" do
-      {:key => 1}.to_json.should == {"key" => 1}
+    it "#to_bson returns the hash with symbol keys as strings" do
+      {:key => 1}.to_bson.should == {"key" => 1}
     end
 
     it "decodes to a hash" do
       hash = {'key' => 1}
-      MongoDoc::JSON.decode(hash.to_json).should == hash
+      MongoDoc::JSON.decode(hash.to_bson).should == hash
     end
     
     it "decodes the values of the hash" do
       hash = {'key' => {'subkey' => Date.today}}
-      MongoDoc::JSON.decode(hash.to_json).should == hash
+      MongoDoc::JSON.decode(hash.to_bson).should == hash
     end
   end
   
   describe "Array" do
-    it "#to_json returns the array" do
+    it "#to_bson returns the array" do
       array = ['string', 1]
-      array.to_json.should == array
+      array.to_bson.should == array
     end
     
-    it "#to_json iterates over its elements" do
+    it "#to_bson iterates over its elements" do
       array = []
       array.should_receive(:map)
-      array.to_json
+      array.to_bson
     end
     
     it "decodes to an array" do
       array = ['string', 1]
-      MongoDoc::JSON.decode(array.to_json).should == array
+      MongoDoc::JSON.decode(array.to_bson).should == array
     end
   end
   
   describe "Extensions to core classes" do
-    it "#to_json for objects that are BSON native return themselves" do
+    it "#to_bson for objects that are BSON native return themselves" do
       [true, false, nil, 1.0, 1, /regexp/, 'string', :symbol, Time.now].each do |native|
-        native.to_json.should == native
+        native.to_bson.should == native
       end
     end
     
     it "objects that are BSON native decode to themselves" do
       [true, false, nil, 1.0, 1, /regexp/, 'string', :symbol, Time.now].each do |native|
         hash = {'native' => native}
-        MongoDoc::JSON.decode(hash.to_json).should == hash
+        MongoDoc::JSON.decode(hash.to_bson).should == hash
       end
     end
     
-    it "Date#to_json returns a date hash" do
+    it "Date#to_bson returns a date hash" do
       date = Date.today
-      date.to_json.should == {MongoDoc::JSON::CLASS_KEY => "Date", "dt" => date.strftime, "sg"  => date.respond_to?(:start) ? date.start : date.sg}
+      date.to_bson.should == {MongoDoc::JSON::CLASS_KEY => "Date", "dt" => date.strftime, "sg"  => date.respond_to?(:start) ? date.start : date.sg}
     end
 
     it "roundtrips Date" do
       date = Date.today
-      MongoDoc::JSON.decode(date.to_json).should == date
+      MongoDoc::JSON.decode(date.to_bson).should == date
     end
     
-    it "DateTime#to_json returns a datetime hash" do
+    it "DateTime#to_bson returns a datetime hash" do
       datetime = DateTime.now
-      datetime.to_json.should == {MongoDoc::JSON::CLASS_KEY => "DateTime", "dt" => datetime.strftime, "sg"  => datetime.respond_to?(:start) ? datetime.start : datetime.sg}
+      datetime.to_bson.should == {MongoDoc::JSON::CLASS_KEY => "DateTime", "dt" => datetime.strftime, "sg"  => datetime.respond_to?(:start) ? datetime.start : datetime.sg}
     end
     
     it "roundtrips DateTime" do
       datetime = DateTime.now
-      MongoDoc::JSON.decode(datetime.to_json).to_s.should == datetime.to_s
+      MongoDoc::JSON.decode(datetime.to_bson).to_s.should == datetime.to_s
     end
   end
   
@@ -172,20 +152,20 @@ describe "JSON for Mongo (BSON)" do
     end
 
     it "renders a json representation of a simple object" do
-      @director.to_json.should be_json_eql({"name" => "Victor Fleming", MongoDoc::JSON::CLASS_KEY => "Director", "awards" => ["1940 - Best Director"]})
+      @director.to_bson.should be_json_eql({"name" => "Victor Fleming", MongoDoc::JSON::CLASS_KEY => "Director", "awards" => ["1940 - Best Director"]})
     end
     
     it "renders a json representation of an object with embedded objects" do
-      @movie.to_json.should be_json_eql({"title" => "Gone with the Wind", MongoDoc::JSON::CLASS_KEY => "Movie", "writers" => ["Sidney Howard"], "director" => {"name" => "Victor Fleming", MongoDoc::JSON::CLASS_KEY => "Director", "awards" => ["1940 - Best Director"]}})
+      @movie.to_bson.should be_json_eql({"title" => "Gone with the Wind", MongoDoc::JSON::CLASS_KEY => "Movie", "writers" => ["Sidney Howard"], "director" => {"name" => "Victor Fleming", MongoDoc::JSON::CLASS_KEY => "Director", "awards" => ["1940 - Best Director"]}})
     end
 
     it "roundtrips the object" do
-      MongoDoc::JSON.decode(@movie.to_json).should be_kind_of(Movie)
+      MongoDoc::JSON.decode(@movie.to_bson).should be_kind_of(Movie)
     end
 
     it "allows for embedded objects" do
-      movie_from_json = MongoDoc::JSON.decode(@movie.to_json)
-      movie_from_json.director.should be_kind_of(Director)
+      movie_from_bson = MongoDoc::JSON.decode(@movie.to_bson)
+      movie_from_bson.director.should be_kind_of(Director)
     end
 
     it "allows for embedded arrays of objects" do
@@ -193,8 +173,8 @@ describe "JSON for Mongo (BSON)" do
       award.year = '1940'
       award.category = 'Best Director'
       @director.awards = [award]
-      director_from_json = MongoDoc::JSON.decode(@director.to_json)
-      director_from_json.awards.each {|award| award.should be_kind_of(AcademyAward)}
+      director_from_bson = MongoDoc::JSON.decode(@director.to_bson)
+      director_from_bson.awards.each {|award| award.should be_kind_of(AcademyAward)}
     end
   end
   
@@ -210,26 +190,26 @@ describe "JSON for Mongo (BSON)" do
     end
 
     it "renders a json representation of the object" do
-      @location.to_json.should be_json_eql({MongoDoc::JSON::CLASS_KEY => "Location", "website" => nil, "address" => {"state" => "FL", MongoDoc::JSON::CLASS_KEY => "Address", "zip_code" => "32250", "street" => "320 1st Street North", "city" => "Jacksonville Beach"}})
+      @location.to_bson.should be_json_eql({MongoDoc::JSON::CLASS_KEY => "Location", "website" => nil, "address" => {"state" => "FL", MongoDoc::JSON::CLASS_KEY => "Address", "zip_code" => "32250", "street" => "320 1st Street North", "city" => "Jacksonville Beach"}})
     end
 
     it "roundtrips the object" do
-      MongoDoc::JSON.decode(@location.to_json).should be_kind_of(Location)
+      MongoDoc::JSON.decode(@location.to_bson).should be_kind_of(Location)
     end
 
     it "allows for embedded MongoDoc objects" do
-      company_from_json = MongoDoc::JSON.decode(@location.to_json)
-      company_from_json.should be_kind_of(Location)
-      company_from_json.address.should be_kind_of(Address)
+      company_from_bson = MongoDoc::JSON.decode(@location.to_bson)
+      company_from_bson.should be_kind_of(Location)
+      company_from_bson.address.should be_kind_of(Address)
     end
 
     it "allows for derived classes" do
       wifi = WifiAccessible.new
       wifi.address = @address
       wifi.network_name = 'hashrocket'
-      wifi_from_json = MongoDoc::JSON.decode(wifi.to_json)
-      wifi_from_json.should be_kind_of(WifiAccessible)
-      wifi_from_json.address.should be_kind_of(Address)
+      wifi_from_bson = MongoDoc::JSON.decode(wifi.to_bson)
+      wifi_from_bson.should be_kind_of(WifiAccessible)
+      wifi_from_bson.address.should be_kind_of(Address)
     end
 
     it "allows for embedded ruby objects" do
@@ -237,9 +217,9 @@ describe "JSON for Mongo (BSON)" do
       website.url = 'http://hashrocket.com'
       wifi = WifiAccessible.new
       wifi.website = website
-      wifi_from_json = MongoDoc::JSON.decode(wifi.to_json)
-      wifi_from_json.should be_kind_of(WifiAccessible)
-      wifi_from_json.website.should be_kind_of(WebSite)
+      wifi_from_bson = MongoDoc::JSON.decode(wifi.to_bson)
+      wifi_from_bson.should be_kind_of(WifiAccessible)
+      wifi_from_bson.website.should be_kind_of(WebSite)
     end
   end  
 end

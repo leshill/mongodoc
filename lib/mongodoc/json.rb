@@ -15,44 +15,44 @@ module MongoDoc
   module JSON
     CLASS_KEY = "json_class"
 
-    def self.decode(json, options = {})
-      return json if options[:raw_json]
-      case json
+    def self.decode(bson, options = {})
+      return bson if options[:raw_json]
+      case bson
       when Hash
-        object_create(json, options)
+        object_create(bson, options)
       when Array
-        array_create(json, options)
+        array_create(bson, options)
       else
-        json
+        bson
       end
     end
     
-    def self.object_create(json_hash, options = {})
-      return json_hash if options[:raw_json]
-      klass = json_hash.delete(CLASS_KEY)
-      return json_hash.each_pair {|key, value| json_hash[key] = decode(value)} unless klass
-      klass.constantize.object_create(json_hash, options)
+    def self.object_create(bson_hash, options = {})
+      return bson_hash if options[:raw_json]
+      klass = bson_hash.delete(CLASS_KEY)
+      return bson_hash.each_pair {|key, value| bson_hash[key] = decode(value)} unless klass
+      klass.constantize.object_create(bson_hash, options)
     end
 
-    def self.array_create(json_array, options = {})
-      return json_array if options[:raw_json]
-      json_array.map {|item| decode(item, options)}
+    def self.array_create(bson_array, options = {})
+      return bson_array if options[:raw_json]
+      bson_array.map {|item| decode(item, options)}
     end
 
     module InstanceMethods
-      def to_json(*args)
-        {MongoDoc::JSON::CLASS_KEY => self.class.name}.tap do |json_hash|
+      def to_bson(*args)
+        {MongoDoc::JSON::CLASS_KEY => self.class.name}.tap do |bson_hash|
           self.class.keys.each do |name|
-            json_hash[name.to_s] = send(name).to_json
+            bson_hash[name.to_s] = send(name).to_bson
           end
         end
       end
     end
 
     module ClassMethods
-      def self.object_create(json_hash, options = {})
+      def self.object_create(bson_hash, options = {})
         new.tap do |obj|
-          json_hash.each do |name, value|
+          bson_hash.each do |name, value|
             obj.send("#{name}=", MongoDoc::JSON.decode(value))
           end
         end

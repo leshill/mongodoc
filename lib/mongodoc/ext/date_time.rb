@@ -1,5 +1,5 @@
 class DateTime
-  def to_json(*args)
+  def to_bson(*args)
     {
       MongoDoc::JSON::CLASS_KEY => self.class.name,
       'dt' => strftime,
@@ -7,7 +7,7 @@ class DateTime
     }
   end
 
-  def self.object_create(json_hash, options = nil)
-    DateTime.parse(*json_hash.values_at('dt', 'sg'))
+  def self.object_create(bson_hash, options = nil)
+    DateTime.parse(*bson_hash.values_at('dt', 'sg'))
   end
 end

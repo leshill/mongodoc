@@ -1,5 +1,5 @@
 class Date
-  def to_json(*args)
+  def to_bson(*args)
     {
       MongoDoc::JSON::CLASS_KEY => self.class.name,
       'dt' => strftime,
@@ -9,8 +9,8 @@ class Date
 
   alias start sg unless method_defined?(:start)
 
-  def self.object_create(json_hash, options = nil)
-    Date.parse(*json_hash.values_at('dt', 'sg'))
+  def self.object_create(bson_hash, options = nil)
+    Date.parse(*bson_hash.values_at('dt', 'sg'))
   end
 
 end

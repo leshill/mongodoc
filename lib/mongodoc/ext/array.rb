@@ -1,5 +1,5 @@
 class Array
-  def to_json(*args)
-    map {|item| item.to_json(args)}
+  def to_bson(*args)
+    map {|item| item.to_bson(args)}
   end
 end

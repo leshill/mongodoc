@@ -1,7 +1,7 @@
 class Hash
-  def to_json(*args)
+  def to_bson(*args)
     {}.tap do |hash|
-      each {|key, value| hash[key.to_s] = value.to_json}
+      each {|key, value| hash[key.to_s] = value.to_bson}
     end
   end  
 end

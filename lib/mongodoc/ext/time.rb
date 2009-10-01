@@ -1,5 +1,5 @@
 class Time
-  def to_json(*args)
+  def to_bson(*args)
     self
-  end  
+  end
 end
