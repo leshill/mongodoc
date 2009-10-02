@@ -189,6 +189,11 @@ describe "BSON for Mongo (BSON)" do
       @location.address = @address
     end
 
+    it "encodes the class for the object" do
+      atom = Automobile::Ariel.new
+      atom.to_bson[MongoDoc::BSON::CLASS_KEY].should == Automobile::Ariel.name
+    end
+    
     it "renders a json representation of the object" do
       @location.to_bson.should be_bson_eql({MongoDoc::BSON::CLASS_KEY => "Location", "website" => nil, "address" => {"state" => "FL", MongoDoc::BSON::CLASS_KEY => "Address", "zip_code" => "32250", "street" => "320 1st Street North", "city" => "Jacksonville Beach"}})
     end

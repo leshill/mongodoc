@@ -17,3 +17,9 @@ end
 class WebSite
   attr_accessor :url
 end
+
+module Automobile
+  class Ariel < MongoDoc::Base
+    key :name
+  end
+end
