@@ -1,4 +1,4 @@
-gem 'mongodb-mongo', '0.14.1'
+gem 'mongo', '0.15'
 
 require 'mongo'
 require 'activesupport'
