@@ -30,7 +30,7 @@ module MongoDoc
     def self.bson_create(bson_hash, options = {})
       return bson_hash if options[:raw_json]
       klass = bson_hash.delete(CLASS_KEY)
-      return bson_hash.each_pair {|key, value| bson_hash[key] = decode(value)} unless klass
+      return bson_hash.each_pair {|key, value| bson_hash[key] = decode(value, options)} unless klass
       klass.constantize.bson_create(bson_hash, options)
     end
 
@@ -43,17 +43,17 @@ module MongoDoc
       def to_bson(*args)
         {MongoDoc::BSON::CLASS_KEY => self.class.name}.tap do |bson_hash|
           self.class.keys.each do |name|
-            bson_hash[name.to_s] = send(name).to_bson
+            bson_hash[name.to_s] = send(name).to_bson(args)
           end
         end
       end
     end
 
     module ClassMethods
-      def self.bson_create(bson_hash, options = {})
+      def bson_create(bson_hash, options = {})
         new.tap do |obj|
           bson_hash.each do |name, value|
-            obj.send("#{name}=", MongoDoc::BSON.decode(value))
+            obj.send("#{name}=", MongoDoc::BSON.decode(value, options))
           end
         end
       end

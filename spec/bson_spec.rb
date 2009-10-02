@@ -159,6 +159,10 @@ describe "BSON for Mongo (BSON)" do
       @movie.to_bson.should be_bson_eql({"title" => "Gone with the Wind", MongoDoc::BSON::CLASS_KEY => "Movie", "writers" => ["Sidney Howard"], "director" => {"name" => "Victor Fleming", MongoDoc::BSON::CLASS_KEY => "Director", "awards" => ["1940 - Best Director"]}})
     end
 
+    it "ignores a class hash when the :raw_json option is used" do
+      Movie.bson_create(@movie.to_bson.except(MongoDoc::BSON::CLASS_KEY), :raw_json => true).director.should == @director.to_bson
+    end
+
     it "roundtrips the object" do
       MongoDoc::BSON.decode(@movie.to_bson).should be_kind_of(Movie)
     end
@@ -200,6 +204,10 @@ describe "BSON for Mongo (BSON)" do
 
     it "roundtrips the object" do
       MongoDoc::BSON.decode(@location.to_bson).should be_kind_of(Location)
+    end
+
+    it "ignores a class hash when the :raw_json option is used" do
+      Location.bson_create(@location.to_bson.except(MongoDoc::BSON::CLASS_KEY), :raw_json => true).address.should == @address.to_bson
     end
 
     it "allows for embedded MongoDoc objects" do
