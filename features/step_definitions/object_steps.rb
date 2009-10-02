@@ -13,6 +13,11 @@ Given /^an object '(.*)'$/ do |name|
 end
 
 When /^I save the object '(.*)'$/ do |name|
-  json = instance_variable_get("@#{name}").to_bson
-  @collection.save(json)
+  object = instance_variable_get("@#{name}")
+  @last_save = @collection.save(object.to_bson)
+  object.instance_variable_set("@_id", @last_save)
+end
+
+Then /^the object '(.*)' roundtrips$/ do |name|
+  MongoDoc::BSON.decode(@collection.find_one(@last_save)).should == instance_variable_get("@#{name}")
 end
