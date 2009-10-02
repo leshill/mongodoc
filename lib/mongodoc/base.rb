@@ -14,11 +14,11 @@ module MongoDoc
       keys << name
       
       define_method(name) do
-        read_attribute(name)
+        instance_variable_get("@#{name}")
       end
 
       define_method(name.to_s + '=') do |value|
-        write_attribute(name, value)
+        instance_variable_set("@#{name}", value)
       end
     end
     
@@ -26,14 +26,5 @@ module MongoDoc
       MongoDoc.database.collection(self.to_s.tableize.gsub('/', '.'))
     end
     
-    private
-    
-    def read_attribute(name)
-      instance_variable_get("@#{name}")
-    end
-    
-    def write_attribute(name, value)
-      instance_variable_set("@#{name}", value)
-    end
   end
 end

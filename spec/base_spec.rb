@@ -16,18 +16,13 @@ describe "MongoDoc::Base" do
           should respond_to("#{attr}=")
         end
       end
-    end
 
-    it "defines a reader that calls read_attribute" do
-      address = Address.new
-      address.should_receive(:read_attribute)
-      address.street
-    end
-
-    it "defines a writer that calls write_attribute" do
-      address = Address.new
-      address.should_receive(:write_attribute)
-      address.street = '312 First Street North'
+      it "roundtrips the attribute" do
+        address = Address.new
+        street = '312 First Street North'
+        address.street = street
+        address.street.should == street
+      end
     end
     
     describe "used with inheritance" do
