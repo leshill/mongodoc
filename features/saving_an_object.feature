@@ -1,4 +1,4 @@
-Feature: saving a document
+Feature: saving an object
 
   Scenario: saving simple json
     Given a valid connection to the 'test' database
@@ -7,7 +7,7 @@ Feature: saving a document
     Then the collection should have 1 document
     And the json '{"name":"name"}' roundtrips
     
-  Scenario: saving a ruby object document
+  Scenario: saving a ruby object
     Given a valid connection to the 'test' database
     And a new collection named 'test'
     And an object 'movie'
