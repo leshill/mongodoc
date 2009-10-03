@@ -139,6 +139,19 @@ describe "BSON for Mongo (BSON)" do
     end
   end
   
+  describe "Mongo Classes" do
+    [Mongo::ObjectID.new, Mongo::DBRef.new('ns', 1), Mongo::Code.new('code'), Mongo::Binary.new, Mongo::RegexpOfHolding.new('a', 'i', 'g')].each do |obj|
+      it "#to_bson for #{obj.class.name} returns self" do
+        obj.to_bson.should == obj
+      end
+      
+      it "objects of type #{obj.class.name} decode to themselves" do
+        hash = {"mongo" => obj}
+        MongoDoc::BSON.decode(hash.to_bson)["mongo"].should == obj
+      end
+    end
+  end
+  
   describe "Extensions to Object" do
     before do
       @movie = Movie.new
