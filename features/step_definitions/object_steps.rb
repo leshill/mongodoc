@@ -15,9 +15,10 @@ end
 When /^I save the object '(.*)'$/ do |name|
   object = instance_variable_get("@#{name}")
   @last_save = @collection.save(object.to_bson)
-  object.instance_variable_set("@_id", @last_save)
 end
 
 Then /^the object '(.*)' roundtrips$/ do |name|
-  MongoDoc::BSON.decode(@collection.find_one(@last_save)).should == instance_variable_get("@#{name}")
+  object = instance_variable_get("@#{name}")
+  object.instance_variable_set("@_id", @last_save)
+  MongoDoc::BSON.decode(@collection.find_one(@last_save)).should == object
 end
