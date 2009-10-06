@@ -21,10 +21,14 @@ module MongoDoc
         instance_variable_set("@#{name}", value)
       end
     end
-    
-    def self.collection
-      MongoDoc.database.collection(self.to_s.tableize.gsub('/', '.'))
+
+    def self.collection_name
+      self.to_s.tableize.gsub('/', '.')
     end
-    
+
+    def self.collection
+      MongoDoc.database.collection(collection_name)
+    end
+
   end
 end

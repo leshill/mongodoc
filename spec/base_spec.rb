@@ -31,7 +31,11 @@ describe "MongoDoc::Base" do
       end
     end
   end
-  
+
+  it ".collection_name returns the name of the collection for this class" do
+    Address.collection_name.should == Address.to_s.tableize.gsub('/', '.')
+  end
+
   it ".collection calls through MongoDoc.database using the class name" do
     db = stub('db')
     db.should_receive(:collection).with(MongoDoc::Base.to_s.tableize.gsub('/', '.'))
