@@ -32,6 +32,35 @@ describe "MongoDoc::Base" do
     end
   end
 
+  context "#save" do
+    before do
+      @address = Address.new
+      @collection = stub('collection')
+      Address.stub(:collection).and_return(@collection)
+    end
+
+    it "saves a #to_bson on the collection" do
+      bson = stub('bson')
+      @address.should_receive(:to_bson).and_return(bson)
+      @collection.should_receive(:save).with(bson).and_return(Mongo::ObjectID.new([1]))
+      @address.save
+    end
+
+    it "returns self with the _id of the document set" do
+      id = Mongo::ObjectID.new([1])
+      @collection.stub(:save).and_return(id)
+      @address.save.should == @address
+      @address._id.should == id
+    end
+  end
+
+  it ".count calls the collection count" do
+    collection = stub('collection')
+    MongoDoc::Base.stub(:collection).and_return(collection)
+    collection.should_receive(:count).and_return(1)
+    MongoDoc::Base.count
+  end
+
   it ".collection_name returns the name of the collection for this class" do
     Address.collection_name.should == Address.to_s.tableize.gsub('/', '.')
   end
