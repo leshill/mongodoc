@@ -1,0 +1,2 @@
+mongod: /usr/local/bin/mongod
+dbpath: /data/db
