@@ -41,25 +41,5 @@ module MongoDoc
       return bson_array if options[:raw_json]
       bson_array.map {|item| decode(item, options)}
     end
-
-    module InstanceMethods
-      def to_bson(*args)
-        {MongoDoc::BSON::CLASS_KEY => self.class.name}.tap do |bson_hash|
-          self.class.keys.each do |name|
-            bson_hash[name.to_s] = send(name).to_bson(args)
-          end
-        end
-      end
-    end
-
-    module ClassMethods
-      def bson_create(bson_hash, options = {})
-        new.tap do |obj|
-          bson_hash.each do |name, value|
-            obj.send("#{name}=", MongoDoc::BSON.decode(value, options))
-          end
-        end
-      end
-    end
   end
 end

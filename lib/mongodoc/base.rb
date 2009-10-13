@@ -4,13 +4,48 @@ require 'mongodoc/connection'
 require 'mongodoc/value_equals'
 
 module MongoDoc
-  class Base
-    include MongoDoc::BSON::InstanceMethods
-    extend MongoDoc::BSON::ClassMethods
-    include MongoDoc::ValueEquals
+  
+  module Persistence
+    module Keys
+      def self.extended(klass)
+        klass.class_inheritable_array :_keys
+        klass._keys = []
+      end
+
+      def key(*args)
+        args.each do |name|
+          _keys << name unless _keys.include?(name)
+          attr_accessor name
+        end
+      end      
+    end
     
-    class_inheritable_array :keys
-    self.keys = []
+    module ToBSON
+      def to_bson(*args)
+        {MongoDoc::BSON::CLASS_KEY => self.class.name}.tap do |bson_hash|
+          self.class._keys.each do |name|
+            bson_hash[name.to_s] = send(name).to_bson(args)
+          end
+        end
+      end
+    end
+    
+    module BSONCreate
+      def bson_create(bson_hash, options = {})
+        new.tap do |obj|
+          bson_hash.each do |name, value|
+            obj.send("#{name}=", MongoDoc::BSON.decode(value, options))
+          end
+        end
+      end
+    end
+  end
+  
+  class Base
+    extend MongoDoc::Persistence::Keys
+    extend MongoDoc::Persistence::BSONCreate
+    include MongoDoc::Persistence::ToBSON
+    include MongoDoc::ValueEquals
 
     attr_accessor :_id
 
@@ -21,18 +56,6 @@ module MongoDoc
     def save
       self._id = self.class.collection.save(self.to_bson)
       self
-    end
-
-    def self.key(name)
-      keys << name
-      
-      define_method(name) do
-        instance_variable_get("@#{name}")
-      end
-
-      define_method(name.to_s + '=') do |value|
-        instance_variable_set("@#{name}", value)
-      end
     end
 
     def self.collection_name
