@@ -4,8 +4,17 @@ require 'mongodoc/connection'
 require 'mongodoc/value_equals'
 
 module MongoDoc
-  
-  module Persistence
+  module Document
+    module Identity
+      attr_accessor :_id
+      alias :id :_id
+      alias :to_param :_id
+
+      def new_record?
+        _id.nil?
+      end
+    end
+
     module Keys
       def self.extended(klass)
         klass.class_inheritable_array :_keys
@@ -42,20 +51,14 @@ module MongoDoc
   end
   
   class Base
-    extend MongoDoc::Persistence::Keys
-    extend MongoDoc::Persistence::BSONCreate
-    include MongoDoc::Persistence::ToBSON
+    extend MongoDoc::Document::Keys
+    extend MongoDoc::Document::BSONCreate
+    include MongoDoc::Document::ToBSON
     include MongoDoc::ValueEquals
-
-    attr_accessor :_id
-
-    def new_record?
-      _id.nil?
-    end
-
+    include MongoDoc::Document::Identity
+    
     def save
       self._id = self.class.collection.save(self.to_bson)
-      self
     end
 
     def self.collection_name

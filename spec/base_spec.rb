@@ -47,6 +47,32 @@ describe "MongoDoc::Base" do
     end
   end
 
+  context "satisfies form_for requirements" do
+    before do
+      @address = Address.new
+      @address._id = '1'
+    end
+    
+    it "#id returns the _id" do
+      @address.id.should == @address._id
+    end
+    
+    it "#to_param returns the _id" do
+      @address.to_param.should == @address._id
+    end
+    
+    context "#new_record?" do
+      it "is true when the object does not have an _id" do
+        @address._id = nil
+        @address.new_record?.should be_true
+      end
+      
+      it "is false when the object has an id" do
+        @address.new_record?.should be_false
+      end
+    end
+  end
+  
   context "#save" do
     before do
       @address = Address.new
@@ -61,10 +87,16 @@ describe "MongoDoc::Base" do
       @address.save
     end
 
-    it "returns self with the _id of the document set" do
+    it "returns the _id of the document" do
       id = Mongo::ObjectID.new([1])
       @collection.stub(:save).and_return(id)
-      @address.save.should == @address
+      @address.save.should == id
+    end
+    
+    it "sets the _id of the document" do
+      id = Mongo::ObjectID.new([1])
+      @collection.stub(:save).and_return(id)
+      @address.save
       @address._id.should == id
     end
   end
