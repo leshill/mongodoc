@@ -5,6 +5,16 @@ require 'mongodoc/value_equals'
 
 module MongoDoc
   module Document
+    def self.included(klass)
+      klass.instance_eval do
+        extend MongoDoc::Document::Keys
+        extend MongoDoc::Document::BSONCreate
+        include MongoDoc::Document::ToBSON
+        include MongoDoc::ValueEquals
+        include MongoDoc::Document::Identity
+      end
+    end
+    
     module Identity
       attr_accessor :_id
       alias :id :_id
@@ -51,11 +61,7 @@ module MongoDoc
   end
   
   class Base
-    extend MongoDoc::Document::Keys
-    extend MongoDoc::Document::BSONCreate
-    include MongoDoc::Document::ToBSON
-    include MongoDoc::ValueEquals
-    include MongoDoc::Document::Identity
+    include MongoDoc::Document
     
     def save
       self._id = self.class.collection.save(self.to_bson)
