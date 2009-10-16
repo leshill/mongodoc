@@ -12,6 +12,19 @@ Given /^an object '(.*)'$/ do |name|
   @movie.director = @director
 end
 
+Given /^a hash named '(.*)':$/ do |name, table|
+  @all = []
+  table.hashes.each do |hash|
+    @last = hash.inject({}) do |h, (key, value)|
+      h["#{key.underscore.gsub(' ', '_')}"] = value
+      h
+    end
+    @all << @last
+  end
+  instance_variable_set("@#{name}", @last)
+  
+end
+
 When /^I save the object '(.*)'$/ do |name|
   object = instance_variable_get("@#{name}")
   @last_save = @collection.save(object.to_bson)

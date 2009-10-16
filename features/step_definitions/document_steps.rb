@@ -4,12 +4,14 @@ Given /^an empty (\w+) document collection$/ do |doc|
 end
 
 Given /^an (\w+) document named '(.*)' :$/ do |doc, name, table|
+  @all = []
   klass = doc.constantize
   table.hashes.each do |hash|
     @last = klass.new
     hash.each do |attr, value|
       @last.send("#{attr.underscore.gsub(' ', '_')}=", value)
     end
+    @all << @last
   end
   instance_variable_set("@#{name}", @last)
 end
@@ -17,6 +19,12 @@ end
 When /^I save the document '(.*)'$/ do |name|
   object = instance_variable_get("@#{name}")
   @last_save = object.save
+end
+
+When /^I create an (.*) '(.*)' from the hash '(.*)'$/ do |doc, name, hash|
+  klass = doc.constantize
+  attrs = instance_variable_get("@#{hash}")
+  instance_variable_set("@#{name}", klass.create(attrs))
 end
 
 Then /^'(.*)' is not a new record$/ do |name|

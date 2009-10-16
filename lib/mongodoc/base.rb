@@ -62,6 +62,18 @@ module MongoDoc
   
   class Base
     include MongoDoc::Document
+
+    def initialize(attrs = {})
+      attrs.each do |key, value|
+        send("#{key}=", value)
+      end
+    end
+    
+    def self.create(attrs = {})
+      instance = new(attrs)
+      instance.save
+      instance
+    end
     
     def save
       self._id = self.class.collection.save(self.to_bson)
