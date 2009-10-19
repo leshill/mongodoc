@@ -69,14 +69,22 @@ module MongoDoc
       end
     end
     
-    def self.create(attrs = {})
+    def self.create(attrs = {}, safe = false)
       instance = new(attrs)
-      instance._id = collection.insert(instance.to_bson)
+      instance._id = collection.insert(instance.to_bson, :safe => safe)
       instance
     end
     
-    def save
-      self._id = self.class.collection.save(self.to_bson)
+    def self.create!(attrs = {})
+      create(attrs, true)
+    end
+
+    def save(safe = false)
+      self._id = self.class.collection.save(self.to_bson, :safe => safe)
+    end
+    
+    def save!
+      save(true)
     end
 
     def self.collection_name

@@ -83,7 +83,7 @@ describe "MongoDoc::Base" do
     it "saves a #to_bson on the collection" do
       bson = stub('bson')
       @address.should_receive(:to_bson).and_return(bson)
-      @collection.should_receive(:save).with(bson).and_return(Mongo::ObjectID.new([1]))
+      @collection.should_receive(:save).with(bson, anything).and_return(Mongo::ObjectID.new([1]))
       @address.save
     end
 
@@ -101,6 +101,24 @@ describe "MongoDoc::Base" do
     end
   end
 
+  context "#bang methods!" do
+    before do
+      @address = Address.new
+      @collection = stub('collection')
+      Address.stub(:collection).and_return(@collection)
+    end
+    
+    it "create! calls insert with the :safe => true option" do
+      @collection.should_receive(:insert).with(anything, hash_including(:safe => true))
+      Address.create!
+    end
+    
+    it "save! call insert with the :safe => true option" do
+      @collection.should_receive(:save).with(anything, hash_including(:safe => true))
+      @address.save!
+    end
+  end
+  
   it ".count calls the collection count" do
     collection = stub('collection')
     MongoDoc::Base.stub(:collection).and_return(collection)
