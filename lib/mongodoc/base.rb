@@ -71,7 +71,7 @@ module MongoDoc
     
     def self.create(attrs = {})
       instance = new(attrs)
-      instance.save
+      instance._id = collection.insert(instance.to_bson)
       instance
     end
     
