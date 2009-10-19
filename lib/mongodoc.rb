@@ -1,3 +1,4 @@
+require 'rubygems'
 gem 'mongo', '0.15'
 
 require 'mongo'
