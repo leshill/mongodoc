@@ -63,22 +63,16 @@ module MongoDoc
   class Base
     include MongoDoc::Document
 
-    def initialize(attrs = {})
+    def attributes=(attrs)
       attrs.each do |key, value|
         send("#{key}=", value)
       end
     end
-    
-    def self.create(attrs = {}, safe = false)
-      instance = new(attrs)
-      instance._id = collection.insert(instance.to_bson, :safe => safe)
-      instance
-    end
-    
-    def self.create!(attrs = {})
-      create(attrs, true)
-    end
 
+    def initialize(attrs = {})
+      self.attributes = attrs
+    end
+    
     def save(safe = false)
       self._id = self.class.collection.save(self.to_bson, :safe => safe)
     end
@@ -97,6 +91,16 @@ module MongoDoc
 
     def self.count
       collection.count
+    end
+
+    def self.create(attrs = {}, safe = false)
+      instance = new(attrs)
+      instance._id = collection.insert(instance.to_bson, :safe => safe)
+      instance
+    end
+    
+    def self.create!(attrs = {})
+      create(attrs, true)
     end
 
     def self.find_one(id)
