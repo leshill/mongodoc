@@ -27,6 +27,12 @@ When /^I create an (.*) '(.*)' from the hash '(.*)'$/ do |doc, name, hash|
   instance_variable_set("@#{name}", klass.create(attrs))
 end
 
+When /^I update the document '(.*)' with the hash named '(.*)'$/ do |doc_name, hash_name|
+  doc = instance_variable_get("@#{doc_name}")
+  attrs = instance_variable_get("@#{hash_name}")
+  doc.update_attributes(attrs)
+end
+
 Then /^'(.*)' is not a new record$/ do |name|
   instance_variable_get("@#{name}").new_record?.should be_false
 end
@@ -38,6 +44,8 @@ end
 
 Then /^the document '(.*)' roundtrips$/ do |name|
   object = instance_variable_get("@#{name}")
-  object.class.find_one(object._id).should == object
+  from_db = object.class.find_one(object._id)
+  from_db.should == object
+  instance_variable_set("@#{name}", from_db)
 end
 

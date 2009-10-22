@@ -35,3 +35,9 @@ Then /^the object '(.*)' roundtrips$/ do |name|
   object.instance_variable_set("@_id", @last_save)
   MongoDoc::BSON.decode(@collection.find_one(@last_save)).should == object
 end
+
+Then /^the attribute '(.*)' of '(.*)' is '(.*)'$/ do |attr, var, value|
+  object = instance_variable_get("@#{var}")
+  object.send(attr).to_s.should == value
+end
+

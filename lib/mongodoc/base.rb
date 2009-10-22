@@ -2,6 +2,7 @@ require 'mongodoc/exceptions'
 require 'mongodoc/bson'
 require 'mongodoc/connection'
 require 'mongodoc/value_equals'
+require 'mongodoc/query'
 
 module MongoDoc
   module Document
@@ -81,6 +82,15 @@ module MongoDoc
       save(true)
     end
 
+    def update_attributes(attrs, safe = false)
+      self.attributes = attrs
+      self.class.collection.update({'_id' => self._id}, MongoDoc::Query.set_modifier(attrs.to_bson), :safe => safe)
+    end
+    
+    def update_attributes!(attrs)
+      update_attributes(attrs, true)
+    end
+    
     def self.collection_name
       self.to_s.tableize.gsub('/', '.')
     end

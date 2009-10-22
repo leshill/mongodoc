@@ -119,6 +119,33 @@ describe "MongoDoc::Base" do
     end
   end
   
+  context "#update_attributes" do
+    before do
+      @spec = {'_id' => 1}
+      @address = Address.new(@spec)
+      @collection = stub('collection', :update => nil)
+      Address.stub(:collection).and_return(@collection)
+    end
+
+    it "sets the attributes" do
+      attrs = {:state => 'FL'}
+      @address.update_attributes(attrs)
+      @address.state.should == 'FL'
+    end
+
+    it "updates the document with only the specified attributes" do
+      attrs = {:state => 'FL'}
+      @collection.should_receive(:update).with(@spec, MongoDoc::Query.set_modifier(attrs.to_bson), :safe => false)
+      @address.update_attributes(attrs)
+    end
+
+    it "with a bang, updates the document with the :safe => true option" do
+      attrs = {:state => 'FL'}
+      @collection.should_receive(:update).with(@spec, MongoDoc::Query.set_modifier(attrs.to_bson), :safe => true)
+      @address.update_attributes!(attrs)
+    end
+  end
+
   it ".count calls the collection count" do
     collection = stub('collection')
     MongoDoc::Base.stub(:collection).and_return(collection)
