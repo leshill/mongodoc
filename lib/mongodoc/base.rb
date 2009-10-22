@@ -1,4 +1,3 @@
-require 'mongodoc/exceptions'
 require 'mongodoc/bson'
 require 'mongodoc/connection'
 require 'mongodoc/value_equals'
