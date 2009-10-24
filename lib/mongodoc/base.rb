@@ -2,16 +2,26 @@ require 'mongodoc/bson'
 require 'mongodoc/connection'
 require 'mongodoc/value_equals'
 require 'mongodoc/query'
+require 'mongodoc/attributes'
 
 module MongoDoc
   module Document
+    class NotADocumentError < RuntimeError; end
+
     def self.included(klass)
       klass.instance_eval do
-        extend MongoDoc::Document::Keys
+        extend MongoDoc::Document::Attributes
         extend MongoDoc::Document::BSONCreate
         include MongoDoc::Document::ToBSON
-        include MongoDoc::ValueEquals
+        include MongoDoc::Document::ValueEquals
         include MongoDoc::Document::Identity
+      end
+    end
+
+    module ValueEquals
+      def ==(other)
+        return false unless instance_variables.size == other.instance_variables.size
+        (instance_variables - ["@_parent", "@_root"]).all? {|var| self.instance_variable_get(var) == other.instance_variable_get(var)}
       end
     end
     
@@ -23,20 +33,6 @@ module MongoDoc
       def new_record?
         _id.nil?
       end
-    end
-
-    module Keys
-      def self.extended(klass)
-        klass.class_inheritable_array :_keys
-        klass._keys = []
-      end
-
-      def key(*args)
-        args.each do |name|
-          _keys << name unless _keys.include?(name)
-          attr_accessor name
-        end
-      end      
     end
     
     module ToBSON

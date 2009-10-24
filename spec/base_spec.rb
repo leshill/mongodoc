@@ -1,51 +1,6 @@
 require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
 describe "MongoDoc::Base" do
-  describe ".key macro" do
-    class TestKeys < MongoDoc::Base
-    end
-    
-    it "adds its arguments to _keys" do
-      TestKeys.key :attr1, :attr2
-      TestKeys._keys.should == [:attr1, :attr2]
-    end
-
-    describe "accessors" do
-      before do
-        TestKeys.key :attr1
-      end
-      
-      subject do
-        TestKeys.new
-      end
-      
-      it "has an attr1 reader" do
-        should respond_to(:attr1)
-      end
-
-      it "has an attr1 writer" do
-        should respond_to(:attr1=)
-      end
-    end
-    
-    describe "used with inheritance" do
-      class TestParent < MongoDoc::Base
-        key :parent_attr
-      end
-      
-      class TestChild < TestParent
-        key :child_attr
-      end
-      
-      it "has its own keys" do
-        TestChild._keys.should include(:child_attr)
-      end
-      
-      it "has the keys from the parent class" do
-        TestChild._keys.should include(*TestParent._keys)
-      end
-    end
-  end
 
   context "satisfies form_for requirements" do
     before do
