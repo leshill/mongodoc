@@ -22,7 +22,7 @@ Feature: MongoDoc::Base
     And the Address collection should have 1 document
     And the document 'hashrocket' roundtrips
 
-  Scenario: updating an attribute of a document
+  Scenario: updating an attribute of a simple document
     Given a valid connection to the 'test' database
     And an empty Address document collection
     And an Address document named 'hashrocket' :
@@ -34,4 +34,4 @@ Feature: MongoDoc::Base
     And I save the document 'hashrocket'
     When I update the document 'hashrocket' with the hash named 'street'
     And the document 'hashrocket' roundtrips
-    Then the attribute 'street' of 'hashrocket' is '320 First St N' 
+    Then the attribute 'street' of 'hashrocket' is '320 First St N'
