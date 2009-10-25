@@ -76,4 +76,15 @@ describe "MongoDoc::Document::Attributes" do
       subdoc._root.should == doc
     end
   end
+
+  context "._attributes" do
+    class TestDoc < MongoDoc::Base
+      key :key
+      has_one :has_one
+    end
+
+    it "is _keys + _associations" do
+      TestDoc._attributes.should == TestDoc._keys + TestDoc._associations
+    end
+  end
 end

@@ -27,7 +27,13 @@ module MongoDoc
         klass.class_inheritable_array :_associations
         klass._associations = []
 
-        klass.send(:include, Tree)
+        klass.class_eval <<-EOS
+          include Tree
+
+          def self._attributes
+            _keys + _associations
+          end
+        EOS
       end
 
       def key(*args)

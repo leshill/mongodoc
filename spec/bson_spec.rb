@@ -247,5 +247,31 @@ describe "BSON for Mongo (BSON)" do
       wifi_from_bson.should be_kind_of(WifiAccessible)
       wifi_from_bson.website.should be_kind_of(WebSite)
     end
-  end  
+
+    context "associations" do
+      class TestDoc < MongoDoc::Base
+        has_one :subdoc
+      end
+
+      class SubDoc < MongoDoc::Base
+        key :attr
+      end
+
+      it "#to_bson on a document with a has_one association renders a bson representation of the document" do
+        doc = TestDoc.new
+        subdoc = SubDoc.new(:attr => "value")
+        bson = doc.to_bson
+        bson["subdoc"] = subdoc.to_bson
+        doc.subdoc = subdoc
+        doc.to_bson.should == bson
+      end
+      
+      it "a document with a has_one association roundtrips" do
+        doc = TestDoc.new
+        subdoc = SubDoc.new(:attr => "value")
+        doc.subdoc = subdoc
+        MongoDoc::BSON.decode(doc.to_bson).should == doc
+      end
+    end
+  end
 end
