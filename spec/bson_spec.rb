@@ -249,28 +249,62 @@ describe "BSON for Mongo (BSON)" do
     end
 
     context "associations" do
-      class TestBsonDoc < MongoDoc::Base
-        has_one :subdoc
+      context "has_one" do
+        class TestHasOneBsonDoc < MongoDoc::Base
+          has_one :subdoc
+        end
+
+        class SubHasOneBsonDoc < MongoDoc::Base
+          key :attr
+        end
+
+        it "#to_bson renders a bson representation of the document" do
+          doc = TestHasOneBsonDoc.new
+          subdoc = SubHasOneBsonDoc.new(:attr => "value")
+          bson = doc.to_bson
+          bson["subdoc"] = subdoc.to_bson
+          doc.subdoc = subdoc
+          doc.to_bson.should == bson
+        end
+
+        it "roundtrips" do
+          doc = TestHasOneBsonDoc.new
+          subdoc = SubHasOneBsonDoc.new(:attr => "value")
+          doc.subdoc = subdoc
+          MongoDoc::BSON.decode(doc.to_bson).should == doc
+        end
       end
 
-      class SubBsonDoc < MongoDoc::Base
-        key :attr
-      end
+      context "has_many" do
 
-      it "#to_bson on a document with a has_one association renders a bson representation of the document" do
-        doc = TestBsonDoc.new
-        subdoc = SubBsonDoc.new(:attr => "value")
-        bson = doc.to_bson
-        bson["subdoc"] = subdoc.to_bson
-        doc.subdoc = subdoc
-        doc.to_bson.should == bson
-      end
-      
-      it "a document with a has_one association roundtrips" do
-        doc = TestBsonDoc.new
-        subdoc = SubBsonDoc.new(:attr => "value")
-        doc.subdoc = subdoc
-        MongoDoc::BSON.decode(doc.to_bson).should == doc
+        class SubHasManyBsonDoc < MongoDoc::Base
+          key :attr
+        end
+
+        class TestHasManyBsonDoc < MongoDoc::Base
+          has_many :subdoc, :class_name => 'SubHasManyBsonDoc'
+        end
+
+        it "#to_bson renders a bson representation of the document" do
+          doc = TestHasManyBsonDoc.new
+          subdoc = SubHasManyBsonDoc.new(:attr => "value")
+          bson = doc.to_bson
+          bson["subdoc"] = [subdoc].to_bson
+          doc.subdoc = subdoc
+          doc.to_bson.should == bson
+        end
+
+        it "roundtrips" do
+          doc = TestHasManyBsonDoc.new
+          subdoc = SubHasManyBsonDoc.new(:attr => "value")
+          doc.subdoc = subdoc
+          MongoDoc::BSON.decode(doc.to_bson).should == doc
+        end
+
+        it "roundtrips the proxy" do
+          doc = TestHasManyBsonDoc.new(:subdoc => SubHasManyBsonDoc.new(:attr => "value"))
+          MongoDoc::Document::Proxy.should === MongoDoc::BSON.decode(doc.to_bson).subdoc
+        end
       end
     end
   end
