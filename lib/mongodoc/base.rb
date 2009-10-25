@@ -7,6 +7,7 @@ require 'mongodoc/proxy'
 
 module MongoDoc
   module Document
+    class DocumentInvalidError < RuntimeError; end
     class NotADocumentError < RuntimeError; end
 
     def self.included(klass)
@@ -21,8 +22,8 @@ module MongoDoc
 
     module ValueEquals
       def ==(other)
-        return false unless instance_variables.size == other.instance_variables.size
-        (instance_variables - ["@_parent", "@_root"]).all? {|var| self.instance_variable_get(var) == other.instance_variable_get(var)}
+        return false unless self.class === other
+        self.class._attributes.all? {|var| self.send(var) == other.send(var)}
       end
     end
     
@@ -59,6 +60,7 @@ module MongoDoc
   
   class Base
     include MongoDoc::Document
+    include Validatable
 
     def attributes=(attrs)
       attrs.each do |key, value|
@@ -70,12 +72,20 @@ module MongoDoc
       self.attributes = attrs
     end
     
-    def save(safe = false)
-      self._id = self.class.collection.save(self.to_bson, :safe => safe)
+    def save(validate = true)
+      unless validate and not valid?
+        _save(false)
+      else
+        false
+      end
     end
     
     def save!
-      save(true)
+      if valid?
+        _save(true)
+      else
+        raise DocumentInvalidError
+      end
     end
 
     def update_attributes(attrs, safe = false)
@@ -101,16 +111,35 @@ module MongoDoc
 
     def self.create(attrs = {}, safe = false)
       instance = new(attrs)
-      instance._id = collection.insert(instance.to_bson, :safe => safe)
-      instance
+      if instance.valid?
+        _create(instance, false)
+      else
+        false
+      end
     end
     
     def self.create!(attrs = {})
-      create(attrs, true)
+      instance = new(attrs)
+      if instance.valid?
+        _create(instance, true)
+      else
+        raise DocumentInvalidError
+      end
     end
 
     def self.find_one(id)
       MongoDoc::BSON.decode(collection.find_one(id))
+    end
+
+    private
+
+    def _save(safe)
+      self._id = self.class.collection.save(self.to_bson, :safe => safe)
+    end
+
+    def self._create(instance, safe)
+      instance._id = collection.insert(instance.to_bson, :safe => safe)
+      instance
     end
   end
 end
