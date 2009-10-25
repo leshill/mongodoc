@@ -78,13 +78,49 @@ describe "MongoDoc::Document::Attributes" do
   end
 
   context "._attributes" do
-    class TestDoc < MongoDoc::Base
+    class TestHasOneDoc < MongoDoc::Base
       key :key
       has_one :has_one
     end
 
     it "is _keys + _associations" do
-      TestDoc._attributes.should == TestDoc._keys + TestDoc._associations
+      TestHasOneDoc._attributes.should == TestHasOneDoc._keys + TestHasOneDoc._associations
+    end
+  end
+
+  context ".has_many" do
+
+    class SubHasManyDoc < MongoDoc::Base
+      key :data
+    end
+
+    class TestHasManyDoc < MongoDoc::Base
+      has_many :sub_docs, :class_name => 'SubHasManyDoc'
+    end
+
+    class TestImplicitHasManyDoc < MongoDoc::Base
+      has_many :sub_has_many_docs
+    end
+
+    it "uses a proxy" do
+      MongoDoc::Document::Proxy.should === TestHasManyDoc.new.sub_docs
+    end
+
+    it "sets the subdocuments parent to the proxy" do
+      subdoc = SubHasManyDoc.new
+      doc = TestHasManyDoc.new(:sub_docs => [subdoc])
+      subdoc._parent.should == doc.sub_docs
+    end
+
+    it "set the subdocuments root to the root" do
+      subdoc = SubHasManyDoc.new
+      doc = TestHasManyDoc.new(:sub_docs => [subdoc])
+      subdoc._root.should == doc
+    end
+
+    it "uses the association name to find the children's class name" do
+      subdoc = SubHasManyDoc.new
+      doc = TestImplicitHasManyDoc.new(:sub_has_many_docs => [subdoc])
     end
   end
 end

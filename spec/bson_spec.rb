@@ -249,17 +249,17 @@ describe "BSON for Mongo (BSON)" do
     end
 
     context "associations" do
-      class TestDoc < MongoDoc::Base
+      class TestBsonDoc < MongoDoc::Base
         has_one :subdoc
       end
 
-      class SubDoc < MongoDoc::Base
+      class SubBsonDoc < MongoDoc::Base
         key :attr
       end
 
       it "#to_bson on a document with a has_one association renders a bson representation of the document" do
-        doc = TestDoc.new
-        subdoc = SubDoc.new(:attr => "value")
+        doc = TestBsonDoc.new
+        subdoc = SubBsonDoc.new(:attr => "value")
         bson = doc.to_bson
         bson["subdoc"] = subdoc.to_bson
         doc.subdoc = subdoc
@@ -267,8 +267,8 @@ describe "BSON for Mongo (BSON)" do
       end
       
       it "a document with a has_one association roundtrips" do
-        doc = TestDoc.new
-        subdoc = SubDoc.new(:attr => "value")
+        doc = TestBsonDoc.new
+        subdoc = SubBsonDoc.new(:attr => "value")
         doc.subdoc = subdoc
         MongoDoc::BSON.decode(doc.to_bson).should == doc
       end
