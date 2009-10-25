@@ -6,6 +6,7 @@ require 'spec/autorun'
 require 'bson_matchers'
 require 'test_classes'
 require 'test_documents'
+require 'base_ext'
 
 Spec::Runner.configure do |config|
   config.include(BsonMatchers)
