@@ -23,3 +23,8 @@ module Automobile
     key :name
   end
 end
+
+class Contact < MongoDoc::Base
+  key :name
+  has_many :addresses
+end

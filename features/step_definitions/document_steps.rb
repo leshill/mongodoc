@@ -3,7 +3,7 @@ Given /^an empty (\w+) document collection$/ do |doc|
   Given "an empty #{klass.collection_name} collection"
 end
 
-Given /^an (\w+) document named '(.*)' :$/ do |doc, name, table|
+Given /^an? (\w+) document named '(.*)' :$/ do |doc, name, table|
   @all = []
   klass = doc.constantize
   table.hashes.each do |hash|
@@ -14,6 +14,16 @@ Given /^an (\w+) document named '(.*)' :$/ do |doc, name, table|
     @all << @last
   end
   instance_variable_set("@#{name}", @last)
+end
+
+Given /^'(.*)' has (.*) :$/ do |doc_name, assoc_name, table|
+  doc = instance_variable_get("@#{doc_name}")
+  table.hashes.each do |hash|
+    doc.send(assoc_name) << hash.inject({}) do |attrs, (attr, value)|
+      attrs["#{attr.underscore.gsub(' ', '_')}"] = value
+      attrs
+    end
+  end
 end
 
 When /^I save the document '(.*)'$/ do |name|

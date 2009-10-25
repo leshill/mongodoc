@@ -40,7 +40,8 @@ module MongoDoc
 
       alias_method :append, :<<
       def <<(items)
-        [*items].each do |item|
+        items = [items] unless items.kind_of?(Array)
+        items.each do |item|
           item = collection_class.new(item) if Hash === item
           raise NotADocumentError unless collection_class === item
           append item
