@@ -6,7 +6,7 @@ class Address < MongoDoc::Base
 end
 
 class Location < MongoDoc::Base
-  key :address
+  has_one :address
   key :website
 end
 

@@ -219,8 +219,8 @@ describe "BSON for Mongo (BSON)" do
       MongoDoc::BSON.decode(@location.to_bson).should be_kind_of(Location)
     end
 
-    it "ignores a class hash when the :raw_json option is used" do
-      Location.bson_create(@location.to_bson.except(MongoDoc::BSON::CLASS_KEY), :raw_json => true).address.should == @address.to_bson
+    it "ignores the class hash when the :raw_json option is used" do
+      MongoDoc::BSON.decode(@location.to_bson.except(MongoDoc::BSON::CLASS_KEY), :raw_json => true)['address'].should == @address.to_bson
     end
 
     it "allows for embedded MongoDoc objects" do

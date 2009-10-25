@@ -44,9 +44,11 @@ module MongoDoc
           _associations << name unless _associations.include?(name)
           attr_reader name
           define_method("#{name}=") do |value|
-            raise NotADocumentError unless Document === value
-            value._parent = self
-            value._root = _root || self
+            if value
+              raise NotADocumentError unless Document === value
+              value._parent = self
+              value._root = _root || self
+            end
             instance_variable_set("@#{name}", value)
           end
         end
