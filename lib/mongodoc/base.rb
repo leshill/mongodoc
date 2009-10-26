@@ -88,13 +88,17 @@ module MongoDoc
       end
     end
 
-    def update_attributes(attrs, safe = false)
+    def update_attributes(attrs)
       self.attributes = attrs
-      self.class.collection.update({'_id' => self._id}, MongoDoc::Query.set_modifier(attrs.to_bson), :safe => safe)
+      valid? and _update_attributes(attrs, false)
     end
     
     def update_attributes!(attrs)
-      update_attributes(attrs, true)
+      if valid?
+        _update_attributes(attrs, true)
+      else
+        raise DocumentInvalidError
+      end
     end
     
     def self.collection_name
@@ -111,11 +115,7 @@ module MongoDoc
 
     def self.create(attrs = {}, safe = false)
       instance = new(attrs)
-      if instance.valid?
-        _create(instance, false)
-      else
-        false
-      end
+      instance.valid? and _create(instance, false)
     end
     
     def self.create!(attrs = {})
@@ -135,6 +135,12 @@ module MongoDoc
 
     def _save(safe)
       self._id = self.class.collection.save(self.to_bson, :safe => safe)
+    end
+
+    def _update_attributes(attrs,  safe)
+      self.class.collection.update({'_id' => self._id}, MongoDoc::Query.set_modifier(attrs.to_bson), :safe => safe)
+      result = MongoDoc::BSON.decode(self.class.collection.find_one({'getlasterror' => 1}))
+      return (result and result.has_key?('updatedExisting') and result['updatedExisting'])
     end
 
     def self._create(instance, safe)

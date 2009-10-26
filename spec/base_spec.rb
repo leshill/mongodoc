@@ -139,28 +139,45 @@ describe "MongoDoc::Base" do
 
   context "#update_attributes" do
     before do
+      @attrs = {:state => 'FL'}
       @spec = {'_id' => 1}
       @address = Address.new(@spec)
-      @collection = stub('collection', :update => nil)
+      @collection = stub('collection', :update => nil, :find_one => {'updatedExisting' => true})
       Address.stub(:collection).and_return(@collection)
     end
 
+    it "returns true on success" do
+      @address.update_attributes(@attrs).should be_true
+    end
+
     it "sets the attributes" do
-      attrs = {:state => 'FL'}
-      @address.update_attributes(attrs)
+      @address.update_attributes(@attrs)
       @address.state.should == 'FL'
     end
 
     it "updates the document with only the specified attributes" do
-      attrs = {:state => 'FL'}
-      @collection.should_receive(:update).with(@spec, MongoDoc::Query.set_modifier(attrs.to_bson), :safe => false)
-      @address.update_attributes(attrs)
+      @collection.should_receive(:update).with(@spec, MongoDoc::Query.set_modifier(@attrs.to_bson), :safe => false)
+      @address.update_attributes(@attrs)
     end
 
-    it "with a bang, updates the document with the :safe => true option" do
-      attrs = {:state => 'FL'}
-      @collection.should_receive(:update).with(@spec, MongoDoc::Query.set_modifier(attrs.to_bson), :safe => true)
-      @address.update_attributes!(attrs)
+    it "returns false if the object is not valid" do
+      @address.stub(:valid?).and_return(false)
+      @address.update_attributes(@attrs).should be_false
+    end
+
+    context "with a bang" do
+
+      it "with a bang, updates the document with the :safe => true option" do
+        @collection.should_receive(:update).with(@spec, MongoDoc::Query.set_modifier(@attrs.to_bson), :safe => true)
+        @address.update_attributes!(@attrs)
+      end
+
+      it "raises if not valid" do
+        @address.stub(:valid?).and_return(false)
+        expect do
+          @address.update_attributes!(@attrs)
+        end.should raise_error(MongoDoc::Document::DocumentInvalidError)
+      end
     end
   end
 
