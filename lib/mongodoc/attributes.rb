@@ -43,6 +43,7 @@ module MongoDoc
         args.each do |name|
           _associations << name unless _associations.include?(name)
           attr_reader name
+
           define_method("#{name}=") do |value|
             if value
               raise NotADocumentError unless Document === value
@@ -51,6 +52,8 @@ module MongoDoc
             end
             instance_variable_set("@#{name}", value)
           end
+
+          validates_associated name
         end
       end
 
@@ -62,6 +65,7 @@ module MongoDoc
 
         args.each do |name|
           _associations << name unless _associations.include?(name)
+
           define_method("#{name}") do
             association = instance_variable_get("@#{name}")
             unless association
@@ -70,6 +74,8 @@ module MongoDoc
             end
             association
           end
+
+          validates_associated name
 
           define_method("#{name}=") do |array|
             proxy = send("#{name}")

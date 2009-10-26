@@ -75,6 +75,17 @@ describe "MongoDoc::Document::Attributes" do
       doc = TestDoc.new(:subdoc => middoc)
       subdoc._root.should == doc
     end
+
+    class HasOneValidationTest < MongoDoc::Base
+      key :data
+      validates_presence_of :data
+    end
+
+    it "cascades validations down" do
+      invalid = HasOneValidationTest.new
+      doc = TestDoc.new(:subdoc => invalid)
+      doc.should have(1).error_on(:subdoc)
+    end
   end
 
   context "._attributes" do
@@ -121,6 +132,27 @@ describe "MongoDoc::Document::Attributes" do
     it "uses the association name to find the children's class name" do
       subdoc = SubHasManyDoc.new
       doc = TestImplicitHasManyDoc.new(:sub_has_many_docs => [subdoc])
+    end
+
+    class HasManyValidationChild < MongoDoc::Base
+      key :data
+      validates_presence_of :data
+    end
+
+    class HasManyValidationTest < MongoDoc::Base
+      has_many :subdocs, :class_name => 'HasManyValidationChild'
+    end
+
+    it "cascades validations and marks it in the parent" do
+      invalid = HasManyValidationChild.new
+      doc = HasManyValidationTest.new(:subdocs => [invalid])
+      doc.should have(1).error_on(:subdocs)
+    end
+
+    it "cascades validations and marks it in the child" do
+      invalid = HasManyValidationChild.new
+      doc = HasManyValidationTest.new(:subdocs => [invalid])
+      invalid.should have(1).error_on(:data)
     end
   end
 end
