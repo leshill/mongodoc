@@ -36,6 +36,20 @@ Feature: MongoDoc::Base
     And the document 'hashrocket' roundtrips
     Then the attribute 'street' of 'hashrocket' is '320 First St N'
 
+  Scenario: failing to update an attribute of a simple document
+    Given a valid connection to the 'test' database
+    And an empty Address document collection
+    And an Address document named 'hashrocket' :
+      | Street                 | City               | State | Zip Code |
+      | 320 First Street North | Jacksonville Beach | FL    | 32250    |
+    And a hash named 'street':
+      | Street         |
+      | 320 First St N |
+    And I save the document 'hashrocket'
+    And I set the id on the document 'hashrocket' to 1
+    When I update the document 'hashrocket' with the hash named 'street'
+    Then the last return value is false
+
   Scenario: saving a has_many document
     Given a valid connection to the 'test' database
     And an empty Contact document collection

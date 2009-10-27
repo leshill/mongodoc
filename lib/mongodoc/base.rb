@@ -141,7 +141,7 @@ module MongoDoc
 
     def _update_attributes(attrs,  safe)
       self.class.collection.update({'_id' => self._id}, MongoDoc::Query.set_modifier(attrs.to_bson), :safe => safe)
-      result = MongoDoc::BSON.decode(self.class.collection.find_one({'getlasterror' => 1}))
+      result = MongoDoc.database.db_command({'getlasterror' => 1})
       return (result and result.has_key?('updatedExisting') and result['updatedExisting'])
     end
 

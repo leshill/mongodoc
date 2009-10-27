@@ -142,8 +142,7 @@ describe "MongoDoc::Base" do
       @attrs = {:state => 'FL'}
       @spec = {'_id' => 1}
       @address = Address.new(@spec)
-      @collection = stub('collection', :update => nil, :find_one => {'updatedExisting' => true})
-      Address.stub(:collection).and_return(@collection)
+      @address.stub(:_update_attributes).and_return(true)
     end
 
     it "returns true on success" do
@@ -155,8 +154,8 @@ describe "MongoDoc::Base" do
       @address.state.should == 'FL'
     end
 
-    it "updates the document with only the specified attributes" do
-      @collection.should_receive(:update).with(@spec, MongoDoc::Query.set_modifier(@attrs.to_bson), :safe => false)
+    it "calls _update_attributes" do
+      @address.should_receive(:_update_attributes).with(@attrs, false)
       @address.update_attributes(@attrs)
     end
 
@@ -166,9 +165,8 @@ describe "MongoDoc::Base" do
     end
 
     context "with a bang" do
-
       it "with a bang, updates the document with the :safe => true option" do
-        @collection.should_receive(:update).with(@spec, MongoDoc::Query.set_modifier(@attrs.to_bson), :safe => true)
+        @address.should_receive(:_update_attributes).with(@attrs, true)
         @address.update_attributes!(@attrs)
       end
 

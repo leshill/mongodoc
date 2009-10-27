@@ -28,13 +28,18 @@ Given /^'(.*)' has (.*) :$/ do |doc_name, assoc_name, table|
   @last = @all.last
 end
 
+Given /^I set the id on the document '(.*)' to (.*)$/ do |doc_name, value|
+  doc = instance_variable_get("@#{doc_name}")
+  doc._id = Mongo::ObjectID.new([value.to_i])
+end
+
 When /^I save the document '(.*)'$/ do |name|
   object = instance_variable_get("@#{name}")
-  @last_save = object.save
+ @last_return = object.save
 end
 
 When /^I save the last document$/ do
-  @last_save = @last.save
+ @last_return = @last.save
 end
 
 When /^I create an (.*) '(.*)' from the hash '(.*)'$/ do |doc, name, hash|
@@ -46,7 +51,7 @@ end
 When /^I update the document '(.*)' with the hash named '(.*)'$/ do |doc_name, hash_name|
   doc = instance_variable_get("@#{doc_name}")
   attrs = instance_variable_get("@#{hash_name}")
-  doc.update_attributes(attrs)
+ @last_return = doc.update_attributes(attrs)
 end
 
 Then /^'(.*)' is not a new record$/ do |name|
@@ -63,5 +68,9 @@ Then /^the document '(.*)' roundtrips$/ do |name|
   from_db = object.class.find_one(object._id)
   from_db.should == object
   instance_variable_set("@#{name}", from_db)
+end
+
+Then /^the last return value is false$/ do
+  @last_return.should be_false
 end
 
