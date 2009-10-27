@@ -181,6 +181,36 @@ describe "MongoDoc::Base" do
     end
   end
 
+  context "from nested documents" do
+    class NestedDocsRoot < MongoDoc::Base
+      has_many :nested_children
+    end
+
+    class NestedChild < MongoDoc::Base
+      has_one :leaf
+    end
+
+    class LeafDoc < MongoDoc::Base
+      key :data
+    end
+
+    it "save calls the root documents save" do
+      leaf = LeafDoc.new
+      child = NestedChild.new(:leaf => leaf)
+      root = NestedDocsRoot.new(:nested_children => [child])
+      root.should_receive(:save).with(true)
+      leaf.save
+    end
+
+    it "save! calls the root documents save!" do
+      leaf = LeafDoc.new
+      child = NestedChild.new(:leaf => leaf)
+      root = NestedDocsRoot.new(:nested_children => [child])
+      root.should_receive(:save!)
+      leaf.save!
+    end
+  end
+
   it ".count calls the collection count" do
     collection = stub('collection')
     MongoDoc::Base.stub(:collection).and_return(collection)

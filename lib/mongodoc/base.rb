@@ -73,6 +73,7 @@ module MongoDoc
     end
     
     def save(validate = true)
+      return _root.save(validate) if _root
       unless validate and not valid?
         _save(false)
       else
@@ -81,6 +82,7 @@ module MongoDoc
     end
     
     def save!
+      return _root.save! if _root
       if valid?
         _save(true)
       else

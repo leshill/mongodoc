@@ -24,11 +24,17 @@ Given /^'(.*)' has (.*) :$/ do |doc_name, assoc_name, table|
       attrs
     end
   end
+  @all = doc.send(assoc_name)
+  @last = @all.last
 end
 
 When /^I save the document '(.*)'$/ do |name|
   object = instance_variable_get("@#{name}")
   @last_save = object.save
+end
+
+When /^I save the last document$/ do
+  @last_save = @last.save
 end
 
 When /^I create an (.*) '(.*)' from the hash '(.*)'$/ do |doc, name, hash|
