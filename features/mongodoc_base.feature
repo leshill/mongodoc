@@ -36,17 +36,17 @@ Feature: MongoDoc::Base
     And the document 'hashrocket' roundtrips
     Then the attribute 'street' of 'hashrocket' is '320 First St N'
 
-    Scenario: saving a has_many document
-      Given a valid connection to the 'test' database
-      And an empty Contact document collection
-      And a Contact document named 'hashrocket' :
-        | Name       |
-        | Hashrocket |
-      And 'hashrocket' has addresses :
-        | Street                 | City               | State | Zip Code |
-        | 320 First Street North | Jacksonville Beach | FL    | 32250    |
-        | 1 Main Street          | Santiago           | Chile |          |
-      When I save the document 'hashrocket'
-      Then 'hashrocket' is not a new record
-      And the Contact collection should have 1 document
-      And the document 'hashrocket' roundtrips
+  Scenario: saving a has_many document
+    Given a valid connection to the 'test' database
+    And an empty Contact document collection
+    And a Contact document named 'hashrocket' :
+      | Name       |
+      | Hashrocket |
+    And 'hashrocket' has addresses :
+      | Street                 | City               | State | Zip Code |
+      | 320 First Street North | Jacksonville Beach | FL    | 32250    |
+      | 1 Main Street          | Santiago           | Chile |          |
+    When I save the document 'hashrocket'
+    Then 'hashrocket' is not a new record
+    And the Contact collection should have 1 document
+    And the document 'hashrocket' roundtrips

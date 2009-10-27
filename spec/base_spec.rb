@@ -121,7 +121,7 @@ describe "MongoDoc::Base" do
 
       expect do
         CreateBangValidationTest.create!
-      end.should raise_error MongoDoc::Document::DocumentInvalidError
+      end.should raise_error(MongoDoc::Document::DocumentInvalidError)
     end
 
     it "save! call insert with the :safe => true option" do
