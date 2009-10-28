@@ -18,7 +18,7 @@ module MongoDoc
         RUBY
       end
 
-      attr_reader :collection, :collection_class, :_parent, :_root
+      attr_reader :assoc_name, :collection, :collection_class, :_parent, :_root
 
       def _parent=(parent)
         @_parent = parent
@@ -32,6 +32,7 @@ module MongoDoc
       end
 
       def initialize(options)
+        @assoc_name = options[:assoc_name]
         @collection = []
         @collection_class = options[:collection_class]
         @_root = options[:root]
@@ -59,6 +60,10 @@ module MongoDoc
         klass == Array || super(klass)
       end
       alias kind_of? is_a?
+
+      def path_to_root(prev)
+        _parent.path_to_root(assoc_name => [prev])
+      end
 
     end
   end

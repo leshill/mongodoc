@@ -55,10 +55,11 @@ describe "MongoDoc::Document::Attributes" do
       key :data
     end
 
-    it "sets the subdocuments parent" do
+    it "sets the subdocuments parent to the parent proxy" do
       subdoc = SubDoc.new
       doc = TestDoc.new(:subdoc => subdoc)
-      subdoc._parent.should == doc
+      MongoDoc::Document::ParentProxy.should === subdoc._parent
+      subdoc._parent._parent.should == doc
     end
 
     it "set the subdocuments root" do

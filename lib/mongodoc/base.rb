@@ -3,7 +3,6 @@ require 'mongodoc/connection'
 require 'mongodoc/value_equals'
 require 'mongodoc/query'
 require 'mongodoc/attributes'
-require 'mongodoc/proxy'
 
 module MongoDoc
   module Document
@@ -71,7 +70,12 @@ module MongoDoc
     def initialize(attrs = {})
       self.attributes = attrs
     end
-    
+
+    def path_to_root(prev)
+      return prev unless _parent
+      _parent.path_to_root(prev)
+    end
+
     def save(validate = true)
       return _root.save(validate) if _root
       unless validate and not valid?
@@ -92,12 +96,21 @@ module MongoDoc
 
     def update_attributes(attrs)
       self.attributes = attrs
-      valid? and _update_attributes(attrs, false)
+      return false unless valid?
+      if _root
+        _root.send(:_update_attributes, path_to_root(attrs), false)
+      else
+        _update_attributes(attrs, false)
+      end
     end
-    
+
     def update_attributes!(attrs)
       if valid?
-        _update_attributes(attrs, true)
+        if _root
+          _root.send(:_update_attributes, path_to_root(attrs), true)
+        else          
+          _update_attributes(attrs, true)
+        end
       else
         raise DocumentInvalidError
       end

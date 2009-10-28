@@ -207,6 +207,23 @@ describe "MongoDoc::Base" do
       root.should_receive(:save!)
       leaf.save!
     end
+
+    it "update_attributes calls the root documents _update_attributes with a full attribute path and not safe" do
+      leaf = LeafDoc.new
+      child = NestedChild.new(:leaf => leaf)
+      root = NestedDocsRoot.new(:nested_children => [child])
+      root.should_receive(:_update_attributes).with({:nested_children => [{:leaf => {:data => 'data'}}]}, false)
+      leaf.update_attributes(:data => 'data')
+    end
+
+    it "update_attributes! calls the root documents _update_attributes with a full attribute path and safe" do
+      leaf = LeafDoc.new
+      child = NestedChild.new(:leaf => leaf)
+      root = NestedDocsRoot.new(:nested_children => [child])
+      root.should_receive(:_update_attributes).with({:nested_children => [{:leaf => {:data => 'data'}}]}, true)
+      leaf.update_attributes!(:data => 'data')
+    end
+
   end
 
   it ".count calls the collection count" do

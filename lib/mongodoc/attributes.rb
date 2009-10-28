@@ -1,3 +1,6 @@
+require 'mongodoc/proxy'
+require 'mongodoc/parent_proxy'
+
 module MongoDoc
   module Document
     module Attributes
@@ -47,7 +50,7 @@ module MongoDoc
           define_method("#{name}=") do |value|
             if value
               raise NotADocumentError unless Document === value
-              value._parent = self
+              value._parent = ParentProxy.new(self, name)
               value._root = _root || self
             end
             instance_variable_set("@#{name}", value)
@@ -69,7 +72,7 @@ module MongoDoc
           define_method("#{name}") do
             association = instance_variable_get("@#{name}")
             unless association
-              association = Proxy.new(:root => _root || self, :parent => self, :collection_class => collection_class || self.class.type_name_with_module(name.to_s.classify).constantize)
+              association = Proxy.new(:root => _root || self, :parent => self, :assoc_name => name, :collection_class => collection_class || self.class.type_name_with_module(name.to_s.classify).constantize)
               instance_variable_set("@#{name}", association)
             end
             association
