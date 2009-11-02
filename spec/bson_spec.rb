@@ -215,6 +215,11 @@ describe "BSON for Mongo (BSON)" do
       @location.to_bson.should be_bson_eql({MongoDoc::BSON::CLASS_KEY => "Location", "website" => nil, "address" => {"state" => "FL", MongoDoc::BSON::CLASS_KEY => "Address", "zip_code" => "32250", "street" => "320 1st Street North", "city" => "Jacksonville Beach"}})
     end
 
+    it "includes the _id of the object" do
+      @location._id = Mongo::ObjectID.new
+      @location.to_bson.should be_bson_eql({MongoDoc::BSON::CLASS_KEY => "Location", "_id" => @location._id.to_bson, "website" => nil, "address" => {"state" => "FL", MongoDoc::BSON::CLASS_KEY => "Address", "zip_code" => "32250", "street" => "320 1st Street North", "city" => "Jacksonville Beach"}})
+    end
+
     it "roundtrips the object" do
       MongoDoc::BSON.decode(@location.to_bson).should be_kind_of(Location)
     end

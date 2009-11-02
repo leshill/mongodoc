@@ -40,6 +40,7 @@ module MongoDoc
     module ToBSON
       def to_bson(*args)
         {MongoDoc::BSON::CLASS_KEY => self.class.name}.tap do |bson_hash|
+          bson_hash['_id'] = _id unless _id.nil?
           self.class._attributes.each do |name|
             bson_hash[name.to_s] = send(name).to_bson(args)
           end
