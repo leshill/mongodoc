@@ -5,6 +5,11 @@ class Address < MongoDoc::Base
   key :zip_code
 end
 
+class Place < MongoDoc::Base
+  key :name
+  has_one :address
+end
+
 class Location < MongoDoc::Base
   has_one :address
   key :website

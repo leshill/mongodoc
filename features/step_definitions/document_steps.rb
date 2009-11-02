@@ -16,7 +16,19 @@ Given /^an? (\w+) document named '(.*)' :$/ do |doc, name, table|
   instance_variable_set("@#{name}", @last)
 end
 
-Given /^'(.*)' has (.*) :$/ do |doc_name, assoc_name, table|
+Given /^'(.*)' has one (.*?) as (.*) :$/ do |doc_name, class_name, assoc_name, table|
+  doc = instance_variable_get("@#{doc_name}")
+  obj = class_name.constantize.new
+  table.hashes.each do |hash|
+    hash.each do |key, value|
+      obj.send("#{key.underscore.gsub(' ', '_')}=", value)
+    end
+  end
+  doc.send("#{assoc_name.underscore.gsub(' ', '_')}=", obj)
+  @last = obj
+end
+
+Given /^'(.*)' has (?:a|an|many) (.*) :$/ do |doc_name, assoc_name, table|
   doc = instance_variable_get("@#{doc_name}")
   table.hashes.each do |hash|
     doc.send(assoc_name) << hash.inject({}) do |attrs, (attr, value)|
