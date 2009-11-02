@@ -61,10 +61,15 @@ module MongoDoc
       end
       alias kind_of? is_a?
 
-      def path_to_root(prev)
-        _parent.path_to_root(assoc_name => [prev])
+      def path_to_root(attrs)
+        _parent.path_to_root(attrs)
       end
 
+      protected
+
+      def _propose_update_attributes(attrs, safe)
+        false
+      end
     end
   end
 end

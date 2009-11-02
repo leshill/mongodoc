@@ -16,6 +16,7 @@ module MongoDoc
         include MongoDoc::Document::ToBSON
         include MongoDoc::Document::ValueEquals
         include MongoDoc::Document::Identity
+        include Validatable
       end
     end
 
@@ -56,10 +57,9 @@ module MongoDoc
       end
     end
   end
-  
+
   class Base
     include MongoDoc::Document
-    include Validatable
 
     def attributes=(attrs)
       attrs.each do |key, value|
@@ -69,11 +69,6 @@ module MongoDoc
 
     def initialize(attrs = {})
       self.attributes = attrs
-    end
-
-    def path_to_root(prev)
-      return prev unless _parent
-      _parent.path_to_root(prev)
     end
 
     def save(validate = true)
@@ -97,25 +92,18 @@ module MongoDoc
     def update_attributes(attrs)
       self.attributes = attrs
       return false unless valid?
-      if _root
-        _root.send(:_update_attributes, path_to_root(attrs), false)
-      else
-        _update_attributes(attrs, false)
-      end
+      _propose_update_attributes(path_to_root(attrs), false)
     end
 
     def update_attributes!(attrs)
+      self.attributes = attrs
       if valid?
-        if _root
-          _root.send(:_update_attributes, path_to_root(attrs), true)
-        else          
-          _update_attributes(attrs, true)
-        end
+        _propose_update_attributes(path_to_root(attrs), true)
       else
         raise DocumentInvalidError
       end
     end
-    
+
     def self.collection_name
       self.to_s.tableize.gsub('/', '.')
     end
@@ -146,7 +134,15 @@ module MongoDoc
       MongoDoc::BSON.decode(collection.find_one(id))
     end
 
-    private
+    protected
+
+    def _propose_update_attributes(attrs, safe)
+      if _parent
+        _parent.send(:_propose_update_attributes, attrs, safe)
+      else
+        _update_attributes(attrs, safe)
+      end
+    end
 
     def _save(safe)
       self._id = self.class.collection.save(self.to_bson, :safe => safe)

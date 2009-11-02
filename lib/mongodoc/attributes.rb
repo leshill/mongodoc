@@ -4,22 +4,6 @@ require 'mongodoc/parent_proxy'
 module MongoDoc
   module Document
     module Attributes
-      module Tree
-        attr_accessor :_parent
-
-        def _root
-          @_root
-        end
-
-        def _root=(root)
-          _associations.each do|a|
-            association = send(a)
-            association._root = root if association
-          end
-          @_root = root
-        end
-      end
-
       def self.extended(klass)
         klass.class_inheritable_array :_keys
         klass._keys = []
@@ -27,12 +11,29 @@ module MongoDoc
         klass._associations = []
 
         klass.class_eval <<-RUBY, __FILE__, __LINE__ + 1
-          include Tree
+          attr_accessor :_parent
 
-          def self._attributes
-            _keys + _associations
+          def _root
+            @_root
+          end
+
+          def _root=(root)
+            @_root = root
+            _associations.each do|a|
+              association = send(a)
+              association._root = root if association
+            end
+          end
+
+          def path_to_root(prev)
+            return prev unless _parent
+            _parent.path_to_root(prev)
           end
         RUBY
+      end
+
+      def _attributes
+        _keys + _associations
       end
 
       def key(*args)

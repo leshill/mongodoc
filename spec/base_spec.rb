@@ -179,7 +179,7 @@ describe "MongoDoc::Base" do
     end
   end
 
-  context "from nested documents" do
+  context "from a nested document" do
     class NestedDocsRoot < MongoDoc::Base
       has_many :nested_children
     end
@@ -192,36 +192,53 @@ describe "MongoDoc::Base" do
       key :data
     end
 
-    it "save calls the root documents save" do
-      leaf = LeafDoc.new
-      child = NestedChild.new(:leaf => leaf)
-      root = NestedDocsRoot.new(:nested_children => [child])
-      root.should_receive(:save).with(true)
-      leaf.save
+    context "#save" do
+      before do
+        @leaf = LeafDoc.new
+        @root = NestedDocsRoot.new(:nested_children => [NestedChild.new(:leaf => @leaf)])
+      end
+
+      it "calls the root document's save" do
+        @root.should_receive(:save).with(true)
+        @leaf.save
+      end
+
+      it "(with bang!) calls the root documents save!" do
+        @root.should_receive(:save!)
+        @leaf.save!
+      end
     end
 
-    it "save! calls the root documents save!" do
-      leaf = LeafDoc.new
-      child = NestedChild.new(:leaf => leaf)
-      root = NestedDocsRoot.new(:nested_children => [child])
-      root.should_receive(:save!)
-      leaf.save!
-    end
+    context "with no has_many, update_attributes" do
+      before do
+        @leaf = LeafDoc.new
+        @root = NestedChild.new(:leaf => @leaf)
+      end
 
-    it "update_attributes calls the root documents _update_attributes with a full attribute path and not safe" do
-      leaf = LeafDoc.new
-      child = NestedChild.new(:leaf => leaf)
-      root = NestedDocsRoot.new(:nested_children => [child])
-      root.should_receive(:_update_attributes).with({:nested_children => [{:leaf => {:data => 'data'}}]}, false)
-      leaf.update_attributes(:data => 'data')
-    end
+      it "calls the root document's _update_attributes with a full attribute path and not safe" do
+        @root.should_receive(:_update_attributes).with({'leaf.data' => 'data'}, false)
+        @leaf.update_attributes(:data => 'data')
+      end
 
-    it "update_attributes! calls the root documents _update_attributes with a full attribute path and safe" do
-      leaf = LeafDoc.new
-      child = NestedChild.new(:leaf => leaf)
-      root = NestedDocsRoot.new(:nested_children => [child])
-      root.should_receive(:_update_attributes).with({:nested_children => [{:leaf => {:data => 'data'}}]}, true)
-      leaf.update_attributes!(:data => 'data')
+      it "(with bang!) calls the root document's _update_attributes with a full attribute path and safe" do
+        @root.should_receive(:_update_attributes).with({'leaf.data' => 'data'}, true)
+        @leaf.update_attributes!(:data => 'data')
+      end
+    end
+    
+    context "with has_many, update_attributes returns false" do
+      before do
+        @leaf = LeafDoc.new
+        NestedDocsRoot.new(:nested_children => [NestedChild.new(:leaf => @leaf)])
+      end
+
+      it "calls the root document's save" do
+        @leaf.update_attributes(:data => 'data').should be_false
+      end
+
+      it "(with bang!) calls the root document's save!" do
+        @leaf.update_attributes!(:data => 'data').should be_false
+      end
     end
 
   end
