@@ -110,8 +110,8 @@ Feature: MongoDoc::Base
     And I save the last document
     And that @last is named 'address'
     And a hash named 'street':
-      | Street         |
-      | 320 1st St. N. |
+      | Street         | City    |
+      | 320 1st St. N. | Jax Bch |
     When I update the document 'address' with the hash named 'street'
     Then the Place collection should have 1 document
     And the document 'hashrocket' roundtrips
