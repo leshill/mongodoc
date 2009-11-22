@@ -1,7 +1,7 @@
 require 'rubygems'
 
 gem 'mongo', '0.16'
-gem 'jnunemaker-validatable', '1.8.0'
+gem 'durran-validatable', '1.8.2'
 
 require 'mongo'
 require 'activesupport'
