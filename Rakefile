@@ -10,6 +10,8 @@ begin
     gem.email = "leshill@gmail.com"
     gem.homepage = "http://github.com/leshill/mongodoc"
     gem.authors = ["Les Hill"]
+    gem.add_dependency "mongo", "= 0.16"
+    gem.add_dependency "durran-validatable", "= 1.8.2"
     gem.add_development_dependency "rspec"
     gem.add_development_dependency "cucumber"
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
