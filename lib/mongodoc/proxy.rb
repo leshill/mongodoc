@@ -67,7 +67,8 @@ module MongoDoc
 
       protected
 
-      def _propose_update_attributes(attrs, safe)
+      def _propose_update_attributes(src, attrs, safe)
+        src.errors.add(:base, 'update_attributes called through a has_many')
         false
       end
     end

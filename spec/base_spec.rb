@@ -226,18 +226,28 @@ describe "MongoDoc::Base" do
       end
     end
     
-    context "with has_many, update_attributes returns false" do
+    context "with has_many, update_attributes" do
       before do
         @leaf = LeafDoc.new
         NestedDocsRoot.new(:nested_children => [NestedChild.new(:leaf => @leaf)])
       end
 
-      it "calls the root document's save" do
+      it "returns false" do
         @leaf.update_attributes(:data => 'data').should be_false
       end
 
-      it "(with bang!) calls the root document's save!" do
+      it "sets an error on base" do
+        @leaf.update_attributes(:data => 'data')
+        @leaf.errors[:base].should_not be_nil
+      end
+
+      it "(with bang!) returns false" do
         @leaf.update_attributes!(:data => 'data').should be_false
+      end
+
+      it "(with bang!) sets an error on base" do
+        @leaf.update_attributes(:data => 'data')
+        @leaf.errors[:base].should_not be_nil
       end
     end
 

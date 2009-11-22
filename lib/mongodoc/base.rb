@@ -93,13 +93,13 @@ module MongoDoc
     def update_attributes(attrs)
       self.attributes = attrs
       return false unless valid?
-      _propose_update_attributes(path_to_root(attrs), false)
+      _propose_update_attributes(self, path_to_root(attrs), false)
     end
 
     def update_attributes!(attrs)
       self.attributes = attrs
       if valid?
-        _propose_update_attributes(path_to_root(attrs), true)
+        _propose_update_attributes(self, path_to_root(attrs), true)
       else
         raise DocumentInvalidError
       end
@@ -137,9 +137,9 @@ module MongoDoc
 
     protected
 
-    def _propose_update_attributes(attrs, safe)
+    def _propose_update_attributes(src, attrs, safe)
       if _parent
-        _parent.send(:_propose_update_attributes, attrs, safe)
+        _parent.send(:_propose_update_attributes, src, attrs, safe)
       else
         _update_attributes(attrs, safe)
       end
