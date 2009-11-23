@@ -5,7 +5,12 @@ describe "MongoDoc Connections" do
   it ".connection raises a no connection error when connect has not been called" do
     lambda {MongoDoc.connection}.should raise_error(MongoDoc::NoConnectionError)
   end
-  
+
+  it ".connection raises a no connection error when the connection has failed" do
+    MongoDoc.send(:class_variable_set, :@@connection, nil)
+    lambda {MongoDoc.connection}.should raise_error(MongoDoc::NoConnectionError)
+  end
+
   describe ".connect" do
     it "when called with no params just connects" do
       Mongo::Connection.should_receive(:new)
@@ -51,6 +56,11 @@ describe "MongoDoc Connections" do
   
   describe ".database" do
     it "raises a no database error when the database has not been initialized" do
+      lambda {MongoDoc.database}.should raise_error(MongoDoc::NoDatabaseError)
+    end
+
+    it "raises a no database error when the database connect failed" do
+      MongoDoc.send(:class_variable_set, :@@database, nil)
       lambda {MongoDoc.database}.should raise_error(MongoDoc::NoDatabaseError)
     end
 

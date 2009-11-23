@@ -3,13 +3,13 @@ module MongoDoc
     if name
       @@database = connection.db(name)
     else
-      raise NoDatabaseError unless defined? @@database
+      raise NoDatabaseError unless defined? @@database and @@database
       @@database
     end
   end
   
   def self.connection
-    raise NoConnectionError unless defined? @@connection
+    raise NoConnectionError unless defined? @@connection and @@connection
     @@connection
   end
     
