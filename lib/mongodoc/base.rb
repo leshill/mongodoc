@@ -1,5 +1,4 @@
 require 'mongodoc/bson'
-require 'mongodoc/connection'
 require 'mongodoc/value_equals'
 require 'mongodoc/query'
 require 'mongodoc/attributes'

@@ -14,4 +14,6 @@ module MongoDoc
   class NoDatabaseError < RuntimeError; end
 end
 
+require 'mongodoc/connection'
+require 'mongodoc/collection'
 require 'mongodoc/base'
