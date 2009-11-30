@@ -19,11 +19,11 @@ describe "MongoDoc::Base" do
     context "#new_record?" do
       it "is true when the object does not have an _id" do
         @address._id = nil
-        @address.new_record?.should be_true
+        @address.should be_new_record
       end
       
       it "is false when the object has an id" do
-        @address.new_record?.should be_false
+        @address.should_not be_new_record
       end
     end
   end
@@ -45,140 +45,412 @@ describe "MongoDoc::Base" do
     end
   end
 
-  context "#save" do
+  context "saving" do
+    class SaveRoot < MongoDoc::Base
+      has_many :save_children
+    end
+    
+    class SaveChild < MongoDoc::Base
+      key :data
+    end
+    
     before do
-      @id = Mongo::ObjectID.new([1])
-      @address = Address.new
-      @collection = stub('collection')
-      Address.stub(:collection).and_return(@collection)
+      @root = SaveRoot.new
+      @root.stub(:_save)
+      @child = SaveChild.new
+      @root.save_children << @child
     end
 
-    it "saves a #to_bson on the collection" do
-      bson = stub('bson')
-      @address.should_receive(:to_bson).and_return(bson)
-      @collection.should_receive(:save).with(bson, anything).and_return(Mongo::ObjectID.new([1]))
-      @address.save
-    end
+    context "#save" do
+      it "delegates to the root" do
+        validate = true
+        @root.should_receive(:save).with(validate)
+        @child.save(validate)
+      end
+    
+      context "when validating" do
+        it "validates" do
+          @root.should_receive(:valid?)
+          @root.save(true)
+        end
+      
+        context "and valid" do
+          it "delegates to _save" do
+            @root.should_receive(:_save).with(false)
+            @root.save(true)
+          end
 
-    it "sets the _id of the document" do
-      @collection.stub(:save).and_return(@id)
-      @address.save
-      @address._id.should == @id
-    end
+          it "returns the result of _save if valid" do
+            id = 'id'
+            @root.stub(:valid?).and_return(true)
+            @root.should_receive(:_save).and_return(id)
+            @root.save(true).should == id
+          end
+        end
+        
+        context "and invalid" do
+          it "does not call _save" do
+            @root.stub(:valid?).and_return(false)
+            @root.should_not_receive(:_save)
+            @root.save(true)
+          end
+        
+          it "returns false" do
+            @root.stub(:valid?).and_return(false)
+            @root.save(true).should be_false
+          end
+        end
+      end
+    
+      context "when not validating" do
+        it "does not validate" do
+          @root.should_not_receive(:valid?)
+          @root.save(false)
+        end
 
-    it "returns the _id of the document" do
-      @collection.stub(:save).and_return(@id)
-      @address.save.should == @id
-    end
+        it "delegates to _save" do
+          @root.should_receive(:_save).with(false)
+          @root.save(false)
+        end
 
-    it "ignores validates if asked to" do
-      @address.stub(:valid?).and_return(false)
-      @collection.stub(:save).and_return(@id)
-      @address.save(false).should == @id
+        it "returns the result of _save" do
+          id = 'id'
+          @root.stub(:_save).and_return(id)
+          @root.save(false).should == id
+        end
+      end
     end
-
-    it "returns false if the object is not valid" do
-      @address.stub(:valid?).and_return(false)
-      @address.save.should be_false
-    end
-  end
-
-  context ".create" do
-    it "calls insert with the :safe => false option" do
-      collection = stub('collection')
-      Address.stub(:collection).and_return(collection)
-      collection.should_receive(:insert).with(anything, hash_including(:safe => false))
-      Address.create
-    end
-
-    it "is false if the object is not valid" do
-      class CreateValidationTest < MongoDoc::Base
-        key :data
-        validates_presence_of :data
+    
+    context "#save!" do
+      it "delegates to the root" do
+        @root.should_receive(:save!)
+        @child.save!
+      end
+    
+      it "validates" do
+        @root.should_receive(:valid?).and_return(true)
+        @root.save!
+      end
+      
+      it "returns the result of _save if valid" do
+        id = 'id'
+        @root.stub(:valid?).and_return(true)
+        @root.should_receive(:_save).with(true).and_return(id)
+        @root.save!.should == id
       end
 
-      CreateValidationTest.create.should be_false
-    end
-  end
-
-  context "#bang methods!" do
-    before do
-      @address = Address.new
-      @collection = stub('collection')
-      Address.stub(:collection).and_return(@collection)
-    end
-
-    it "create! calls insert with the :safe => true option" do
-      @collection.should_receive(:insert).with(anything, hash_including(:safe => true))
-      Address.create!
-    end
-
-    it "create! raises if not valid" do
-      class CreateBangValidationTest < MongoDoc::Base
-        key :data
-        validates_presence_of :data
-      end
-
-      expect do
-        CreateBangValidationTest.create!
-      end.should raise_error(MongoDoc::Document::DocumentInvalidError)
-    end
-
-    it "save! call insert with the :safe => true option" do
-      @collection.should_receive(:save).with(anything, hash_including(:safe => true))
-      @address.save!
-    end
-
-    it "save! raises if not valid" do
-      @address.stub(:valid?).and_return(false)
-      expect do
-        @address.save!
-      end.should raise_error(MongoDoc::Document::DocumentInvalidError)
-    end
-  end
-
-  context "#update_attributes" do
-    before do
-      @attrs = {:state => 'FL'}
-      @spec = {'_id' => 1}
-      @address = Address.new(@spec)
-      @address.stub(:_update_attributes).and_return(true)
-    end
-
-    it "returns true on success" do
-      @address.update_attributes(@attrs).should be_true
-    end
-
-    it "sets the attributes" do
-      @address.update_attributes(@attrs)
-      @address.state.should == 'FL'
-    end
-
-    it "calls _update_attributes" do
-      @address.should_receive(:_update_attributes).with(@attrs, false)
-      @address.update_attributes(@attrs)
-    end
-
-    it "returns false if the object is not valid" do
-      @address.stub(:valid?).and_return(false)
-      @address.update_attributes(@attrs).should be_false
-    end
-
-    context "with a bang" do
-      it "with a bang, updates the document with the :safe => true option" do
-        @address.should_receive(:_update_attributes).with(@attrs, true)
-        @address.update_attributes!(@attrs)
-      end
-
-      it "raises if not valid" do
-        @address.stub(:valid?).and_return(false)
+      it "raises if invalid" do
+        @root.stub(:valid?).and_return(false)
         expect do
-          @address.update_attributes!(@attrs)
+          @root.save!
+        end.should raise_error(MongoDoc::Document::DocumentInvalidError)
+      end
+    end
+  end
+  
+  context "#_save" do
+    class SaveTest < MongoDoc::Base
+    end
+    
+    before do
+      @collection = stub('collection')
+      @doc = SaveTest.new
+      @doc.stub(:_collection).and_return(@collection)
+    end
+    
+    it "delegates to the collection save" do
+      safe = true
+      @collection.should_receive(:save)
+      @doc.send(:_save, safe)
+    end
+    
+    it "sets the _id of the document" do
+      id = 'id'
+      @collection.stub(:save).and_return(id)
+      @doc.send(:_save, true)
+      @doc._id.should == id
+    end
+
+    it "returns the _id" do
+      id = 'id'
+      @collection.stub(:save).and_return(id)
+      @doc.send(:_save, true).should == id
+    end
+  end
+
+  context "creating" do
+    class CreateTest < MongoDoc::Base
+      key :data
+      validates_presence_of :data
+    end
+
+    before do
+      @value = 'value'
+      CreateTest.stub(:_create).and_return(true)
+    end
+    
+    context ".create" do
+      it "creates a new document" do
+        obj = CreateTest.new
+        CreateTest.should_receive(:new).and_return(obj)
+        CreateTest.create
+      end
+    
+      it "delegates to _create with safe => false" do
+        obj = CreateTest.new(:data => @value)
+        CreateTest.stub(:new).and_return(obj)
+        CreateTest.should_receive(:_create).with(obj, false).and_return(true)
+        CreateTest.create(:data => @value)
+      end
+    
+      it "sets the passed attributes" do
+        CreateTest.create(:data => @value).data.should == @value
+      end
+
+      it "returns a valid document" do
+        CreateTest.should === CreateTest.create(:data => @value)
+      end
+    
+      it "validates" do
+        CreateTest.create.errors.should_not be_empty
+      end
+
+      it "returns an invalid document" do
+        CreateTest.should === CreateTest.create
+      end
+    end
+    
+    context ".create!" do
+      it "creates a new document" do
+        obj = CreateTest.new
+        CreateTest.should_receive(:new).and_return(obj)
+        CreateTest.create! rescue nil
+      end
+    
+      it "delegates to _create with safe => true" do
+        obj = CreateTest.new(:data => @value)
+        CreateTest.stub(:new).and_return(obj)
+        CreateTest.should_receive(:_create).with(obj, true).and_return(true)
+        CreateTest.create!(:data => @value)
+      end
+    
+      it "sets the passed attributes" do
+        CreateTest.create!(:data => @value).data.should == @value
+      end
+
+      it "returns a valid document" do
+        CreateTest.should === CreateTest.create!(:data => @value)
+      end
+    
+      it "raises when invalid" do
+        expect do
+          CreateTest.create!
         end.should raise_error(MongoDoc::Document::DocumentInvalidError)
       end
     end
   end
 
+  context "#_create" do
+    class CreateTest < MongoDoc::Base
+    end
+    
+    before do
+      @collection = stub('collection')
+      @collection.stub(:insert)
+      @doc = CreateTest.new
+      CreateTest.stub(:collection).and_return(@collection)
+    end
+    
+    it "delegates to the collection insert with safe" do
+      safe = true
+      @collection.should_receive(:insert).with(@doc, hash_including(:safe => safe))
+      CreateTest.send(:_create, @doc, safe)
+    end
+    
+    it "sets the _id of the document" do
+      id = 'id'
+      @collection.stub(:insert).and_return(id)
+      CreateTest.send(:_create, @doc, false)
+      @doc._id.should == id
+    end
+    
+    it "returns the _id" do
+      id = 'id'
+      @collection.stub(:insert).and_return(id)
+      CreateTest.send(:_create, @doc, false).should == id
+    end    
+  end
+
+  context "updating attributes" do
+    class UpdateAttributesRoot < MongoDoc::Base
+      has_one :update_attribute_child
+    end
+    
+    class UpdateAttributesChild < MongoDoc::Base
+      key :data
+    end
+  
+    before do
+      @data = 'data'
+      @doc = UpdateAttributesChild.new
+      UpdateAttributesRoot.new.update_attribute_child = @doc
+      @attrs = {:data => @data}
+      @path_attrs = {'update_attribute_child.data' => @data}
+      @doc.stub(:_propose_update_attributes)
+    end
+
+    context "#update_attributes" do
+      it "sets the attributes" do
+        @doc.update_attributes(@attrs)
+        @doc.data.should == @data
+      end
+
+      it "normalizes the attributes to the parent" do
+        @doc.should_receive(:path_to_root)
+        @doc.update_attributes(@attrs)
+      end
+
+      it "validates" do
+        @doc.should_receive(:valid?)
+        @doc.update_attributes(@attrs)
+      end
+            
+      it "returns false if the object is not valid" do
+        @doc.stub(:valid?).and_return(false)
+        @doc.update_attributes(@attrs).should be_false
+      end
+      
+      context "if valid" do
+        it "delegates to _propose_update_attributes" do
+          @doc.should_receive(:_propose_update_attributes).with(@doc, @path_attrs, false)
+          @doc.update_attributes(@attrs)
+        end
+
+        it "returns the result of _propose_update_attributes" do
+          result = 'check'
+          @doc.stub(:_propose_update_attributes).and_return(result)
+          @doc.update_attributes(@attrs).should == result
+        end
+      end
+    end
+    
+    context "#update_attributes!" do
+      it "sets the attributes" do
+        @doc.update_attributes!(@attrs)
+        @doc.data.should == @data
+      end
+
+      it "normalizes the attributes to the parent" do
+        @doc.should_receive(:path_to_root)
+        @doc.update_attributes!(@attrs)
+      end
+
+      it "validates" do
+        @doc.should_receive(:valid?).and_return(true)
+        @doc.update_attributes!(@attrs)
+      end
+
+      it "raises if not valid" do
+        @doc.stub(:valid?).and_return(false)
+        expect do
+          @doc.update_attributes!(@attrs)
+        end.should raise_error(MongoDoc::Document::DocumentInvalidError)
+      end
+
+      context "if valid" do
+        it "delegates to _propose_update_attributes with safe == true" do
+          @doc.should_receive(:_propose_update_attributes).with(@doc, @path_attrs, true)
+          @doc.update_attributes!(@attrs)
+        end
+        
+        it "returns the result of _propose_update_attributes" do
+          result = 'check'
+          @doc.stub(:_propose_update_attributes).and_return(result)
+          @doc.update_attributes!(@attrs).should == result
+        end
+      end
+    end
+  end
+  
+  context "#_propose_update_attributes" do
+    class ProposeUpdateAttributes < MongoDoc::Base
+    end
+
+    before do
+      @attrs = {:data => 1}
+      @safe = true
+    end
+    
+    context "when not a child" do
+      before do
+        @obj = ProposeUpdateAttributes.new
+      end
+      
+      it "delegates to _update_attributes when not a child" do
+        @obj.should_receive(:_update_attributes).with(@attrs, @safe)
+        @obj.send(:_propose_update_attributes, @obj, @attrs, @safe)
+      end
+      
+      it "returns the results of _update_attributes" do
+        result = 'check'
+        @obj.stub(:_update_attributes).and_return(result)
+        @obj.send(:_propose_update_attributes, @obj, @attrs, @safe).should == result
+      end
+    end
+    
+    context "when a child" do
+      before do
+        @obj = ProposeUpdateAttributes.new
+        @parent = stub('parent')
+        @obj._parent = @parent
+      end
+      
+      it "delegates to the parent when a child" do
+        @parent.should_receive(:_propose_update_attributes).with(@obj, @attrs, @safe)
+        @obj.send(:_propose_update_attributes, @obj, @attrs, @safe)
+      end
+      
+      it "returns the results of the parent's _propose_update_attributes" do
+        result = 'check'
+        @parent.stub(:_propose_update_attributes).and_return(result)
+        @obj.send(:_propose_update_attributes, @obj, @attrs, @safe).should == result
+      end
+    end
+  end
+
+  context "#_update_attributes" do
+    class UpdateAttributes < MongoDoc::Base
+    end
+    
+    before do
+      @collection = stub('collection')
+      @collection.stub(:update)
+      @doc = UpdateAttributes.new
+      @doc.stub(:_id).and_return(@id)
+      UpdateAttributes.stub(:collection).and_return(@collection)
+      @attrs = {:data => 'value'}
+    end
+    
+    it "uses the set modifier for the attributes" do
+      safe = true
+      MongoDoc::Query.should_receive(:set_modifier).with(@attrs)
+      @collection.stub(:update)
+      @doc.send(:_update_attributes, @attrs, safe)
+    end
+
+    it "delegates to the collection update with safe" do
+      safe = true
+      @collection.should_receive(:update).with({'_id' => @id}, MongoDoc::Query.set_modifier(@attrs), {:safe => safe})
+      @doc.send(:_update_attributes, @attrs, safe)
+    end
+
+    it "returns the result" do
+      result = 'check'
+      @collection.stub(:update).and_return(result)
+      @doc.send(:_update_attributes, @attrs, true)
+    end    
+  end
+  
   context "from a nested document" do
     class NestedDocsRoot < MongoDoc::Base
       has_many :nested_children
@@ -264,10 +536,12 @@ describe "MongoDoc::Base" do
     Address.collection_name.should == Address.to_s.tableize.gsub('/', '.')
   end
 
-  it ".collection calls through MongoDoc.database using the class name" do
-    db = stub('db')
-    db.should_receive(:collection).with(MongoDoc::Base.to_s.tableize.gsub('/', '.'))
-    MongoDoc.should_receive(:database).and_return(db)
-    MongoDoc::Base.collection
+  context ".collection" do
+    it ".collection returns a wrapped MongoDoc::Collection" do
+      db = stub('db')
+      db.should_receive(:collection).with(MongoDoc::Base.to_s.tableize.gsub('/', '.'))
+      MongoDoc.should_receive(:database).and_return(db)
+      MongoDoc::Collection.should === MongoDoc::Base.collection
+    end
   end
 end

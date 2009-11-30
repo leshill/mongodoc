@@ -73,90 +73,82 @@ module MongoDoc
 
     def save(validate = true)
       return _root.save(validate) if _root
-      unless validate and not valid?
-        _save(false)
-      else
-        false
-      end
+      return _save(false) unless validate and not valid?
+      false
     end
     
     def save!
       return _root.save! if _root
-      if valid?
-        _save(true)
-      else
-        raise DocumentInvalidError
-      end
+      raise DocumentInvalidError unless valid?
+      _save(true)
     end
 
     def update_attributes(attrs)
       self.attributes = attrs
-      return false unless valid?
-      _propose_update_attributes(self, path_to_root(attrs), false)
+      return _propose_update_attributes(self, path_to_root(attrs), false) if valid?
+      false
     end
 
     def update_attributes!(attrs)
       self.attributes = attrs
-      if valid?
-        _propose_update_attributes(self, path_to_root(attrs), true)
-      else
-        raise DocumentInvalidError
+      raise DocumentInvalidError unless valid?
+      _propose_update_attributes(self, path_to_root(attrs), true)
+    end
+
+    class << self
+      def collection_name
+        self.to_s.tableize.gsub('/', '.')
       end
-    end
 
-    def self.collection_name
-      self.to_s.tableize.gsub('/', '.')
-    end
+      def collection
+        @collection ||= MongoDoc::Collection.new(collection_name)
+      end
 
-    def self.collection
-      MongoDoc.database.collection(collection_name)
-    end
+      def count
+        collection.count
+      end
 
-    def self.count
-      collection.count
-    end
-
-    def self.create(attrs = {}, safe = false)
-      instance = new(attrs)
-      instance.valid? and _create(instance, false)
-    end
+      def create(attrs = {})
+        instance = new(attrs)
+        _create(instance, false) if instance.valid?
+        instance
+      end
     
-    def self.create!(attrs = {})
-      instance = new(attrs)
-      if instance.valid?
+      def create!(attrs = {})
+        instance = new(attrs)
+        raise MongoDoc::Document::DocumentInvalidError unless instance.valid?
         _create(instance, true)
-      else
-        raise DocumentInvalidError
+        instance
       end
-    end
 
-    def self.find_one(id)
-      MongoDoc::BSON.decode(collection.find_one(id))
+      def find_one(id)
+        MongoDoc::BSON.decode(collection.find_one(id))
+      end
+
+      protected
+      
+      def _create(instance, safe)
+        instance._id = collection.insert(instance, :safe => safe)
+      end
     end
 
     protected
 
+    def _collection
+      self.class.collection
+    end
+    
     def _propose_update_attributes(src, attrs, safe)
-      if _parent
-        _parent.send(:_propose_update_attributes, src, attrs, safe)
-      else
-        _update_attributes(attrs, safe)
-      end
+      return _parent.send(:_propose_update_attributes, src, attrs, safe) if _parent
+      _update_attributes(attrs, safe)
     end
 
     def _save(safe)
-      self._id = self.class.collection.save(self.to_bson, :safe => safe)
+      self._id = _collection.save(self, :safe => safe)
     end
 
     def _update_attributes(attrs,  safe)
-      self.class.collection.update({'_id' => self._id}, MongoDoc::Query.set_modifier(attrs.to_bson), :safe => safe)
-      result = MongoDoc.database.db_command({'getlasterror' => 1})
-      return (result and result.has_key?('updatedExisting') and result['updatedExisting'])
-    end
-
-    def self._create(instance, safe)
-      instance._id = collection.insert(instance.to_bson, :safe => safe)
-      instance
+      _collection.update({'_id' => self._id}, MongoDoc::Query.set_modifier(attrs), :safe => safe)
     end
   end
 end
