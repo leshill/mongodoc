@@ -1,16 +1,16 @@
-class Address < MongoDoc::Base
+class Address < MongoDoc::Document
   key :street
   key :city
   key :state
   key :zip_code
 end
 
-class Place < MongoDoc::Base
+class Place < MongoDoc::Document
   key :name
   has_one :address
 end
 
-class Location < MongoDoc::Base
+class Location < MongoDoc::Document
   has_one :address
   key :website
 end
@@ -24,12 +24,12 @@ class WebSite
 end
 
 module Automobile
-  class Ariel < MongoDoc::Base
+  class Ariel < MongoDoc::Document
     key :name
   end
 end
 
-class Contact < MongoDoc::Base
+class Contact < MongoDoc::Document
   key :name
   has_many :addresses
 end

@@ -1,8 +1,8 @@
 require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
-describe "MongoDoc::Document::Attributes" do
+describe "MongoDoc::Attributes" do
   context ".key" do
-    class TestKeys < MongoDoc::Base
+    class TestKeys < MongoDoc::Document
     end
 
     it "adds its arguments to _keys" do
@@ -28,7 +28,7 @@ describe "MongoDoc::Document::Attributes" do
     end
 
     describe "used with inheritance" do
-      class TestParent < MongoDoc::Base
+      class TestParent < MongoDoc::Document
         key :parent_attr
       end
 
@@ -47,18 +47,18 @@ describe "MongoDoc::Document::Attributes" do
   end
 
   context ".has_one" do
-    class TestDoc < MongoDoc::Base
+    class TestDoc < MongoDoc::Document
       has_one :subdoc
     end
 
-    class SubDoc < MongoDoc::Base
+    class SubDoc < MongoDoc::Document
       key :data
     end
 
     it "sets the subdocuments parent to the parent proxy" do
       subdoc = SubDoc.new
       doc = TestDoc.new(:subdoc => subdoc)
-      MongoDoc::Document::ParentProxy.should === subdoc._parent
+      MongoDoc::ParentProxy.should === subdoc._parent
       subdoc._parent._parent.should == doc
     end
 
@@ -77,7 +77,7 @@ describe "MongoDoc::Document::Attributes" do
       subdoc._root.should == doc
     end
 
-    class HasOneValidationTest < MongoDoc::Base
+    class HasOneValidationTest < MongoDoc::Document
       key :data
       validates_presence_of :data
     end
@@ -90,7 +90,7 @@ describe "MongoDoc::Document::Attributes" do
   end
 
   context "._attributes" do
-    class TestHasOneDoc < MongoDoc::Base
+    class TestHasOneDoc < MongoDoc::Document
       key :key
       has_one :has_one
     end
@@ -102,20 +102,20 @@ describe "MongoDoc::Document::Attributes" do
 
   context ".has_many" do
 
-    class SubHasManyDoc < MongoDoc::Base
+    class SubHasManyDoc < MongoDoc::Document
       key :data
     end
 
-    class TestHasManyDoc < MongoDoc::Base
+    class TestHasManyDoc < MongoDoc::Document
       has_many :sub_docs, :class_name => 'SubHasManyDoc'
     end
 
-    class TestImplicitHasManyDoc < MongoDoc::Base
+    class TestImplicitHasManyDoc < MongoDoc::Document
       has_many :sub_has_many_docs
     end
 
     it "uses a proxy" do
-      MongoDoc::Document::Proxy.should === TestHasManyDoc.new.sub_docs
+      MongoDoc::Proxy.should === TestHasManyDoc.new.sub_docs
     end
 
     it "sets the subdocuments parent to the proxy" do
@@ -135,12 +135,12 @@ describe "MongoDoc::Document::Attributes" do
       doc = TestImplicitHasManyDoc.new(:sub_has_many_docs => [subdoc])
     end
 
-    class HasManyValidationChild < MongoDoc::Base
+    class HasManyValidationChild < MongoDoc::Document
       key :data
       validates_presence_of :data
     end
 
-    class HasManyValidationTest < MongoDoc::Base
+    class HasManyValidationTest < MongoDoc::Document
       has_many :subdocs, :class_name => 'HasManyValidationChild'
     end
 

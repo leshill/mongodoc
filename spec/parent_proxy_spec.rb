@@ -1,6 +1,6 @@
 require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
-describe "MongoDoc::Document::ParentProxy" do
+describe "MongoDoc::ParentProxy" do
   class Parent
     def path_to_root(attrs)
       attrs
@@ -13,7 +13,7 @@ describe "MongoDoc::Document::ParentProxy" do
   end
 
   subject do
-    MongoDoc::Document::ParentProxy.new(@parent, @assoc_name)
+    MongoDoc::ParentProxy.new(@parent, @assoc_name)
   end
 
   it "has the association name" do
@@ -26,13 +26,13 @@ describe "MongoDoc::Document::ParentProxy" do
 
   it "requires a parent" do
     expect do
-      MongoDoc::Document::ParentProxy.new(nil, @assoc_name)
+      MongoDoc::ParentProxy.new(nil, @assoc_name)
     end.should raise_error
   end
 
   it "requires an association name" do
     expect do
-      MongoDoc::Document::ParentProxy.new(@parent, nil)
+      MongoDoc::ParentProxy.new(@parent, nil)
     end.should raise_error
   end
 

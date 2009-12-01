@@ -16,4 +16,4 @@ end
 
 require 'mongodoc/connection'
 require 'mongodoc/collection'
-require 'mongodoc/base'
+require 'mongodoc/document'

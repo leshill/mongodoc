@@ -195,7 +195,7 @@ describe "BSON for Mongo (BSON)" do
     end
   end
   
-  describe "MongoDoc::Base" do
+  describe "MongoDoc::Document" do
     before do
       @address = Address.new
       @address.street = '320 1st Street North'
@@ -255,11 +255,11 @@ describe "BSON for Mongo (BSON)" do
 
     context "associations" do
       context "has_one" do
-        class TestHasOneBsonDoc < MongoDoc::Base
+        class TestHasOneBsonDoc < MongoDoc::Document
           has_one :subdoc
         end
 
-        class SubHasOneBsonDoc < MongoDoc::Base
+        class SubHasOneBsonDoc < MongoDoc::Document
           key :attr
         end
 
@@ -282,11 +282,11 @@ describe "BSON for Mongo (BSON)" do
 
       context "has_many" do
 
-        class SubHasManyBsonDoc < MongoDoc::Base
+        class SubHasManyBsonDoc < MongoDoc::Document
           key :attr
         end
 
-        class TestHasManyBsonDoc < MongoDoc::Base
+        class TestHasManyBsonDoc < MongoDoc::Document
           has_many :subdoc, :class_name => 'SubHasManyBsonDoc'
         end
 
@@ -308,7 +308,7 @@ describe "BSON for Mongo (BSON)" do
 
         it "roundtrips the proxy" do
           doc = TestHasManyBsonDoc.new(:subdoc => SubHasManyBsonDoc.new(:attr => "value"))
-          MongoDoc::Document::Proxy.should === MongoDoc::BSON.decode(doc.to_bson).subdoc
+          MongoDoc::Proxy.should === MongoDoc::BSON.decode(doc.to_bson).subdoc
         end
       end
     end

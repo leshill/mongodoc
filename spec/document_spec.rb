@@ -1,6 +1,6 @@
 require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
-describe "MongoDoc::Base" do
+describe "MongoDoc::Document" do
 
   context "satisfies form_for requirements" do
     before do
@@ -29,13 +29,13 @@ describe "MongoDoc::Base" do
   end
 
   context "validations" do
-    class SimpleValidationTest < MongoDoc::Base
+    class SimpleValidationTest < MongoDoc::Document
       key :data
       validates_presence_of :data
     end
 
     it "are part of Base" do
-      Validatable.should === MongoDoc::Base.new
+      Validatable.should === MongoDoc::Document.new
     end
 
     it "valid? fails when a document is invalid" do
@@ -46,11 +46,11 @@ describe "MongoDoc::Base" do
   end
 
   context "saving" do
-    class SaveRoot < MongoDoc::Base
+    class SaveRoot < MongoDoc::Document
       has_many :save_children
     end
     
-    class SaveChild < MongoDoc::Base
+    class SaveChild < MongoDoc::Document
       key :data
     end
     
@@ -143,13 +143,13 @@ describe "MongoDoc::Base" do
         @root.stub(:valid?).and_return(false)
         expect do
           @root.save!
-        end.should raise_error(MongoDoc::Document::DocumentInvalidError)
+        end.should raise_error(MongoDoc::DocumentInvalidError)
       end
     end
   end
   
   context "#_save" do
-    class SaveTest < MongoDoc::Base
+    class SaveTest < MongoDoc::Document
     end
     
     before do
@@ -179,7 +179,7 @@ describe "MongoDoc::Base" do
   end
 
   context "creating" do
-    class CreateTest < MongoDoc::Base
+    class CreateTest < MongoDoc::Document
       key :data
       validates_presence_of :data
     end
@@ -245,13 +245,13 @@ describe "MongoDoc::Base" do
       it "raises when invalid" do
         expect do
           CreateTest.create!
-        end.should raise_error(MongoDoc::Document::DocumentInvalidError)
+        end.should raise_error(MongoDoc::DocumentInvalidError)
       end
     end
   end
 
   context "#_create" do
-    class CreateTest < MongoDoc::Base
+    class CreateTest < MongoDoc::Document
     end
     
     before do
@@ -282,11 +282,11 @@ describe "MongoDoc::Base" do
   end
 
   context "updating attributes" do
-    class UpdateAttributesRoot < MongoDoc::Base
+    class UpdateAttributesRoot < MongoDoc::Document
       has_one :update_attribute_child
     end
     
-    class UpdateAttributesChild < MongoDoc::Base
+    class UpdateAttributesChild < MongoDoc::Document
       key :data
     end
   
@@ -354,7 +354,7 @@ describe "MongoDoc::Base" do
         @doc.stub(:valid?).and_return(false)
         expect do
           @doc.update_attributes!(@attrs)
-        end.should raise_error(MongoDoc::Document::DocumentInvalidError)
+        end.should raise_error(MongoDoc::DocumentInvalidError)
       end
 
       context "if valid" do
@@ -373,7 +373,7 @@ describe "MongoDoc::Base" do
   end
   
   context "#_propose_update_attributes" do
-    class ProposeUpdateAttributes < MongoDoc::Base
+    class ProposeUpdateAttributes < MongoDoc::Document
     end
 
     before do
@@ -419,7 +419,7 @@ describe "MongoDoc::Base" do
   end
 
   context "#_update_attributes" do
-    class UpdateAttributes < MongoDoc::Base
+    class UpdateAttributes < MongoDoc::Document
     end
     
     before do
@@ -452,15 +452,15 @@ describe "MongoDoc::Base" do
   end
   
   context "from a nested document" do
-    class NestedDocsRoot < MongoDoc::Base
+    class NestedDocsRoot < MongoDoc::Document
       has_many :nested_children
     end
 
-    class NestedChild < MongoDoc::Base
+    class NestedChild < MongoDoc::Document
       has_one :leaf
     end
 
-    class LeafDoc < MongoDoc::Base
+    class LeafDoc < MongoDoc::Document
       key :data
     end
 
@@ -527,9 +527,9 @@ describe "MongoDoc::Base" do
 
   it ".count calls the collection count" do
     collection = stub('collection')
-    MongoDoc::Base.stub(:collection).and_return(collection)
+    MongoDoc::Document.stub(:collection).and_return(collection)
     collection.should_receive(:count).and_return(1)
-    MongoDoc::Base.count
+    MongoDoc::Document.count
   end
 
   it ".collection_name returns the name of the collection for this class" do
@@ -539,9 +539,9 @@ describe "MongoDoc::Base" do
   context ".collection" do
     it ".collection returns a wrapped MongoDoc::Collection" do
       db = stub('db')
-      db.should_receive(:collection).with(MongoDoc::Base.to_s.tableize.gsub('/', '.'))
+      db.should_receive(:collection).with(MongoDoc::Document.to_s.tableize.gsub('/', '.'))
       MongoDoc.should_receive(:database).and_return(db)
-      MongoDoc::Collection.should === MongoDoc::Base.collection
+      MongoDoc::Collection.should === MongoDoc::Document.collection
     end
   end
 end

@@ -4,62 +4,54 @@ require 'mongodoc/query'
 require 'mongodoc/attributes'
 
 module MongoDoc
-  module Document
-    class DocumentInvalidError < RuntimeError; end
-    class NotADocumentError < RuntimeError; end
+  class DocumentInvalidError < RuntimeError; end
+  class NotADocumentError < RuntimeError; end
 
-    def self.included(klass)
-      klass.instance_eval do
-        extend MongoDoc::Document::Attributes
-        extend MongoDoc::Document::BSONCreate
-        include MongoDoc::Document::ToBSON
-        include MongoDoc::Document::ValueEquals
-        include MongoDoc::Document::Identity
-        include Validatable
-      end
+  module DocumentValueEquals
+    def ==(other)
+      return false unless self.class === other
+      self.class._attributes.all? {|var| self.send(var) == other.send(var)}
     end
+  end
+  
+  module Identity
+    attr_accessor :_id
+    alias :id :_id
+    alias :to_param :_id
 
-    module ValueEquals
-      def ==(other)
-        return false unless self.class === other
-        self.class._attributes.all? {|var| self.send(var) == other.send(var)}
-      end
+    def new_record?
+      _id.nil?
     end
-    
-    module Identity
-      attr_accessor :_id
-      alias :id :_id
-      alias :to_param :_id
-
-      def new_record?
-        _id.nil?
-      end
-    end
-    
-    module ToBSON
-      def to_bson(*args)
-        {MongoDoc::BSON::CLASS_KEY => self.class.name}.tap do |bson_hash|
-          bson_hash['_id'] = _id unless _id.nil?
-          self.class._attributes.each do |name|
-            bson_hash[name.to_s] = send(name).to_bson(args)
-          end
+  end
+  
+  module ToBSON
+    def to_bson(*args)
+      {MongoDoc::BSON::CLASS_KEY => self.class.name}.tap do |bson_hash|
+        bson_hash['_id'] = _id unless _id.nil?
+        self.class._attributes.each do |name|
+          bson_hash[name.to_s] = send(name).to_bson(args)
         end
       end
     end
-    
-    module BSONCreate
-      def bson_create(bson_hash, options = {})
-        new.tap do |obj|
-          bson_hash.each do |name, value|
-            obj.send("#{name}=", MongoDoc::BSON.decode(value, options))
-          end
+  end
+  
+  module BSONCreate
+    def bson_create(bson_hash, options = {})
+      new.tap do |obj|
+        bson_hash.each do |name, value|
+          obj.send("#{name}=", MongoDoc::BSON.decode(value, options))
         end
       end
     end
   end
 
-  class Base
-    include MongoDoc::Document
+  class Document
+    extend MongoDoc::Attributes
+    extend MongoDoc::BSONCreate
+    include MongoDoc::ToBSON
+    include MongoDoc::DocumentValueEquals
+    include MongoDoc::Identity
+    include Validatable
 
     def attributes=(attrs)
       attrs.each do |key, value|
@@ -116,7 +108,7 @@ module MongoDoc
     
       def create!(attrs = {})
         instance = new(attrs)
-        raise MongoDoc::Document::DocumentInvalidError unless instance.valid?
+        raise MongoDoc::DocumentInvalidError unless instance.valid?
         _create(instance, true)
         instance
       end
