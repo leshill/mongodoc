@@ -7,51 +7,22 @@ module MongoDoc
   class DocumentInvalidError < RuntimeError; end
   class NotADocumentError < RuntimeError; end
 
-  module DocumentValueEquals
-    def ==(other)
-      return false unless self.class === other
-      self.class._attributes.all? {|var| self.send(var) == other.send(var)}
-    end
-  end
-  
-  module Identity
+  class Document
+    extend MongoDoc::Attributes
+    include Validatable
+
     attr_accessor :_id
     alias :id :_id
     alias :to_param :_id
 
-    def new_record?
-      _id.nil?
+    def initialize(attrs = {})
+      self.attributes = attrs
     end
-  end
-  
-  module ToBSON
-    def to_bson(*args)
-      {MongoDoc::BSON::CLASS_KEY => self.class.name}.tap do |bson_hash|
-        bson_hash['_id'] = _id unless _id.nil?
-        self.class._attributes.each do |name|
-          bson_hash[name.to_s] = send(name).to_bson(args)
-        end
-      end
-    end
-  end
-  
-  module BSONCreate
-    def bson_create(bson_hash, options = {})
-      new.tap do |obj|
-        bson_hash.each do |name, value|
-          obj.send("#{name}=", MongoDoc::BSON.decode(value, options))
-        end
-      end
-    end
-  end
 
-  class Document
-    extend MongoDoc::Attributes
-    extend MongoDoc::BSONCreate
-    include MongoDoc::ToBSON
-    include MongoDoc::DocumentValueEquals
-    include MongoDoc::Identity
-    include Validatable
+    def ==(other)
+      return false unless self.class === other
+      self.class._attributes.all? {|var| self.send(var) == other.send(var)}
+    end
 
     def attributes=(attrs)
       attrs.each do |key, value|
@@ -59,8 +30,8 @@ module MongoDoc
       end
     end
 
-    def initialize(attrs = {})
-      self.attributes = attrs
+    def new_record?
+      _id.nil?
     end
 
     def save(validate = true)
@@ -73,6 +44,15 @@ module MongoDoc
       return _root.save! if _root
       raise DocumentInvalidError unless valid?
       _save(true)
+    end
+
+    def to_bson(*args)
+      {MongoDoc::BSON::CLASS_KEY => self.class.name}.tap do |bson_hash|
+        bson_hash['_id'] = _id unless _id.nil?
+        self.class._attributes.each do |name|
+          bson_hash[name.to_s] = send(name).to_bson(args)
+        end
+      end
     end
 
     def update_attributes(attrs)
@@ -88,12 +68,20 @@ module MongoDoc
     end
 
     class << self
-      def collection_name
-        self.to_s.tableize.gsub('/', '.')
+      def bson_create(bson_hash, options = {})
+        new.tap do |obj|
+          bson_hash.each do |name, value|
+            obj.send("#{name}=", MongoDoc::BSON.decode(value, options))
+          end
+        end
       end
 
       def collection
         @collection ||= MongoDoc::Collection.new(collection_name)
+      end
+
+      def collection_name
+        self.to_s.tableize.gsub('/', '.')
       end
 
       def count
