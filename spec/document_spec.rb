@@ -3,27 +3,30 @@ require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 describe "MongoDoc::Document" do
 
   context "satisfies form_for requirements" do
+    class FormForTest < MongoDoc::Document
+    end
+    
     before do
-      @address = Address.new
-      @address._id = '1'
+      @doc = FormForTest.new
+      @doc._id = '1'
     end
     
     it "#id returns the _id" do
-      @address.id.should == @address._id
+      @doc.id.should == @doc._id
     end
     
     it "#to_param returns the _id" do
-      @address.to_param.should == @address._id
+      @doc.to_param.should == @doc._id
     end
     
     context "#new_record?" do
       it "is true when the object does not have an _id" do
-        @address._id = nil
-        @address.should be_new_record
+        @doc._id = nil
+        @doc.should be_new_record
       end
       
       it "is false when the object has an id" do
-        @address.should_not be_new_record
+        @doc.should_not be_new_record
       end
     end
   end
@@ -525,23 +528,137 @@ describe "MongoDoc::Document" do
 
   end
 
-  it ".count calls the collection count" do
-    collection = stub('collection')
-    MongoDoc::Document.stub(:collection).and_return(collection)
-    collection.should_receive(:count).and_return(1)
-    MongoDoc::Document.count
+  describe "bson" do
+    class BSONTest < MongoDoc::Document
+      key :other
+    end
+
+    class BSONDerived < BSONTest
+      key :derived
+    end
+    
+    class OtherObject
+      attr_accessor :value
+    end
+    
+    before do
+      @value = 'value'
+      @other = OtherObject.new
+      @other.value = @value
+      @doc = BSONTest.new(:other => @other)
+    end
+
+    it "encodes the class for the object" do
+      @doc.to_bson[MongoDoc::BSON::CLASS_KEY].should == BSONTest.name
+    end
+    
+    it "renders a json representation of the object" do
+      @doc.to_bson.should be_bson_eql({MongoDoc::BSON::CLASS_KEY => BSONTest.name, "other" => {MongoDoc::BSON::CLASS_KEY => OtherObject.name, "value" => @value}})
+    end
+
+    it "includes the _id of the object" do
+      @doc._id = Mongo::ObjectID.new
+      @doc.to_bson.should be_bson_eql({MongoDoc::BSON::CLASS_KEY => BSONTest.name, "_id" => @doc._id.to_bson, "other" => {MongoDoc::BSON::CLASS_KEY => OtherObject.name, "value" => @value}})
+    end
+
+    it "roundtrips the object" do
+      MongoDoc::BSON.decode(@doc.to_bson).should be_kind_of(BSONTest)
+    end
+
+    it "ignores the class hash when the :raw_json option is used" do
+      MongoDoc::BSON.decode(@doc.to_bson.except(MongoDoc::BSON::CLASS_KEY), :raw_json => true)['other'].should == @other.to_bson
+    end
+
+    it "allows for derived classes" do
+      derived = BSONDerived.new(:other => @other, :derived => 'derived')
+      MongoDoc::BSON.decode(derived.to_bson).other.should be_kind_of(OtherObject)
+    end
+
+    it "roundtrips embedded ruby objects" do
+      MongoDoc::BSON.decode(@doc.to_bson).other.should be_kind_of(OtherObject)
+    end
+
+    context "associations" do
+      context "has_one" do
+        class TestHasOneBsonDoc < MongoDoc::Document
+          has_one :subdoc
+        end
+
+        class SubHasOneBsonDoc < MongoDoc::Document
+          key :attr
+        end
+
+        it "#to_bson renders a bson representation of the document" do
+          doc = TestHasOneBsonDoc.new
+          subdoc = SubHasOneBsonDoc.new(:attr => "value")
+          bson = doc.to_bson
+          bson["subdoc"] = subdoc.to_bson
+          doc.subdoc = subdoc
+          doc.to_bson.should == bson
+        end
+
+        it "roundtrips" do
+          doc = TestHasOneBsonDoc.new
+          subdoc = SubHasOneBsonDoc.new(:attr => "value")
+          doc.subdoc = subdoc
+          MongoDoc::BSON.decode(doc.to_bson).should == doc
+        end
+      end
+
+      context "has_many" do
+
+        class SubHasManyBsonDoc < MongoDoc::Document
+          key :attr
+        end
+
+        class TestHasManyBsonDoc < MongoDoc::Document
+          has_many :subdoc, :class_name => 'SubHasManyBsonDoc'
+        end
+
+        it "#to_bson renders a bson representation of the document" do
+          doc = TestHasManyBsonDoc.new
+          subdoc = SubHasManyBsonDoc.new(:attr => "value")
+          bson = doc.to_bson
+          bson["subdoc"] = [subdoc].to_bson
+          doc.subdoc = subdoc
+          doc.to_bson.should == bson
+        end
+
+        it "roundtrips" do
+          doc = TestHasManyBsonDoc.new
+          subdoc = SubHasManyBsonDoc.new(:attr => "value")
+          doc.subdoc = subdoc
+          MongoDoc::BSON.decode(doc.to_bson).should == doc
+        end
+
+        it "roundtrips the proxy" do
+          doc = TestHasManyBsonDoc.new(:subdoc => SubHasManyBsonDoc.new(:attr => "value"))
+          MongoDoc::Proxy.should === MongoDoc::BSON.decode(doc.to_bson).subdoc
+        end
+      end
+    end
   end
 
-  it ".collection_name returns the name of the collection for this class" do
-    Address.collection_name.should == Address.to_s.tableize.gsub('/', '.')
-  end
+  context "misc class methods" do
+    class ClassMethods < MongoDoc::Document
+    end
+    
+    it ".count calls the collection count" do
+      collection = stub('collection')
+      ClassMethods.stub(:collection).and_return(collection)
+      collection.should_receive(:count).and_return(1)
+      ClassMethods.count
+    end
 
-  context ".collection" do
+    it ".collection_name returns the name of the collection for this class" do
+      ClassMethods.collection_name.should == ClassMethods.to_s.tableize.gsub('/', '.')
+    end
+
     it ".collection returns a wrapped MongoDoc::Collection" do
       db = stub('db')
-      db.should_receive(:collection).with(MongoDoc::Document.to_s.tableize.gsub('/', '.'))
+      db.should_receive(:collection).with(ClassMethods.to_s.tableize.gsub('/', '.'))
       MongoDoc.should_receive(:database).and_return(db)
-      MongoDoc::Collection.should === MongoDoc::Document.collection
+      MongoDoc::Collection.should === ClassMethods.collection
     end
   end
 end

@@ -4,8 +4,6 @@ require 'mongodoc'
 require 'spec'
 require 'spec/autorun'
 require 'bson_matchers'
-require 'test_classes'
-require 'test_documents'
 require 'document_ext'
 
 Spec::Runner.configure do |config|

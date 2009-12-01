@@ -153,164 +153,44 @@ describe "BSON for Mongo (BSON)" do
   end
   
   describe "Extensions to Object" do
+    class Simple
+      attr_accessor :value
+    end
+    
+    class Complex
+      attr_accessor :array_of_simple
+    end
+    
     before do
-      @movie = Movie.new
-      @movie.title = 'Gone with the Wind'
-      @movie.director = 'Victor Fleming'
-      @movie.writers = ['Sidney Howard']
-      @director = Director.new
-      @director.name = 'Victor Fleming'
-      @director.awards = ['1940 - Best Director']
-      @movie.director = @director
+      @value1 = 'value1'
+      @simple1 = Simple.new
+      @simple1.value = @value1
+      @value2 = 'value2'
+      @simple2 = Simple.new
+      @simple2.value = @value2
+      @complex = Complex.new
+      @complex.array_of_simple = [@simple1, @simple2]
     end
 
     it "renders a json representation of a simple object" do
-      @director.to_bson.should be_bson_eql({"name" => "Victor Fleming", MongoDoc::BSON::CLASS_KEY => "Director", "awards" => ["1940 - Best Director"]})
+      @simple1.to_bson.should be_bson_eql({MongoDoc::BSON::CLASS_KEY => Simple.name, "value" => @value1})
     end
     
     it "renders a json representation of an object with embedded objects" do
-      @movie.to_bson.should be_bson_eql({"title" => "Gone with the Wind", MongoDoc::BSON::CLASS_KEY => "Movie", "writers" => ["Sidney Howard"], "director" => {"name" => "Victor Fleming", MongoDoc::BSON::CLASS_KEY => "Director", "awards" => ["1940 - Best Director"]}})
+      @complex.to_bson.should be_bson_eql({MongoDoc::BSON::CLASS_KEY => Complex.name, "array_of_simple" => [@simple1.to_bson, @simple2.to_bson]})
     end
 
     it "ignores a class hash when the :raw_json option is used" do
-      Movie.bson_create(@movie.to_bson.except(MongoDoc::BSON::CLASS_KEY), :raw_json => true).director.should == @director.to_bson
+      Complex.bson_create(@complex.to_bson.except(MongoDoc::BSON::CLASS_KEY), :raw_json => true).array_of_simple.first.should == @simple1.to_bson
     end
 
     it "roundtrips the object" do
-      MongoDoc::BSON.decode(@movie.to_bson).should be_kind_of(Movie)
-    end
-
-    it "allows for embedded objects" do
-      movie_from_bson = MongoDoc::BSON.decode(@movie.to_bson)
-      movie_from_bson.director.should be_kind_of(Director)
+      MongoDoc::BSON.decode(@complex.to_bson).should be_kind_of(Complex)
     end
 
     it "allows for embedded arrays of objects" do
-      award = AcademyAward.new
-      award.year = '1940'
-      award.category = 'Best Director'
-      @director.awards = [award]
-      director_from_bson = MongoDoc::BSON.decode(@director.to_bson)
-      director_from_bson.awards.each {|award| award.should be_kind_of(AcademyAward)}
+      obj = MongoDoc::BSON.decode(@complex.to_bson)
+      obj.array_of_simple.each {|o| o.should be_kind_of(Simple)}
     end
-  end
-  
-  describe "MongoDoc::Document" do
-    before do
-      @address = Address.new
-      @address.street = '320 1st Street North'
-      @address.city = 'Jacksonville Beach'
-      @address.state = 'FL'
-      @address.zip_code = '32250'
-      @location = Location.new
-      @location.address = @address
-    end
-
-    it "encodes the class for the object" do
-      atom = Automobile::Ariel.new
-      atom.to_bson[MongoDoc::BSON::CLASS_KEY].should == Automobile::Ariel.name
-    end
-    
-    it "renders a json representation of the object" do
-      @location.to_bson.should be_bson_eql({MongoDoc::BSON::CLASS_KEY => "Location", "website" => nil, "address" => {"state" => "FL", MongoDoc::BSON::CLASS_KEY => "Address", "zip_code" => "32250", "street" => "320 1st Street North", "city" => "Jacksonville Beach"}})
-    end
-
-    it "includes the _id of the object" do
-      @location._id = Mongo::ObjectID.new
-      @location.to_bson.should be_bson_eql({MongoDoc::BSON::CLASS_KEY => "Location", "_id" => @location._id.to_bson, "website" => nil, "address" => {"state" => "FL", MongoDoc::BSON::CLASS_KEY => "Address", "zip_code" => "32250", "street" => "320 1st Street North", "city" => "Jacksonville Beach"}})
-    end
-
-    it "roundtrips the object" do
-      MongoDoc::BSON.decode(@location.to_bson).should be_kind_of(Location)
-    end
-
-    it "ignores the class hash when the :raw_json option is used" do
-      MongoDoc::BSON.decode(@location.to_bson.except(MongoDoc::BSON::CLASS_KEY), :raw_json => true)['address'].should == @address.to_bson
-    end
-
-    it "allows for embedded MongoDoc objects" do
-      company_from_bson = MongoDoc::BSON.decode(@location.to_bson)
-      company_from_bson.should be_kind_of(Location)
-      company_from_bson.address.should be_kind_of(Address)
-    end
-
-    it "allows for derived classes" do
-      wifi = WifiAccessible.new
-      wifi.address = @address
-      wifi.network_name = 'hashrocket'
-      wifi_from_bson = MongoDoc::BSON.decode(wifi.to_bson)
-      wifi_from_bson.should be_kind_of(WifiAccessible)
-      wifi_from_bson.address.should be_kind_of(Address)
-    end
-
-    it "allows for embedded ruby objects" do
-      website = WebSite.new
-      website.url = 'http://hashrocket.com'
-      wifi = WifiAccessible.new
-      wifi.website = website
-      wifi_from_bson = MongoDoc::BSON.decode(wifi.to_bson)
-      wifi_from_bson.should be_kind_of(WifiAccessible)
-      wifi_from_bson.website.should be_kind_of(WebSite)
-    end
-
-    context "associations" do
-      context "has_one" do
-        class TestHasOneBsonDoc < MongoDoc::Document
-          has_one :subdoc
-        end
-
-        class SubHasOneBsonDoc < MongoDoc::Document
-          key :attr
-        end
-
-        it "#to_bson renders a bson representation of the document" do
-          doc = TestHasOneBsonDoc.new
-          subdoc = SubHasOneBsonDoc.new(:attr => "value")
-          bson = doc.to_bson
-          bson["subdoc"] = subdoc.to_bson
-          doc.subdoc = subdoc
-          doc.to_bson.should == bson
-        end
-
-        it "roundtrips" do
-          doc = TestHasOneBsonDoc.new
-          subdoc = SubHasOneBsonDoc.new(:attr => "value")
-          doc.subdoc = subdoc
-          MongoDoc::BSON.decode(doc.to_bson).should == doc
-        end
-      end
-
-      context "has_many" do
-
-        class SubHasManyBsonDoc < MongoDoc::Document
-          key :attr
-        end
-
-        class TestHasManyBsonDoc < MongoDoc::Document
-          has_many :subdoc, :class_name => 'SubHasManyBsonDoc'
-        end
-
-        it "#to_bson renders a bson representation of the document" do
-          doc = TestHasManyBsonDoc.new
-          subdoc = SubHasManyBsonDoc.new(:attr => "value")
-          bson = doc.to_bson
-          bson["subdoc"] = [subdoc].to_bson
-          doc.subdoc = subdoc
-          doc.to_bson.should == bson
-        end
-
-        it "roundtrips" do
-          doc = TestHasManyBsonDoc.new
-          subdoc = SubHasManyBsonDoc.new(:attr => "value")
-          doc.subdoc = subdoc
-          MongoDoc::BSON.decode(doc.to_bson).should == doc
-        end
-
-        it "roundtrips the proxy" do
-          doc = TestHasManyBsonDoc.new(:subdoc => SubHasManyBsonDoc.new(:attr => "value"))
-          MongoDoc::Proxy.should === MongoDoc::BSON.decode(doc.to_bson).subdoc
-        end
-      end
-    end
-  end
+  end  
 end
