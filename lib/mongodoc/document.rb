@@ -103,12 +103,6 @@ module MongoDoc
       def find_one(id)
         MongoDoc::BSON.decode(collection.find_one(id))
       end
-
-      protected
-      
-      def _create(instance, safe)
-        instance._id = collection.insert(instance, :safe => safe)
-      end
     end
 
     protected
@@ -128,6 +122,12 @@ module MongoDoc
 
     def _update_attributes(attrs,  safe)
       _collection.update({'_id' => self._id}, MongoDoc::Query.set_modifier(attrs), :safe => safe)
+    end
+
+    class << self
+      def _create(instance, safe)
+        instance._id = collection.insert(instance, :safe => safe)
+      end
     end
   end
 end
