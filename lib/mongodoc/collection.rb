@@ -1,3 +1,5 @@
+require 'mongodoc/cursor'
+
 module MongoDoc
   class Collection
     attr_accessor :_collection
