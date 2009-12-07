@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{mongodoc}
-  s.version = "0.0.0"
+  s.version = "0.1.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Les Hill"]
-  s.date = %q{2009-11-22}
+  s.date = %q{2009-12-07}
   s.description = %q{ODM for MongoDB}
   s.email = %q{leshill@gmail.com}
   s.extra_rdoc_files = [
@@ -28,16 +28,23 @@ Gem::Specification.new do |s|
      "features/saving_an_object.feature",
      "features/step_definitions/collection_steps.rb",
      "features/step_definitions/connect_steps.rb",
+     "features/step_definitions/criteria_steps.rb",
      "features/step_definitions/document_steps.rb",
+     "features/step_definitions/documents.rb",
      "features/step_definitions/json_steps.rb",
      "features/step_definitions/object_steps.rb",
+     "features/step_definitions/objects.rb",
      "features/step_definitions/util_steps.rb",
      "features/support/support.rb",
+     "features/using_criteria.feature",
      "lib/mongodoc.rb",
      "lib/mongodoc/attributes.rb",
-     "lib/mongodoc/base.rb",
      "lib/mongodoc/bson.rb",
+     "lib/mongodoc/collection.rb",
      "lib/mongodoc/connection.rb",
+     "lib/mongodoc/criteria.rb",
+     "lib/mongodoc/cursor.rb",
+     "lib/mongodoc/document.rb",
      "lib/mongodoc/ext/array.rb",
      "lib/mongodoc/ext/binary.rb",
      "lib/mongodoc/ext/boolean_class.rb",
@@ -56,22 +63,22 @@ Gem::Specification.new do |s|
      "lib/mongodoc/parent_proxy.rb",
      "lib/mongodoc/proxy.rb",
      "lib/mongodoc/query.rb",
-     "lib/mongodoc/value_equals.rb",
      "mongod.example.yml",
      "mongodoc.gemspec",
      "script/console",
      "spec/attributes_spec.rb",
-     "spec/base_ext.rb",
-     "spec/base_spec.rb",
      "spec/bson_matchers.rb",
      "spec/bson_spec.rb",
+     "spec/collection_spec.rb",
      "spec/connection_spec.rb",
+     "spec/criteria_spec.rb",
+     "spec/cursor_spec.rb",
+     "spec/document_ext.rb",
+     "spec/document_spec.rb",
      "spec/parent_proxy_spec.rb",
      "spec/query_spec.rb",
      "spec/spec.opts",
-     "spec/spec_helper.rb",
-     "spec/test_classes.rb",
-     "spec/test_documents.rb"
+     "spec/spec_helper.rb"
   ]
   s.homepage = %q{http://github.com/leshill/mongodoc}
   s.rdoc_options = ["--charset=UTF-8"]
@@ -80,16 +87,17 @@ Gem::Specification.new do |s|
   s.summary = %q{ODM for MongoDB}
   s.test_files = [
     "spec/attributes_spec.rb",
-     "spec/base_ext.rb",
-     "spec/base_spec.rb",
      "spec/bson_matchers.rb",
      "spec/bson_spec.rb",
+     "spec/collection_spec.rb",
      "spec/connection_spec.rb",
+     "spec/criteria_spec.rb",
+     "spec/cursor_spec.rb",
+     "spec/document_ext.rb",
+     "spec/document_spec.rb",
      "spec/parent_proxy_spec.rb",
      "spec/query_spec.rb",
-     "spec/spec_helper.rb",
-     "spec/test_classes.rb",
-     "spec/test_documents.rb"
+     "spec/spec_helper.rb"
   ]
 
   if s.respond_to? :specification_version then
