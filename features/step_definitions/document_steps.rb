@@ -85,4 +85,3 @@ end
 Then /^the last return value is false$/ do
   @last_return.should be_false
 end
-
