@@ -1,9 +1,50 @@
 = mongodoc
 
-Description goes here.
+Version: 0.1 12/7/09
+
+== Introduction
+
+mongodoc is yet another ODM for MongoDB in Ruby.
+
+Here is an example:
+
+  require 'mongodoc'
+
+  class Address < MongoDoc::Document
+    key :street
+    key :city
+    key :state
+    key :zip_code
+  end
+
+  class Contact < MongoDoc::Document
+    key :name
+    key :interests
+    has_many :addresses
+  end
+
+  MongoDoc.connect
+  contact = Contact.new(:name => 'Joe Strummer', :interests => ['music', 'art', 'acting'])
+  contact.addresses << Address.new(:street => '1 Main Street', :city => 'Anywhere', :state => 'ID', :zip_code => '56789')
+  contact.save
+
+  Contact.criteria.in({'interests' => ['ruby', 'art']}).first
+  Contact.criteria.where('addresses.state' => 'ID').first
+
+== Installation
+
+== Credits
+
+Les Hill, leshill on github
+
+mongodoc
+
+=== Thanks
+
+Thanks to Sandro and Durran for some great conversations and some lovely code.
 
 == Note on Patches/Pull Requests
- 
+
 * Fork the project.
 * Make your feature addition or bug fix.
 * Add tests for it. This is important so I don't break it in a
