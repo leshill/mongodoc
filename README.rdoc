@@ -24,6 +24,7 @@ Here is an example:
   end
 
   MongoDoc.connect
+  MongoDoc.database('test')
   contact = Contact.new(:name => 'Joe Strummer', :interests => ['music', 'art', 'acting'])
   contact.addresses << Address.new(:street => '1 Main Street', :city => 'Anywhere', :state => 'ID', :zip_code => '56789')
   contact.save
