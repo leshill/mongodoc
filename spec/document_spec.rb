@@ -48,6 +48,20 @@ describe "MongoDoc::Document" do
     end
   end
 
+  context ".criteria" do
+    class CriteriaTest < MongoDoc::Document
+      key :data
+    end
+
+    it "creates a new criteria for the document" do
+      CriteriaTest.criteria.should be_a_kind_of(MongoDoc::Criteria)
+    end
+    
+    it "sets the criteria klass" do
+      CriteriaTest.criteria.klass.should == CriteriaTest
+    end
+  end
+  
   context "saving" do
     class SaveRoot < MongoDoc::Document
       has_many :save_children

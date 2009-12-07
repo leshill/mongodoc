@@ -1,6 +1,7 @@
 require 'mongodoc/bson'
 require 'mongodoc/query'
 require 'mongodoc/attributes'
+require 'mongodoc/criteria'
 
 module MongoDoc
   class DocumentInvalidError < RuntimeError; end
@@ -98,6 +99,10 @@ module MongoDoc
         raise MongoDoc::DocumentInvalidError unless instance.valid?
         _create(instance, true)
         instance
+      end
+
+      def criteria
+        Criteria.new(self)
       end
 
       def find_one(id)

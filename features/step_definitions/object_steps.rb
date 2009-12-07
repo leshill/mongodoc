@@ -24,6 +24,15 @@ Given /^a hash named '(.*)':$/ do |name, table|
   instance_variable_set("@#{name}", @last)
 end
 
+Given /^'(.*)' has (.*), an array of:$/ do |name, attribute, table|
+  object = instance_variable_get("@#{name}")
+  object.send(attribute + "=", [])
+  table.hashes.each do |hash|
+    hash.each {|key, value| object.send(attribute) << value}
+  end
+end
+
+
 When /^I save the object '(.*)'$/ do |name|
   object = instance_variable_get("@#{name}")
   @last_save = @collection.save(object)
