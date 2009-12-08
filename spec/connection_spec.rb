@@ -16,7 +16,7 @@ describe "MongoDoc Connections" do
       Mongo::Connection.should_receive(:new)
       MongoDoc.connect
     end
-    
+
     describe "mimics the Mongo::Connection API" do
       it "accepts the host param" do
         host = 'localhost'
@@ -30,13 +30,13 @@ describe "MongoDoc Connections" do
         Mongo::Connection.should_receive(:new).with(host, 3000, {})
         MongoDoc.connect(host, port)
       end
-      
+
       it "accepts an options hash" do
         opts = {:slave_ok => true}
         Mongo::Connection.should_receive(:new).with(nil, nil, opts)
         MongoDoc.connect(opts)
       end
-      
+
       it "accepts host, port, and options" do
         host = 'localhost'
         port = 3000
@@ -45,7 +45,7 @@ describe "MongoDoc Connections" do
         MongoDoc.connect(host, port, opts)
       end
     end
-    
+
     it "sets the connection" do
       cnx = 'connection'
       Mongo::Connection.should_receive(:new).and_return(cnx)
@@ -53,7 +53,7 @@ describe "MongoDoc Connections" do
       MongoDoc.connection.should == cnx
     end
   end
-  
+
   describe ".database" do
     it "raises a no database error when the database has not been initialized" do
       lambda {MongoDoc.database}.should raise_error(MongoDoc::NoDatabaseError)
@@ -69,7 +69,7 @@ describe "MongoDoc Connections" do
       MongoDoc.send(:class_variable_set, :@@database, db)
       MongoDoc.database.should == db
     end
-    
+
     it "connects to the database when no passed any additional arguments" do
       name = 'name'
       cnx = stub('connection')
@@ -77,7 +77,7 @@ describe "MongoDoc Connections" do
       MongoDoc.should_receive(:connection).and_return(cnx)
       MongoDoc.database(name)
     end
-    
+
     it "sets the database when called with the name parameter" do
       db = 'db'
       name = 'name'

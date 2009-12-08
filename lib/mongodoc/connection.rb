@@ -7,12 +7,12 @@ module MongoDoc
       @@database
     end
   end
-  
+
   def self.connection
     raise NoConnectionError unless defined? @@connection and @@connection
     @@connection
   end
-    
+
   def self.connect(*args)
     opts = args.extract_options!
     @@connection = Mongo::Connection.new(args[0], args[1], opts)
