@@ -457,7 +457,7 @@ module MongoDoc #:nodoc:
     #
     # Returns either a cursor or an empty array.
     def execute
-      cursor = @klass.collection.find(selector, options.dup)
+      cursor = klass.collection.find(selector, options.dup)
       if cursor
         @count = cursor.count
         cursor
