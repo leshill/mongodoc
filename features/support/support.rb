@@ -4,4 +4,7 @@ require 'spec/expectations'
 require 'spec/bson_matchers'
 require 'mongodoc'
 
+MongoDoc.config_path = './features/mongodb.yml'
+MongoDoc.connect_to_database
+
 World(BsonMatchers)

@@ -2,38 +2,51 @@ require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
 describe "MongoDoc Connections" do
 
-  it ".connection raises a no connection error when connect has not been called" do
-    lambda {MongoDoc.connection}.should raise_error(MongoDoc::NoConnectionError)
-  end
-
-  it ".connection raises a no connection error when the connection has failed" do
-    MongoDoc.send(:class_variable_set, :@@connection, nil)
-    lambda {MongoDoc.connection}.should raise_error(MongoDoc::NoConnectionError)
+  it "default the configuration location to './mongodb.yml'" do
+    MongoDoc.config_path.should == './mongodb.yml'
   end
 
   describe ".connect" do
+    before do
+      MongoDoc.config_path = nil
+      MongoDoc.connection = nil
+      MongoDoc.config = nil
+      @connection = stub('connection')
+    end
+
     it "when called with no params just connects" do
-      Mongo::Connection.should_receive(:new)
+      Mongo::Connection.should_receive(:new).and_return(@connection)
       MongoDoc.connect
     end
 
-    describe "mimics the Mongo::Connection API" do
+    it "sets the connection" do
+      Mongo::Connection.stub(:new).and_return(@connection)
+      MongoDoc.connect
+      MongoDoc.connection.should == @connection
+    end
+
+    it "raises NoConnectionError if the connection fails" do
+      Mongo::Connection.stub(:new).and_return(nil)
+      lambda { MongoDoc.connect }.should raise_error(MongoDoc::NoConnectionError)
+    end
+
+    context "mimics the Mongo::Connection API" do
       it "accepts the host param" do
         host = 'localhost'
-        Mongo::Connection.should_receive(:new).with(host, nil, {})
+        Mongo::Connection.should_receive(:new).with(host, nil, {}).and_return(@connection)
         MongoDoc.connect(host)
       end
 
       it "accepts the port param" do
         host = 'localhost'
         port = 3000
-        Mongo::Connection.should_receive(:new).with(host, 3000, {})
+        Mongo::Connection.should_receive(:new).with(host, 3000, {}).and_return(@connection)
         MongoDoc.connect(host, port)
       end
 
       it "accepts an options hash" do
         opts = {:slave_ok => true}
-        Mongo::Connection.should_receive(:new).with(nil, nil, opts)
+        Mongo::Connection.should_receive(:new).with(nil, nil, opts).and_return(@connection)
         MongoDoc.connect(opts)
       end
 
@@ -41,51 +54,146 @@ describe "MongoDoc Connections" do
         host = 'localhost'
         port = 3000
         opts = {:slave_ok => true}
-        Mongo::Connection.should_receive(:new).with(host, 3000, opts)
+        Mongo::Connection.should_receive(:new).with(host, 3000, opts).and_return(@connection)
         MongoDoc.connect(host, port, opts)
       end
     end
 
-    it "sets the connection" do
-      cnx = 'connection'
-      Mongo::Connection.should_receive(:new).and_return(cnx)
-      MongoDoc.connect
-      MongoDoc.connection.should == cnx
+    context "when there is a config file" do
+      before do
+        MongoDoc.config_path = './spec/mongodb.yml'
+        config = YAML.load_file(MongoDoc.config_path)
+        @host = config['host']
+        @port = config['port']
+        @db_options = config['options']
+      end
+
+      context "with a host config file" do
+
+        it "and no params connects to the database with the values from the file" do
+          Mongo::Connection.should_receive(:new).with(@host, @port, @db_options).and_return(@connection)
+          MongoDoc.connect
+        end
+
+        it "and params connects to the database with the params" do
+          host = 'p_host'
+          port = 890
+          options = {:option => 'p_opt'}
+          Mongo::Connection.should_receive(:new).with(host, port, options).and_return(@connection)
+          MongoDoc.connect(host, port, options)
+        end
+      end
+
+      context "with a host pairs config file" do
+        before do
+          MongoDoc.config_path = './spec/mongodb_pairs.yml'
+          config = YAML.load_file(MongoDoc.config_path)
+          @host_pairs = config['host_pairs']
+          @port = config['port']
+          @db_options = config['options']
+        end
+
+        it "connects to the database with the host pairs value from the file" do
+          Mongo::Connection.should_receive(:new).with(@host_pairs, @port, @db_options).and_return(@connection)
+          MongoDoc.connect
+        end
+      end
     end
   end
 
-  describe ".database" do
-    it "raises a no database error when the database has not been initialized" do
-      lambda {MongoDoc.database}.should raise_error(MongoDoc::NoDatabaseError)
+  describe ".connect_to_database" do
+    before do
+      MongoDoc.database = nil
+      MongoDoc.connection = nil
+      MongoDoc.config = nil
     end
 
     it "raises a no database error when the database connect failed" do
-      MongoDoc.send(:class_variable_set, :@@database, nil)
-      lambda {MongoDoc.database}.should raise_error(MongoDoc::NoDatabaseError)
+      connection = stub("connection", :db => nil)
+      MongoDoc.stub(:connect).and_return(connection)
+      lambda {MongoDoc.connect_to_database}.should raise_error(MongoDoc::NoDatabaseError)
     end
 
-    it "returns the current database when not given any arguments" do
+    it "returns the database" do
       db = 'db'
-      MongoDoc.send(:class_variable_set, :@@database, db)
-      MongoDoc.database.should == db
+      connection = stub("connection", :db => db)
+      MongoDoc.stub(:connect).and_return(connection)
+      MongoDoc.connect_to_database.should == db
     end
 
-    it "connects to the database when no passed any additional arguments" do
-      name = 'name'
-      cnx = stub('connection')
-      cnx.should_receive(:db).with(name)
-      MongoDoc.should_receive(:connection).and_return(cnx)
-      MongoDoc.database(name)
+    context "when a connection exists" do
+      before do
+        @db = 'db'
+        @connection = stub("connection", :db => @db)
+      end
+
+      it "uses the exsiting connection if already connected" do
+        MongoDoc.should_receive(:connection).and_return(@connection)
+        MongoDoc.should_not_receive(:connect)
+        MongoDoc.connect_to_database.should == @db
+      end
+
+      it "connects if force connect is true" do
+        MongoDoc.should_not_receive(:connection)
+        MongoDoc.should_receive(:connect).and_return(@connection)
+        MongoDoc.connect_to_database(nil, nil, nil, nil, true).should == @db
+      end
     end
 
-    it "sets the database when called with the name parameter" do
-      db = 'db'
-      name = 'name'
-      cnx = stub('connection')
-      cnx.should_receive(:db).with(name).and_return(db)
-      MongoDoc.should_receive(:connection).and_return(cnx)
-      MongoDoc.database(name)
-      MongoDoc.database.should == db
+    context "when there is no config file" do
+      before do
+        MongoDoc.config_path = nil
+        @db = 'db'
+        @name = 'name'
+        @connection = stub('connection')
+      end
+
+      it "connects with defaults when not given parameters" do
+        @connection.should_receive(:db).with(@name).and_return(@db)
+        MongoDoc.should_receive(:connect).and_return(@connection)
+        MongoDoc.connect_to_database(@name)
+      end
+
+      it "connects with the given parameters" do
+        host = 'host'
+        port = 123
+        options = { :auto_reconnect => true }
+        @connection.should_receive(:db).with(@name).and_return(@db)
+        MongoDoc.should_receive(:connect).with(host, port, options).and_return(@connection)
+        MongoDoc.connect_to_database(@name, host, port, options)
+      end
+    end
+
+    context "when there is a config file" do
+      before do
+        @db = 'db'
+        MongoDoc.config_path = './spec/mongodb.yml'
+        config = YAML.load_file(MongoDoc.config_path)
+        @database = config['name']
+        @host = config['host']
+        @port = config['port']
+        @db_options = config['options']
+        @connection = stub('connection')
+      end
+
+      context "with a host config file" do
+
+        it "without a name uses configured name" do
+          @connection.should_receive(:db).with(@database).and_return(@db)
+          MongoDoc.stub(:connect).and_return(@connection)
+          MongoDoc.connect_to_database
+        end
+
+        it "and params connects to the database with the params" do
+          database = 'p_database'
+          host = 'p_host'
+          port = 890
+          options = {:option => 'p_opt'}
+          @connection.should_receive(:db).with(database).and_return(@db)
+          MongoDoc.should_receive(:connect).with(host, port, options).and_return(@connection)
+          MongoDoc.connect_to_database(database, host, port, options)
+        end
+      end
     end
   end
 end

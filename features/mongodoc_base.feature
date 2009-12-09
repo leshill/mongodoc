@@ -1,8 +1,7 @@
 Feature: MongoDoc::Base
 
   Scenario: creating a simple document
-    Given a valid connection to the 'test' database
-    And an empty Address document collection
+    Given an empty Address document collection
     And a hash named 'hashrocket':
       | Street                 | City               | State | Zip Code |
       | 320 First Street North | Jacksonville Beach | FL    | 32250    |
@@ -12,8 +11,7 @@ Feature: MongoDoc::Base
     And the document 'address' roundtrips
 
   Scenario: saving a simple document
-    Given a valid connection to the 'test' database
-    And an empty Address document collection
+    Given an empty Address document collection
     And an Address document named 'hashrocket' :
       | Street                 | City               | State | Zip Code |
       | 320 First Street North | Jacksonville Beach | FL    | 32250    |
@@ -23,8 +21,7 @@ Feature: MongoDoc::Base
     And the document 'hashrocket' roundtrips
 
   Scenario: updating an attribute of a simple document
-    Given a valid connection to the 'test' database
-    And an empty Address document collection
+    Given an empty Address document collection
     And an Address document named 'hashrocket' :
       | Street                 | City               | State | Zip Code |
       | 320 First Street North | Jacksonville Beach | FL    | 32250    |
@@ -37,8 +34,7 @@ Feature: MongoDoc::Base
     Then the attribute 'street' of 'hashrocket' is '320 First St N'
 
   Scenario: failing to update an attribute of a simple document
-    Given a valid connection to the 'test' database
-    And an empty Address document collection
+    Given an empty Address document collection
     And an Address document named 'hashrocket' :
       | Street                 | City               | State | Zip Code |
       | 320 First Street North | Jacksonville Beach | FL    | 32250    |
@@ -51,8 +47,7 @@ Feature: MongoDoc::Base
     Then the last return value is false
 
   Scenario: saving a has_many document
-    Given a valid connection to the 'test' database
-    And an empty Contact document collection
+    Given an empty Contact document collection
     And a Contact document named 'hashrocket' :
       | Name       |
       | Hashrocket |
@@ -66,8 +61,7 @@ Feature: MongoDoc::Base
     And the document 'hashrocket' roundtrips
 
   Scenario: saving from a child document
-    Given a valid connection to the 'test' database
-    And an empty Contact document collection
+    Given an empty Contact document collection
     And a Contact document named 'hashrocket' :
       | Name       |
       | Hashrocket |
@@ -81,8 +75,7 @@ Feature: MongoDoc::Base
     And the document 'hashrocket' roundtrips
 
   Scenario: failing to update attributes from a has_many child document
-    Given a valid connection to the 'test' database
-    And an empty Contact document collection
+    Given an empty Contact document collection
     And a Contact document named 'hashrocket' :
       | Name       |
       | Hashrocket |
@@ -99,8 +92,7 @@ Feature: MongoDoc::Base
     Then the last return value is false
 
   Scenario: update attributes from a has_one child document
-    Given a valid connection to the 'test' database
-    And an empty Place document collection
+    Given an empty Place document collection
     And a Place document named 'hashrocket' :
       | Name       |
       | Hashrocket |

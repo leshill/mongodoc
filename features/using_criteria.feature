@@ -1,8 +1,7 @@
 Feature: MongoDoc::Base
 
   Background:
-    Given a valid connection to the 'test' database
-    And an empty Contact document collection
+    Given an empty Contact document collection
     And a Contact document named 'hashrocket' :
       | Name       | Type    |
       | Hashrocket | company |

@@ -1,0 +1,8 @@
+name: database_name
+host_pairs:
+  first:
+    ['localhost', 27017]
+port: 27017
+options:
+  auto_reconnect: true
+

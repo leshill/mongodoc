@@ -1,20 +1,25 @@
 module MongoDoc
-  def self.database(name = nil)
-    if name
-      @@database = connection.db(name)
-    else
-      raise NoDatabaseError unless defined? @@database and @@database
-      @@database
-    end
-  end
+  mattr_accessor :config, :config_path, :connection, :database
+  self.config_path = './mongodb.yml'
 
-  def self.connection
-    raise NoConnectionError unless defined? @@connection and @@connection
-    @@connection
+  def self.connect_to_database(name = nil, host = nil, port = nil, options = nil, force_connect = false)
+    name ||= configuration['name']
+    self.database = ((!force_connect && connection)|| connect(host, port, options)).db(name)
+    raise NoDatabaseError unless database
+    database
   end
 
   def self.connect(*args)
     opts = args.extract_options!
-    @@connection = Mongo::Connection.new(args[0], args[1], opts)
+    host = args[0] || configuration['host'] || configuration['host_pairs']
+    port = args[1] || configuration['port']
+    options = opts.empty? ? configuration['options'] || {} : opts
+    self.connection = Mongo::Connection.new(host, port, options)
+    raise NoConnectionError unless connection
+    connection
+  end
+
+  def self.configuration
+    self.config ||= File.exists?(config_path || '') ? YAML.load_file(config_path) : {}
   end
 end
