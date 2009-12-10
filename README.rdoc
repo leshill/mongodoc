@@ -23,8 +23,7 @@ Here is an example:
     has_many :addresses
   end
 
-  MongoDoc.connect
-  MongoDoc.database('test')
+  MongoDoc.connect_to_database 'test'
   contact = Contact.new(:name => 'Joe Strummer', :interests => ['music', 'art', 'acting'])
   contact.addresses << Address.new(:street => '1 Main Street', :city => 'Anywhere', :state => 'ID', :zip_code => '56789')
   contact.save
@@ -33,6 +32,22 @@ Here is an example:
   Contact.criteria.where('addresses.state' => 'ID').first
 
 == Installation
+
+  sudo gem install mongodoc
+
+== Configuration
+
+Configure your database connection in ./mongodb.yml, you do not need one if you are running on localhost with the default port
+
+  name: test
+  host: localhost
+  port: 27017
+  options:
+    auto_reconnect: true
+
+You can change the location of the configuration file:
+
+  MongoDoc.config_path = './config/mongodb.yml'
 
 == Credits
 
