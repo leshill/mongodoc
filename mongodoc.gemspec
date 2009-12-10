@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{mongodoc}
-  s.version = "0.1.1"
+  s.version = "0.1.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Les Hill"]
-  s.date = %q{2009-12-07}
+  s.date = %q{2009-12-09}
   s.description = %q{ODM for MongoDB}
   s.email = %q{leshill@gmail.com}
   s.extra_rdoc_files = [
@@ -24,10 +24,10 @@ Gem::Specification.new do |s|
      "Rakefile",
      "VERSION",
      "data/.gitignore",
+     "features/mongodb.yml",
      "features/mongodoc_base.feature",
      "features/saving_an_object.feature",
      "features/step_definitions/collection_steps.rb",
-     "features/step_definitions/connect_steps.rb",
      "features/step_definitions/criteria_steps.rb",
      "features/step_definitions/document_steps.rb",
      "features/step_definitions/documents.rb",
@@ -75,6 +75,8 @@ Gem::Specification.new do |s|
      "spec/cursor_spec.rb",
      "spec/document_ext.rb",
      "spec/document_spec.rb",
+     "spec/mongodb.yml",
+     "spec/mongodb_pairs.yml",
      "spec/parent_proxy_spec.rb",
      "spec/query_spec.rb",
      "spec/spec.opts",
@@ -105,24 +107,27 @@ Gem::Specification.new do |s|
     s.specification_version = 3
 
     if Gem::Version.new(Gem::RubyGemsVersion) >= Gem::Version.new('1.2.0') then
-      s.add_runtime_dependency(%q<mongo>, ["= 0.16"])
-      s.add_runtime_dependency(%q<durran-validatable>, ["= 1.8.2"])
+      s.add_runtime_dependency(%q<mongo>, ["= 0.18.1"])
+      s.add_runtime_dependency(%q<mongo_ext>, ["= 0.18.1"])
+      s.add_runtime_dependency(%q<durran-validatable>, ["= 1.8.3"])
       s.add_runtime_dependency(%q<leshill-will_paginate>, ["= 2.3.11"])
-      s.add_development_dependency(%q<rspec>, [">= 0"])
-      s.add_development_dependency(%q<cucumber>, [">= 0"])
+      s.add_development_dependency(%q<rspec>, ["= 1.2.9"])
+      s.add_development_dependency(%q<cucumber>, ["= 0.4.4"])
     else
-      s.add_dependency(%q<mongo>, ["= 0.16"])
-      s.add_dependency(%q<durran-validatable>, ["= 1.8.2"])
+      s.add_dependency(%q<mongo>, ["= 0.18.1"])
+      s.add_dependency(%q<mongo_ext>, ["= 0.18.1"])
+      s.add_dependency(%q<durran-validatable>, ["= 1.8.3"])
       s.add_dependency(%q<leshill-will_paginate>, ["= 2.3.11"])
-      s.add_dependency(%q<rspec>, [">= 0"])
-      s.add_dependency(%q<cucumber>, [">= 0"])
+      s.add_dependency(%q<rspec>, ["= 1.2.9"])
+      s.add_dependency(%q<cucumber>, ["= 0.4.4"])
     end
   else
-    s.add_dependency(%q<mongo>, ["= 0.16"])
-    s.add_dependency(%q<durran-validatable>, ["= 1.8.2"])
+    s.add_dependency(%q<mongo>, ["= 0.18.1"])
+    s.add_dependency(%q<mongo_ext>, ["= 0.18.1"])
+    s.add_dependency(%q<durran-validatable>, ["= 1.8.3"])
     s.add_dependency(%q<leshill-will_paginate>, ["= 2.3.11"])
-    s.add_dependency(%q<rspec>, [">= 0"])
-    s.add_dependency(%q<cucumber>, [">= 0"])
+    s.add_dependency(%q<rspec>, ["= 1.2.9"])
+    s.add_dependency(%q<cucumber>, ["= 0.4.4"])
   end
 end
 
