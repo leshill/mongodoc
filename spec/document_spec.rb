@@ -5,26 +5,26 @@ describe "MongoDoc::Document" do
   context "satisfies form_for requirements" do
     class FormForTest < MongoDoc::Document
     end
-    
+
     before do
       @doc = FormForTest.new
       @doc._id = '1'
     end
-    
+
     it "#id returns the _id" do
       @doc.id.should == @doc._id
     end
-    
+
     it "#to_param returns the _id" do
       @doc.to_param.should == @doc._id
     end
-    
+
     context "#new_record?" do
       it "is true when the object does not have an _id" do
         @doc._id = nil
         @doc.should be_new_record
       end
-      
+
       it "is false when the object has an id" do
         @doc.should_not be_new_record
       end
@@ -56,21 +56,21 @@ describe "MongoDoc::Document" do
     it "creates a new criteria for the document" do
       CriteriaTest.criteria.should be_a_kind_of(MongoDoc::Criteria)
     end
-    
+
     it "sets the criteria klass" do
       CriteriaTest.criteria.klass.should == CriteriaTest
     end
   end
-  
+
   context "saving" do
     class SaveRoot < MongoDoc::Document
       has_many :save_children
     end
-    
+
     class SaveChild < MongoDoc::Document
       key :data
     end
-    
+
     before do
       @root = SaveRoot.new
       @root.stub(:_save)
@@ -84,13 +84,13 @@ describe "MongoDoc::Document" do
         @root.should_receive(:save).with(validate)
         @child.save(validate)
       end
-    
+
       context "when validating" do
         it "validates" do
           @root.should_receive(:valid?)
           @root.save(true)
         end
-      
+
         context "and valid" do
           it "delegates to _save" do
             @root.should_receive(:_save).with(false)
@@ -104,21 +104,21 @@ describe "MongoDoc::Document" do
             @root.save(true).should == id
           end
         end
-        
+
         context "and invalid" do
           it "does not call _save" do
             @root.stub(:valid?).and_return(false)
             @root.should_not_receive(:_save)
             @root.save(true)
           end
-        
+
           it "returns false" do
             @root.stub(:valid?).and_return(false)
             @root.save(true).should be_false
           end
         end
       end
-    
+
       context "when not validating" do
         it "does not validate" do
           @root.should_not_receive(:valid?)
@@ -137,18 +137,18 @@ describe "MongoDoc::Document" do
         end
       end
     end
-    
+
     context "#save!" do
       it "delegates to the root" do
         @root.should_receive(:save!)
         @child.save!
       end
-    
+
       it "validates" do
         @root.should_receive(:valid?).and_return(true)
         @root.save!
       end
-      
+
       it "returns the result of _save if valid" do
         id = 'id'
         @root.stub(:valid?).and_return(true)
@@ -164,23 +164,23 @@ describe "MongoDoc::Document" do
       end
     end
   end
-  
+
   context "#_save" do
     class SaveTest < MongoDoc::Document
     end
-    
+
     before do
       @collection = stub('collection')
       @doc = SaveTest.new
       @doc.stub(:_collection).and_return(@collection)
     end
-    
+
     it "delegates to the collection save" do
       safe = true
       @collection.should_receive(:save)
       @doc.send(:_save, safe)
     end
-    
+
     it "sets the _id of the document" do
       id = 'id'
       @collection.stub(:save).and_return(id)
@@ -205,21 +205,21 @@ describe "MongoDoc::Document" do
       @value = 'value'
       CreateTest.stub(:_create).and_return(true)
     end
-    
+
     context ".create" do
       it "creates a new document" do
         obj = CreateTest.new
         CreateTest.should_receive(:new).and_return(obj)
         CreateTest.create
       end
-    
+
       it "delegates to _create with safe => false" do
         obj = CreateTest.new(:data => @value)
         CreateTest.stub(:new).and_return(obj)
         CreateTest.should_receive(:_create).with(obj, false).and_return(true)
         CreateTest.create(:data => @value)
       end
-    
+
       it "sets the passed attributes" do
         CreateTest.create(:data => @value).data.should == @value
       end
@@ -227,7 +227,7 @@ describe "MongoDoc::Document" do
       it "returns a valid document" do
         CreateTest.should === CreateTest.create(:data => @value)
       end
-    
+
       it "validates" do
         CreateTest.create.errors.should_not be_empty
       end
@@ -236,21 +236,21 @@ describe "MongoDoc::Document" do
         CreateTest.should === CreateTest.create
       end
     end
-    
+
     context ".create!" do
       it "creates a new document" do
         obj = CreateTest.new
         CreateTest.should_receive(:new).and_return(obj)
         CreateTest.create! rescue nil
       end
-    
+
       it "delegates to _create with safe => true" do
         obj = CreateTest.new(:data => @value)
         CreateTest.stub(:new).and_return(obj)
         CreateTest.should_receive(:_create).with(obj, true).and_return(true)
         CreateTest.create!(:data => @value)
       end
-    
+
       it "sets the passed attributes" do
         CreateTest.create!(:data => @value).data.should == @value
       end
@@ -258,7 +258,7 @@ describe "MongoDoc::Document" do
       it "returns a valid document" do
         CreateTest.should === CreateTest.create!(:data => @value)
       end
-    
+
       it "raises when invalid" do
         expect do
           CreateTest.create!
@@ -270,43 +270,43 @@ describe "MongoDoc::Document" do
   context "#_create" do
     class CreateTest < MongoDoc::Document
     end
-    
+
     before do
       @collection = stub('collection')
       @collection.stub(:insert)
       @doc = CreateTest.new
       CreateTest.stub(:collection).and_return(@collection)
     end
-    
+
     it "delegates to the collection insert with safe" do
       safe = true
       @collection.should_receive(:insert).with(@doc, hash_including(:safe => safe))
       CreateTest.send(:_create, @doc, safe)
     end
-    
+
     it "sets the _id of the document" do
       id = 'id'
       @collection.stub(:insert).and_return(id)
       CreateTest.send(:_create, @doc, false)
       @doc._id.should == id
     end
-    
+
     it "returns the _id" do
       id = 'id'
       @collection.stub(:insert).and_return(id)
       CreateTest.send(:_create, @doc, false).should == id
-    end    
+    end
   end
 
   context "updating attributes" do
     class UpdateAttributesRoot < MongoDoc::Document
       has_one :update_attribute_child
     end
-    
+
     class UpdateAttributesChild < MongoDoc::Document
       key :data
     end
-  
+
     before do
       @data = 'data'
       @doc = UpdateAttributesChild.new
@@ -331,12 +331,12 @@ describe "MongoDoc::Document" do
         @doc.should_receive(:valid?)
         @doc.update_attributes(@attrs)
       end
-            
+
       it "returns false if the object is not valid" do
         @doc.stub(:valid?).and_return(false)
         @doc.update_attributes(@attrs).should be_false
       end
-      
+
       context "if valid" do
         it "delegates to _propose_update_attributes" do
           @doc.should_receive(:_propose_update_attributes).with(@doc, @path_attrs, false)
@@ -350,7 +350,7 @@ describe "MongoDoc::Document" do
         end
       end
     end
-    
+
     context "#update_attributes!" do
       it "sets the attributes" do
         @doc.update_attributes!(@attrs)
@@ -379,7 +379,7 @@ describe "MongoDoc::Document" do
           @doc.should_receive(:_propose_update_attributes).with(@doc, @path_attrs, true)
           @doc.update_attributes!(@attrs)
         end
-        
+
         it "returns the result of _propose_update_attributes" do
           result = 'check'
           @doc.stub(:_propose_update_attributes).and_return(result)
@@ -388,7 +388,7 @@ describe "MongoDoc::Document" do
       end
     end
   end
-  
+
   context "#_propose_update_attributes" do
     class ProposeUpdateAttributes < MongoDoc::Document
     end
@@ -397,36 +397,36 @@ describe "MongoDoc::Document" do
       @attrs = {:data => 1}
       @safe = true
     end
-    
+
     context "when not a child" do
       before do
         @obj = ProposeUpdateAttributes.new
       end
-      
+
       it "delegates to _update_attributes when not a child" do
         @obj.should_receive(:_update_attributes).with(@attrs, @safe)
         @obj.send(:_propose_update_attributes, @obj, @attrs, @safe)
       end
-      
+
       it "returns the results of _update_attributes" do
         result = 'check'
         @obj.stub(:_update_attributes).and_return(result)
         @obj.send(:_propose_update_attributes, @obj, @attrs, @safe).should == result
       end
     end
-    
+
     context "when a child" do
       before do
         @obj = ProposeUpdateAttributes.new
         @parent = stub('parent')
         @obj._parent = @parent
       end
-      
+
       it "delegates to the parent when a child" do
         @parent.should_receive(:_propose_update_attributes).with(@obj, @attrs, @safe)
         @obj.send(:_propose_update_attributes, @obj, @attrs, @safe)
       end
-      
+
       it "returns the results of the parent's _propose_update_attributes" do
         result = 'check'
         @parent.stub(:_propose_update_attributes).and_return(result)
@@ -438,7 +438,7 @@ describe "MongoDoc::Document" do
   context "#_update_attributes" do
     class UpdateAttributes < MongoDoc::Document
     end
-    
+
     before do
       @collection = stub('collection')
       @collection.stub(:update)
@@ -447,7 +447,7 @@ describe "MongoDoc::Document" do
       UpdateAttributes.stub(:collection).and_return(@collection)
       @attrs = {:data => 'value'}
     end
-    
+
     it "uses the set modifier for the attributes" do
       safe = true
       MongoDoc::Query.should_receive(:set_modifier).with(@attrs)
@@ -465,9 +465,9 @@ describe "MongoDoc::Document" do
       result = 'check'
       @collection.stub(:update).and_return(result)
       @doc.send(:_update_attributes, @attrs, true)
-    end    
+    end
   end
-  
+
   context "from a nested document" do
     class NestedDocsRoot < MongoDoc::Document
       has_many :nested_children
@@ -514,7 +514,7 @@ describe "MongoDoc::Document" do
         @leaf.update_attributes!(:data => 'data')
       end
     end
-    
+
     context "with has_many, update_attributes" do
       before do
         @leaf = LeafDoc.new
@@ -550,11 +550,11 @@ describe "MongoDoc::Document" do
     class BSONDerived < BSONTest
       key :derived
     end
-    
+
     class OtherObject
       attr_accessor :value
     end
-    
+
     before do
       @value = 'value'
       @other = OtherObject.new
@@ -565,7 +565,7 @@ describe "MongoDoc::Document" do
     it "encodes the class for the object" do
       @doc.to_bson[MongoDoc::BSON::CLASS_KEY].should == BSONTest.name
     end
-    
+
     it "renders a json representation of the object" do
       @doc.to_bson.should be_bson_eql({MongoDoc::BSON::CLASS_KEY => BSONTest.name, "other" => {MongoDoc::BSON::CLASS_KEY => OtherObject.name, "value" => @value}})
     end
@@ -656,7 +656,7 @@ describe "MongoDoc::Document" do
   context "misc class methods" do
     class ClassMethods < MongoDoc::Document
     end
-    
+
     it ".count calls the collection count" do
       collection = stub('collection')
       ClassMethods.stub(:collection).and_return(collection)

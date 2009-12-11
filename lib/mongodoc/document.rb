@@ -39,7 +39,7 @@ module MongoDoc
       return _save(false) unless validate and not valid?
       false
     end
-    
+
     def save!
       return _root.save! if _root
       raise DocumentInvalidError unless valid?
@@ -93,7 +93,7 @@ module MongoDoc
         _create(instance, false) if instance.valid?
         instance
       end
-    
+
       def create!(attrs = {})
         instance = new(attrs)
         raise MongoDoc::DocumentInvalidError unless instance.valid?
@@ -115,7 +115,7 @@ module MongoDoc
     def _collection
       self.class.collection
     end
-    
+
     def _propose_update_attributes(src, attrs, safe)
       return _parent.send(:_propose_update_attributes, src, attrs, safe) if _parent
       _update_attributes(attrs, safe)
