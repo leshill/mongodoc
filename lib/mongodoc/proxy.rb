@@ -47,6 +47,7 @@ module MongoDoc
         append item
         item._parent = self
         item._root = _root
+        _root.send(:register_save_observer, item)
       end
       self
     end

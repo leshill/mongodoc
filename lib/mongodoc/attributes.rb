@@ -52,6 +52,7 @@ module MongoDoc
             raise NotADocumentError unless Document === value
             value._parent = ParentProxy.new(self, name)
             value._root = _root || self
+            value._root.register_save_observer(value)
           end
           instance_variable_set("@#{name}", value)
         end

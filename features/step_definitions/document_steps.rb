@@ -85,3 +85,14 @@ end
 Then /^the last return value is false$/ do
   @last_return.should be_false
 end
+
+Then /^the first (.*) of '(.*)' is not a new record$/ do |assoc, name|
+  object = instance_variable_get("@#{name}")
+  plural = assoc.pluralize
+  object.send(plural).first.should_not be_new_record
+end
+
+Then /^the (\w*) of '(.*)' is not a new record$/ do |assoc, name|
+  object = instance_variable_get("@#{name}")
+  object.send(assoc).should_not be_new_record
+end

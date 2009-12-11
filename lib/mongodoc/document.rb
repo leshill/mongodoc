@@ -123,15 +123,40 @@ module MongoDoc
 
     def _save(safe)
       self._id = _collection.save(self, :safe => safe)
+      notify_save_observers
+      self._id
     end
 
     def _update_attributes(attrs,  safe)
       _collection.update({'_id' => self._id}, MongoDoc::Query.set_modifier(attrs), :safe => safe)
     end
 
+    def save_callback(root)
+      self._id = Mongo::ObjectID.new if new_record?
+      root.unregister_save_observer(self)
+    end
+
+    def save_observers
+      @save_observers ||= []
+    end
+
+    def register_save_observer(child)
+      save_observers << child
+    end
+
+    def unregister_save_observer(child)
+      save_observers.delete(child)
+    end
+
+    def notify_save_observers
+      save_observers.each {|obs| obs.save_callback(self) }
+    end
+
     class << self
       def _create(instance, safe)
         instance._id = collection.insert(instance, :safe => safe)
+        instance.send(:notify_save_observers)
+        instance._id
       end
     end
   end
