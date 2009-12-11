@@ -1,6 +1,6 @@
 require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
-describe "MongoDoc::Document id handling" do
+describe "MongoDoc::Document _id and #new_record?" do
   class Child < MongoDoc::Document
   end
 
@@ -13,11 +13,14 @@ describe "MongoDoc::Document id handling" do
     validates_presence_of :data
   end
 
-  context "as a has one child" do
+  before do
+    @child = Child.new
+  end
+
+  context "as a has one@child" do
     it "when added to the parent is a new record" do
-      child = Child.new
-      parent = Parent.new(:data => 'data', :child => child)
-      child.should be_new_record
+      Parent.new(:data => 'data', :child => @child)
+      @child.should be_new_record
     end
 
     context "creating" do
@@ -30,29 +33,33 @@ describe "MongoDoc::Document id handling" do
 
       context ".create" do
         it "when created is not a new record" do
-          child = Child.new
-          parent = Parent.create(:data => 'data', :child => child)
-          child.should_not be_new_record
+          Parent.create(:data => 'data', :child => @child)
+          @child.should_not be_new_record
         end
 
         it "if parent is invalid, remains a new record" do
-          child = Child.new
-          parent = Parent.create(:child => child)
-          child.should be_new_record
+          Parent.create(:child =>@child)
+          @child.should be_new_record
         end
       end
 
       context ".create!" do
         it "when created is not a new record" do
-          child = Child.new
-          parent = Parent.create!(:data => 'data', :child => child)
-          child.should_not be_new_record
+          Parent.create!(:data => 'data', :child => @child)
+          @child.should_not be_new_record
         end
 
         it "if parent is invalid, remains a new record" do
-          child = Child.new
-          Parent.create!(:child => child) rescue nil
-          child.should be_new_record
+          Parent.create!(:child => @child) rescue nil
+          @child.should be_new_record
+        end
+
+        it "when db error is raised, remains a new record" do
+          @collection.stub(:insert).and_raise(Mongo::OperationFailure)
+          lambda do
+            Parent.create!(:data => 'data', :child => @child)
+          end.should raise_error Mongo::OperationFailure
+          @child.should be_new_record
         end
       end
     end
@@ -67,44 +74,48 @@ describe "MongoDoc::Document id handling" do
 
       context "#save" do
         it "when saved is not a new record" do
-          child = Child.new
-          parent = Parent.new(:data => 'data', :child => child)
+          parent = Parent.new(:data => 'data', :child => @child)
           parent.save
-          child.should_not be_new_record
+          @child.should_not be_new_record
         end
 
         it "if parent is invalid, remains a new record" do
-          child = Child.new
-          parent = Parent.new(:child => child)
+          parent = Parent.new(:child => @child)
           parent.save
-          child.should be_new_record
+          @child.should be_new_record
         end
       end
 
       context "#save!" do
         it "when saved is not a new record" do
-          child = Child.new
-          parent = Parent.new(:data => 'data', :child => child)
+          parent = Parent.new(:data => 'data', :child => @child)
           parent.save!
-          child.should_not be_new_record
+          @child.should_not be_new_record
         end
 
         it "if parent is invalid, remains a new record" do
-          child = Child.new
-          parent = Parent.new(:child => child)
+          parent = Parent.new(:child => @child)
           parent.save! rescue nil
-          child.should be_new_record
+          @child.should be_new_record
+        end
+
+        it "when db error is raised, remains a new record" do
+          @collection.stub(:save).and_raise(Mongo::OperationFailure)
+          parent = Parent.new(:data => 'data', :child => @child)
+          lambda do
+            parent.save!
+          end.should raise_error Mongo::OperationFailure
+          @child.should be_new_record
         end
       end
     end
   end
 
-  context "as a has many child" do
+  context "as a has many@child" do
     it "when added to the parent is a new record" do
-      child = Child.new
       parent = Parent.new(:data => 'data')
-      parent.children << child
-      child.should be_new_record
+      parent.children << @child
+      @child.should be_new_record
     end
 
     context "creating" do
@@ -117,29 +128,33 @@ describe "MongoDoc::Document id handling" do
 
       context ".create" do
         it "when created is not a new record" do
-          child = Child.new
-          parent = Parent.create(:data => 'data', :children => [child])
-          child.should_not be_new_record
+          Parent.create(:data => 'data', :children => [@child])
+          @child.should_not be_new_record
         end
 
         it "if parent is invalid, remains a new record" do
-          child = Child.new
-          parent = Parent.create(:children => [child])
-          child.should be_new_record
+          Parent.create(:children => [@child])
+          @child.should be_new_record
         end
       end
 
       context ".create!" do
         it "when created is not a new record" do
-          child = Child.new
-          parent = Parent.create!(:data => 'data', :children => [child])
-          child.should_not be_new_record
+          Parent.create!(:data => 'data', :children => [@child])
+          @child.should_not be_new_record
         end
 
         it "if parent is invalid, remains a new record" do
-          child = Child.new
-          Parent.create!(:children => [child]) rescue nil
-          child.should be_new_record
+          Parent.create!(:children => [@child]) rescue nil
+          @child.should be_new_record
+        end
+
+        it "when db error is raised, remains a new record" do
+          @collection.stub(:insert).and_raise(Mongo::OperationFailure)
+          lambda do
+            Parent.create!(:data => 'data', :children => [@child])
+          end.should raise_error Mongo::OperationFailure
+          @child.should be_new_record
         end
       end
     end
@@ -154,37 +169,43 @@ describe "MongoDoc::Document id handling" do
 
       context "#save" do
         it "when saved is not a new record" do
-          child = Child.new
           parent = Parent.new(:data => 'data')
-          parent.children << child
+          parent.children << @child
           parent.save
-          child.should_not be_new_record
+          @child.should_not be_new_record
         end
 
         it "if parent is invalid, remains a new record" do
-          child = Child.new
           parent = Parent.new
-          parent.children << child
+          parent.children << @child
           parent.save
-          child.should be_new_record
+          @child.should be_new_record
         end
       end
 
       context "#save!" do
         it "when saved is not a new record" do
-          child = Child.new
           parent = Parent.new(:data => 'data')
-          parent.children << child
+          parent.children << @child
           parent.save!
-          child.should_not be_new_record
+          @child.should_not be_new_record
         end
 
         it "if parent is invalid, remains a new record" do
-          child = Child.new
           parent = Parent.new
-          parent.children << child
+          parent.children << @child
           parent.save! rescue nil
-          child.should be_new_record
+          @child.should be_new_record
+        end
+
+        it "when db error is raised, remains a new record" do
+          @collection.stub(:save).and_raise(Mongo::OperationFailure)
+          parent = Parent.new(:data => 'data')
+          parent.children << @child
+          lambda do
+            parent.save!
+          end.should raise_error Mongo::OperationFailure
+          @child.should be_new_record
         end
       end
     end

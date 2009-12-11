@@ -122,17 +122,40 @@ module MongoDoc
     end
 
     def _save(safe)
+      notify_before_save_observers
       self._id = _collection.save(self, :safe => safe)
-      notify_save_observers
+      notify_save_success_observers
       self._id
+    rescue Mongo::MongoDBError => e
+      notify_save_failed_observers
+      raise e
     end
 
     def _update_attributes(attrs,  safe)
       _collection.update({'_id' => self._id}, MongoDoc::Query.set_modifier(attrs), :safe => safe)
     end
 
-    def save_callback(root)
+    class << self
+      def _create(instance, safe)
+        instance.send(:notify_before_save_observers)
+        instance._id = collection.insert(instance, :safe => safe)
+        instance.send(:notify_save_success_observers)
+        instance._id
+      rescue Mongo::MongoDBError => e
+        instance.send(:notify_save_failed_observers)
+        raise e
+      end
+    end
+
+    def before_save_callback(root)
       self._id = Mongo::ObjectID.new if new_record?
+    end
+
+    def save_failed_callback(root)
+      self._id = nil
+    end
+
+    def save_success_callback(root)
       root.unregister_save_observer(self)
     end
 
@@ -148,16 +171,17 @@ module MongoDoc
       save_observers.delete(child)
     end
 
-    def notify_save_observers
-      save_observers.each {|obs| obs.save_callback(self) }
+    def notify_before_save_observers
+      save_observers.each {|obs| obs.before_save_callback(self) }
     end
 
-    class << self
-      def _create(instance, safe)
-        instance._id = collection.insert(instance, :safe => safe)
-        instance.send(:notify_save_observers)
-        instance._id
-      end
+    def notify_save_success_observers
+      save_observers.each {|obs| obs.save_success_callback(self) }
     end
+
+    def notify_save_failed_observers
+      save_observers.each {|obs| obs.save_failed_callback(self) }
+    end
+
   end
 end

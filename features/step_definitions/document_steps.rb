@@ -96,3 +96,10 @@ Then /^the (\w*) of '(.*)' is not a new record$/ do |assoc, name|
   object = instance_variable_get("@#{name}")
   object.send(assoc).should_not be_new_record
 end
+
+Then /^the (\w*) of '(.*)' roundtrips$/ do |assoc, name|
+  object = instance_variable_get("@#{name}")
+  from_db = object.class.find_one(object._id)
+  object.send(assoc).id.should == from_db.send(assoc).id
+end
+
