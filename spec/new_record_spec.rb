@@ -56,7 +56,7 @@ describe "MongoDoc::Document _id and #new_record?" do
 
         it "when db error is raised, remains a new record" do
           @collection.stub(:insert).and_raise(Mongo::OperationFailure)
-          lambda do
+          expect do
             Parent.create!(:data => 'data', :child => @child)
           end.should raise_error Mongo::OperationFailure
           @child.should be_new_record
@@ -102,7 +102,7 @@ describe "MongoDoc::Document _id and #new_record?" do
         it "when db error is raised, remains a new record" do
           @collection.stub(:save).and_raise(Mongo::OperationFailure)
           parent = Parent.new(:data => 'data', :child => @child)
-          lambda do
+          expect do
             parent.save!
           end.should raise_error Mongo::OperationFailure
           @child.should be_new_record
@@ -151,7 +151,7 @@ describe "MongoDoc::Document _id and #new_record?" do
 
         it "when db error is raised, remains a new record" do
           @collection.stub(:insert).and_raise(Mongo::OperationFailure)
-          lambda do
+          expect do
             Parent.create!(:data => 'data', :children => [@child])
           end.should raise_error Mongo::OperationFailure
           @child.should be_new_record
@@ -202,7 +202,7 @@ describe "MongoDoc::Document _id and #new_record?" do
           @collection.stub(:save).and_raise(Mongo::OperationFailure)
           parent = Parent.new(:data => 'data')
           parent.children << @child
-          lambda do
+          expect do
             parent.save!
           end.should raise_error Mongo::OperationFailure
           @child.should be_new_record
