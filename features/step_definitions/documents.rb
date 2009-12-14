@@ -16,4 +16,7 @@ class Contact < MongoDoc::Document
   key :type
   key :interests
   has_many :addresses
+
+  named_scope :rubyists, :in => {:interests => ['ruby']}
+  named_scope :contract_work, :in => {:interests => ['contract work']}
 end

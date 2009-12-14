@@ -2,13 +2,15 @@ require 'mongodoc/bson'
 require 'mongodoc/query'
 require 'mongodoc/attributes'
 require 'mongodoc/criteria'
+require 'mongodoc/named_scope'
 
 module MongoDoc
   class DocumentInvalidError < RuntimeError; end
   class NotADocumentError < RuntimeError; end
 
   class Document
-    extend MongoDoc::Attributes
+    extend Attributes
+    extend NamedScope
     include Validatable
 
     attr_accessor :_id

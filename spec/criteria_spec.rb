@@ -50,19 +50,6 @@ describe MongoDoc::Criteria do
     def employer=(emp)
       self.employer_id = emp.id
     end
-
-    class << self
-      def accepted
-        criteria.where(:terms => true)
-      end
-      def knight
-        criteria.where(:title => "Sir")
-      end
-      def old
-        criteria.where(:age => { "$gt" => 50 })
-      end
-    end
-
   end
 
   before do
@@ -479,32 +466,6 @@ describe MongoDoc::Criteria do
           @criteria.selector.should == @selector
           @criteria.options.should == @options
         end
-      end
-
-    end
-
-  end
-
-  describe "#method_missing" do
-
-    before do
-      @criteria.where(:title => "Sir")
-    end
-
-    it "merges the criteria with the next one" do
-      @new_criteria = @criteria.accepted
-      @new_criteria.selector.should == { :title => "Sir", :terms => true }
-    end
-
-    context "chaining more than one scope" do
-
-      before do
-        @criteria = Person.accepted.old.knight
-      end
-
-      it "and_return the final merged criteria" do
-        @criteria.selector.should ==
-          { :title => "Sir", :terms => true, :age => { "$gt" => 50 } }
       end
 
     end

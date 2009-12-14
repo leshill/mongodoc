@@ -214,7 +214,6 @@ module MongoDoc #:nodoc:
     #
     # Options:
     #
-    # type: One of :all, :first:, or :last
     # klass: The class to execute on.
     def initialize(klass)
       @selector, @options, @klass = {}, {}, klass
@@ -266,40 +265,6 @@ module MongoDoc #:nodoc:
     def merge(other)
       selector.update(other.selector)
       options.update(other.options)
-    end
-
-    # Used for chaining +Criteria+ scopes together in the for of class methods
-    # on the +Document+ the criteria is for.
-    #
-    # Options:
-    #
-    # name: The name of the class method on the +Document+ to chain.
-    # args: The arguments passed to the method.
-    #
-    # Example:
-    #
-    #   class Person < Mongoid::Document
-    #     field :title
-    #     field :terms, :type => Boolean, :default => false
-    #
-    #     class << self
-    #       def knights
-    #         all(:conditions => { :title => "Sir" })
-    #       end
-    #
-    #       def accepted
-    #         all(:conditions => { :terms => true })
-    #       end
-    #     end
-    #   end
-    #
-    #   Person.accepted.knights #returns a merged criteria of the 2 scopes.
-    #
-    # Returns: <tt>Criteria</tt>
-    def method_missing(name, *args)
-      new_scope = klass.send(name)
-      new_scope.merge(self)
-      new_scope
     end
 
     # Adds a criterion to the +Criteria+ that specifies values where none
@@ -448,6 +413,12 @@ module MongoDoc #:nodoc:
     # Returns: <tt>self</tt>
     def where(add_selector = {})
       selector.merge!(add_selector); self
+    end
+
+    def criteria(criteria_conditions = {})
+      criteria_conditions.inject(self) do |criteria, (key, value)|
+        criteria.send(key, value)
+      end
     end
 
     protected
