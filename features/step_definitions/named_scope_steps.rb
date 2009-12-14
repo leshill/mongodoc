@@ -13,3 +13,9 @@ When /^I query (.*) with scopes '(.*)'$/ do |doc, scopes|
     result.send(scope.strip)
   end
 end
+
+When /^I query (.*) with lambda scope '(.*)' with parameters '(.*)'$/ do |doc, scope, params_text|
+  klass = doc.singularize.camelize.constantize
+  params = params_text.split(',').map(&:strip)
+  self.query = klass.send(scope, *params)
+end

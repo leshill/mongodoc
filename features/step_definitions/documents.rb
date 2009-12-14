@@ -19,4 +19,5 @@ class Contact < MongoDoc::Document
 
   named_scope :rubyists, :in => {:interests => ['ruby']}
   named_scope :contract_work, :in => {:interests => ['contract work']}
+  named_scope :in_state, lambda {|state| { :where => {'addresses.state' => state}}}
 end

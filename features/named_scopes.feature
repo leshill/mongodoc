@@ -59,3 +59,8 @@ Feature: Named Scopes
     When I query contacts with scopes 'rubyists, contract_work'
     Then the query result has 2 documents
     And one of the query results is the document 'contractor'
+
+  Scenario: Named scope with lambda
+    When I query contacts with lambda scope 'in_state' with parameters 'IL'
+    Then the query result has 1 documents
+    And one of the query results is the document 'hashrocket'

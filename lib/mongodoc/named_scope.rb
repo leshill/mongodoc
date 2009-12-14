@@ -5,10 +5,10 @@ module MongoDoc
       read_inheritable_attribute(:scopes) || write_inheritable_attribute(:scopes, {})
     end
 
-    def named_scope(name, options = {})
+    def named_scope(name, options = {}, &block)
       name = name.to_sym
       scopes[name] = lambda do |parent_scope, *args|
-        CriteriaProxy.new(parent_scope, options)
+        CriteriaProxy.new(parent_scope, Hash === options ? options : options.call(*args), &block)
       end
       (class << self; self; end).class_eval <<-EOT
         def #{name}(*args)
@@ -24,6 +24,8 @@ module MongoDoc
 
       def initialize(parent_scope, conditions, &block)
         conditions ||= {}
+        [conditions.delete(:extend)].flatten.each { |extension| extend extension } if conditions.include?(:extend)
+        extend Module.new(&block) if block_given?
         self.klass = parent_scope unless CriteriaProxy === parent_scope
         self.parent_scope, self.conditions = parent_scope, conditions
       end
