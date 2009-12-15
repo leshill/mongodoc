@@ -57,37 +57,16 @@ describe MongoDoc::Criteria do
   end
 
   describe "#aggregate" do
-
-    context "when klass provided" do
-
-      before do
-        @reduce = "function(obj, prev) { prev.count++; }"
-        @collection = mock
-        Animal.should_receive(:collection).and_return(@collection)
-      end
-
-      it "calls group on the collection with the aggregate js" do
-        @collection.should_receive(:group).with([:field1], {}, {:count => 0}, @reduce)
-        @criteria.select(:field1).aggregate(Animal)
-      end
-
+    before do
+      @reduce = "function(obj, prev) { prev.count++; }"
+      @collection = mock
+      Person.should_receive(:collection).and_return(@collection)
     end
 
-    context "when klass not provided" do
-
-      before do
-        @reduce = "function(obj, prev) { prev.count++; }"
-        @collection = mock
-        Person.should_receive(:collection).and_return(@collection)
-      end
-
-      it "calls group on the collection with the aggregate js" do
-        @collection.should_receive(:group).with([:field1], {}, {:count => 0}, @reduce)
-        @criteria.select(:field1).aggregate
-      end
-
+    it "calls group on the collection with the aggregate js" do
+      @collection.should_receive(:group).with([:field1], {}, {:count => 0}, @reduce)
+      @criteria.select(:field1).aggregate
     end
-
   end
 
   describe "#every" do
@@ -290,41 +269,17 @@ describe MongoDoc::Criteria do
   end
 
   describe "#group" do
-
     before do
       @grouping = [{ "title" => "Sir", "group" => [{ "title" => "Sir", "age" => 30 }] }]
+      @reduce = "function(obj, prev) { prev.group.push(obj); }"
+      @collection = mock
+      Person.should_receive(:collection).and_return(@collection)
     end
 
-    context "when klass provided" do
-
-      before do
-        @reduce = "function(obj, prev) { prev.group.push(obj); }"
-        @collection = mock
-        Animal.should_receive(:collection).and_return(@collection)
-      end
-
-      it "calls group on the collection with the aggregate js" do
-        @collection.should_receive(:group).with([:field1], {}, {:group => []}, @reduce).and_return(@grouping)
-        @criteria.select(:field1).group(Animal)
-      end
-
+    it "calls group on the collection with the aggregate js" do
+      @collection.should_receive(:group).with([:field1], {}, {:group => []}, @reduce).and_return(@grouping)
+      @criteria.select(:field1).group
     end
-
-    context "when klass not provided" do
-
-      before do
-        @reduce = "function(obj, prev) { prev.group.push(obj); }"
-        @collection = mock
-        Person.should_receive(:collection).and_return(@collection)
-      end
-
-      it "calls group on the collection with the aggregate js" do
-        @collection.should_receive(:group).with([:field1], {}, {:group => []}, @reduce).and_return(@grouping)
-        @criteria.select(:field1).group
-      end
-
-    end
-
   end
 
   describe "#id" do
@@ -424,50 +379,6 @@ describe MongoDoc::Criteria do
 
     it "and_return self" do
       @criteria.limit.should == @criteria
-    end
-
-  end
-
-  describe "#merge" do
-
-    before do
-      @criteria.where(:title => "Sir", :age => 30).skip(40).limit(20)
-    end
-
-    context "with another criteria" do
-
-      context "when the other has a selector and options" do
-
-        before do
-          @other = MongoDoc::Criteria.new(Person)
-          @other.where(:name => "Chloe").order_by([[:name, :asc]])
-          @selector = { :title => "Sir", :age => 30, :name => "Chloe" }
-          @options = { :skip => 40, :limit => 20, :sort => [[:name, :asc]] }
-        end
-
-        it "merges the selector and options hashes together" do
-          @criteria.merge(@other)
-          @criteria.selector.should == @selector
-          @criteria.options.should == @options
-        end
-
-      end
-
-      context "when the other has no selector or options" do
-
-        before do
-          @other = MongoDoc::Criteria.new(Person)
-          @selector = { :title => "Sir", :age => 30 }
-          @options = { :skip => 40, :limit => 20 }
-        end
-
-        it "merges the selector and options hashes together" do
-          @criteria.merge(@other)
-          @criteria.selector.should == @selector
-          @criteria.options.should == @options
-        end
-      end
-
     end
 
   end
@@ -784,11 +695,8 @@ describe MongoDoc::Criteria do
           @criteria.selector.should == { :title => "Test" }
           @criteria.options.should == { :skip => 10 }
         end
-
       end
-
     end
-
   end
 
   describe "#where" do
@@ -798,10 +706,18 @@ describe MongoDoc::Criteria do
       @criteria.selector.should == { :title => "Title", :text => "Text" }
     end
 
-    it "and_return self" do
+    it "and return self" do
       @criteria.where.should == @criteria
     end
 
-  end
+    it "#and is an alias for where" do
+      @criteria.and(:title => "Title", :text => "Text")
+      @criteria.selector.should == { :title => "Title", :text => "Text" }
+    end
 
+    it "#conditions is an alias for where" do
+      @criteria.conditions(:title => "Title", :text => "Text")
+      @criteria.selector.should == { :title => "Title", :text => "Text" }
+    end
+  end
 end

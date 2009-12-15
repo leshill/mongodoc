@@ -55,10 +55,9 @@ module MongoDoc #:nodoc:
     #
     # Example:
     #
-    # <tt>criteria.select(:field1).where(:field1 => "Title").aggregate(Person)</tt>
-    def aggregate(use_klass = nil)
-      aggregating_klass = use_klass ? use_klass : klass
-      aggregating_klass.collection.group(options[:fields], selector, { :count => 0 }, AGGREGATE_REDUCE)
+    # <tt>criteria.select(:field1).where(:field1 => "Title").aggregate</tt>
+    def aggregate
+      klass.collection.group(options[:fields], selector, { :count => 0 }, AGGREGATE_REDUCE)
     end
 
     # Adds a criterion to the +Criteria+ that specifies values that must all
@@ -164,9 +163,9 @@ module MongoDoc #:nodoc:
     #
     # Example:
     #
-    # <tt>criteria.select(:field1).where(:field1 => "Title").group(Person)</tt>
-    def group(use_klass = nil)
-      (use_klass || klass).collection.group(
+    # <tt>criteria.select(:field1).where(:field1 => "Title").group</tt>
+    def group
+      klass.collection.group(
         options[:fields],
         selector,
         { :group => [] },
@@ -249,22 +248,6 @@ module MongoDoc #:nodoc:
     # Returns: <tt>self</tt>
     def limit(value = 20)
       options[:limit] = value; self
-    end
-
-    # Merges another object into this +Criteria+. The other object may be a
-    # +Criteria+ or a +Hash+. This is used to combine multiple scopes together,
-    # where a chained scope situation may be desired.
-    #
-    # Options:
-    #
-    # other: The +Criteria+ or +Hash+ to merge with.
-    #
-    # Example:
-    #
-    # <tt>criteria.merge({ :conditions => { :title => "Sir" } })</tt>
-    def merge(other)
-      selector.update(other.selector)
-      options.update(other.options)
     end
 
     # Adds a criterion to the +Criteria+ that specifies values where none
@@ -393,7 +376,7 @@ module MongoDoc #:nodoc:
     # Returns a new +Criteria+ object.
     def self.translate(klass, params = {})
       return new(klass).id(params).one if params.is_a?(String)
-      return new(klass).where(params.delete(:conditions)).extras(params)
+      return new(klass).criteria(params)
     end
 
     # Adds a criterion to the +Criteria+ that specifies values that must
@@ -414,7 +397,20 @@ module MongoDoc #:nodoc:
     def where(add_selector = {})
       selector.merge!(add_selector); self
     end
+    alias :and :where
+    alias :conditions :where
 
+    # Translate the supplied argument hash
+    #
+    # Options:
+    #
+    # criteria_conditions: Hash of criteria keys, and parameter values
+    #
+    # Example:
+    #
+    # <tt>criteria.translate(:where => { :field => "value"}, :limit => 20)</tt>
+    #
+    # Returns <tt>self</tt>
     def criteria(criteria_conditions = {})
       criteria_conditions.inject(self) do |criteria, (key, value)|
         criteria.send(key, value)
