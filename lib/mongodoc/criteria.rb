@@ -27,6 +27,16 @@ module MongoDoc #:nodoc:
 
     attr_reader :klass, :options, :selector
 
+    # Create the new +Criteria+ object. This will initialize the selector
+    # and options hashes, as well as the type of criteria.
+    #
+    # Options:
+    #
+    # klass: The class to execute on.
+    def initialize(klass)
+      @selector, @options, @klass = {}, {}, klass
+    end
+
     # Returns true if the supplied +Enumerable+ or +Criteria+ is equal to the results
     # of this +Criteria+ or the criteria itself.
     #
@@ -60,27 +70,6 @@ module MongoDoc #:nodoc:
       klass.collection.group(options[:fields], selector, { :count => 0 }, AGGREGATE_REDUCE)
     end
 
-    # Adds a criterion to the +Criteria+ that specifies values that must all
-    # be matched in order to return results. Similar to an "in" clause but the
-    # underlying conditional logic is an "AND" and not an "OR". The MongoDB
-    # conditional operator that will be used is "$all".
-    #
-    # Options:
-    #
-    # selections: A +Hash+ where the key is the field name and the value is an
-    # +Array+ of values that must all match.
-    #
-    # Example:
-    #
-    # <tt>criteria.every(:field => ["value1", "value2"])</tt>
-    #
-    # <tt>criteria.every(:field1 => ["value1", "value2"], :field2 => ["value1"])</tt>
-    #
-    # Returns: <tt>self</tt>
-    def every(selections = {})
-      selections.each { |key, value| selector[key] = { "$all" => value } }; self
-    end
-
     # Get the count of matching documents in the database for the +Criteria+.
     #
     # Example:
@@ -105,6 +94,87 @@ module MongoDoc #:nodoc:
       else
         self
       end
+    end
+
+    GROUP_REDUCE = "function(obj, prev) { prev.group.push(obj); }"
+    # Groups the criteria. This will take the internally built selector and options
+    # and pass them on to the Ruby driver's +group()+ method on the collection. The
+    # collection itself will be retrieved from the class provided, and once the
+    # query has returned it will provided a grouping of keys with objects.
+    #
+    # Example:
+    #
+    # <tt>criteria.select(:field1).where(:field1 => "Title").group</tt>
+    def group
+      klass.collection.group(
+        options[:fields],
+        selector,
+        { :group => [] },
+        GROUP_REDUCE
+      ).collect {|docs| docs["group"] = MongoDoc::BSON.decode(docs["group"]); docs }
+    end
+
+    # Return the last result for the +Criteria+. Essentially does a find_one on
+    # the collection with the sorting reversed. If no sorting parameters have
+    # been provided it will default to ids.
+    #
+    # Example:
+    #
+    # <tt>Criteria.select(:name).where(:name = "Chrissy").last</tt>
+    def last
+      opts = options.dup
+      sorting = opts[:sort]
+      sorting = [[:_id, :asc]] unless sorting
+      opts[:sort] = sorting.collect { |option| [ option.first, Criteria.invert(option.last) ] }
+      klass.collection.find_one(selector, opts)
+    end
+
+    # Return the first result for the +Criteria+.
+    #
+    # Example:
+    #
+    # <tt>Criteria.select(:name).where(:name = "Chrissy").one</tt>
+    def one
+      klass.collection.find_one(selector, options.dup)
+    end
+    alias :first :one
+
+    # Translate the supplied argument hash
+    #
+    # Options:
+    #
+    # criteria_conditions: Hash of criteria keys, and parameter values
+    #
+    # Example:
+    #
+    # <tt>criteria.translate(:where => { :field => "value"}, :limit => 20)</tt>
+    #
+    # Returns <tt>self</tt>
+    def criteria(criteria_conditions = {})
+      criteria_conditions.inject(self) do |criteria, (key, value)|
+        criteria.send(key, value)
+      end
+    end
+
+    # Adds a criterion to the +Criteria+ that specifies values that must all
+    # be matched in order to return results. Similar to an "in" clause but the
+    # underlying conditional logic is an "AND" and not an "OR". The MongoDB
+    # conditional operator that will be used is "$all".
+    #
+    # Options:
+    #
+    # selections: A +Hash+ where the key is the field name and the value is an
+    # +Array+ of values that must all match.
+    #
+    # Example:
+    #
+    # <tt>criteria.every(:field => ["value1", "value2"])</tt>
+    #
+    # <tt>criteria.every(:field1 => ["value1", "value2"], :field2 => ["value1"])</tt>
+    #
+    # Returns: <tt>self</tt>
+    def every(selections = {})
+      selections.each { |key, value| selector[key] = { "$all" => value } }; self
     end
 
     # Adds a criterion to the +Criteria+ that specifies values that are not allowed
@@ -145,32 +215,19 @@ module MongoDoc #:nodoc:
       self
     end
 
-    # Return the first result for the +Criteria+.
+    # Adds a criterion to the +Criteria+ that specifies an id that must be matched.
+    #
+    # Options:
+    #
+    # object_id: A +String+ representation of a <tt>Mongo::ObjectID</tt>
     #
     # Example:
     #
-    # <tt>Criteria.select(:name).where(:name = "Chrissy").one</tt>
-    def one
-      klass.collection.find_one(selector, options.dup)
-    end
-    alias :first :one
-
-    GROUP_REDUCE = "function(obj, prev) { prev.group.push(obj); }"
-    # Groups the criteria. This will take the internally built selector and options
-    # and pass them on to the Ruby driver's +group()+ method on the collection. The
-    # collection itself will be retrieved from the class provided, and once the
-    # query has returned it will provided a grouping of keys with objects.
+    # <tt>criteria.id("4ab2bc4b8ad548971900005c")</tt>
     #
-    # Example:
-    #
-    # <tt>criteria.select(:field1).where(:field1 => "Title").group</tt>
-    def group
-      klass.collection.group(
-        options[:fields],
-        selector,
-        { :group => [] },
-        GROUP_REDUCE
-      ).collect {|docs| docs["group"] = MongoDoc::BSON.decode(docs["group"]); docs }
+    # Returns: <tt>self</tt>
+    def id(object_id)
+      selector[:_id] = object_id; self
     end
 
     # Adds a criterion to the +Criteria+ that specifies values where any can
@@ -191,46 +248,6 @@ module MongoDoc #:nodoc:
     # Returns: <tt>self</tt>
     def in(inclusions = {})
       inclusions.each { |key, value| selector[key] = { "$in" => value } }; self
-    end
-
-    # Adds a criterion to the +Criteria+ that specifies an id that must be matched.
-    #
-    # Options:
-    #
-    # object_id: A +String+ representation of a <tt>Mongo::ObjectID</tt>
-    #
-    # Example:
-    #
-    # <tt>criteria.id("4ab2bc4b8ad548971900005c")</tt>
-    #
-    # Returns: <tt>self</tt>
-    def id(object_id)
-      selector[:_id] = object_id; self
-    end
-
-    # Create the new +Criteria+ object. This will initialize the selector
-    # and options hashes, as well as the type of criteria.
-    #
-    # Options:
-    #
-    # klass: The class to execute on.
-    def initialize(klass)
-      @selector, @options, @klass = {}, {}, klass
-    end
-
-    # Return the last result for the +Criteria+. Essentially does a find_one on
-    # the collection with the sorting reversed. If no sorting parameters have
-    # been provided it will default to ids.
-    #
-    # Example:
-    #
-    # <tt>Criteria.select(:name).where(:name = "Chrissy").last</tt>
-    def last
-      opts = options.dup
-      sorting = opts[:sort]
-      sorting = [[:_id, :asc]] unless sorting
-      opts[:sort] = sorting.collect { |option| [ option.first, Criteria.invert(option.last) ] }
-      klass.collection.find_one(selector, opts)
     end
 
     # Adds a criterion to the +Criteria+ that specifies the maximum number of
@@ -355,6 +372,27 @@ module MongoDoc #:nodoc:
       options[:skip] = value; self
     end
 
+    # Adds a criterion to the +Criteria+ that specifies values that must
+    # be matched in order to return results. This is similar to a SQL "WHERE"
+    # clause. This is the actual selector that will be provided to MongoDB,
+    # similar to the Javascript object that is used when performing a find()
+    # in the MongoDB console.
+    #
+    # Options:
+    #
+    # selectior: A +Hash+ that must match the attributes of the +Document+.
+    #
+    # Example:
+    #
+    # <tt>criteria.where(:field1 => "value1", :field2 => 15)</tt>
+    #
+    # Returns: <tt>self</tt>
+    def where(add_selector = {})
+      selector.merge!(add_selector); self
+    end
+    alias :and :where
+    alias :conditions :where
+
     # Translate the supplied arguments into a +Criteria+ object.
     #
     # If the passed in args is a single +String+, then it will
@@ -377,44 +415,6 @@ module MongoDoc #:nodoc:
     def self.translate(klass, params = {})
       return new(klass).id(params).one if params.is_a?(String)
       return new(klass).criteria(params)
-    end
-
-    # Adds a criterion to the +Criteria+ that specifies values that must
-    # be matched in order to return results. This is similar to a SQL "WHERE"
-    # clause. This is the actual selector that will be provided to MongoDB,
-    # similar to the Javascript object that is used when performing a find()
-    # in the MongoDB console.
-    #
-    # Options:
-    #
-    # selectior: A +Hash+ that must match the attributes of the +Document+.
-    #
-    # Example:
-    #
-    # <tt>criteria.where(:field1 => "value1", :field2 => 15)</tt>
-    #
-    # Returns: <tt>self</tt>
-    def where(add_selector = {})
-      selector.merge!(add_selector); self
-    end
-    alias :and :where
-    alias :conditions :where
-
-    # Translate the supplied argument hash
-    #
-    # Options:
-    #
-    # criteria_conditions: Hash of criteria keys, and parameter values
-    #
-    # Example:
-    #
-    # <tt>criteria.translate(:where => { :field => "value"}, :limit => 20)</tt>
-    #
-    # Returns <tt>self</tt>
-    def criteria(criteria_conditions = {})
-      criteria_conditions.inject(self) do |criteria, (key, value)|
-        criteria.send(key, value)
-      end
     end
 
     protected
