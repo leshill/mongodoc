@@ -25,7 +25,7 @@ module MongoDoc #:nodoc:
 
     include Enumerable
 
-    attr_reader :klass, :options, :selector
+    attr_reader :collection, :klass, :options, :selector
 
     # Create the new +Criteria+ object. This will initialize the selector
     # and options hashes, as well as the type of criteria.
@@ -51,7 +51,7 @@ module MongoDoc #:nodoc:
         self.selector == other.selector && self.options == other.options
       when Enumerable
         @collection ||= execute
-        return (@collection == other)
+        return (collection == other)
       else
         return false
       end
@@ -68,6 +68,17 @@ module MongoDoc #:nodoc:
     # <tt>criteria.select(:field1).where(:field1 => "Title").aggregate</tt>
     def aggregate
       klass.collection.group(options[:fields], selector, { :count => 0 }, AGGREGATE_REDUCE)
+    end
+
+    # Get all the matching documents in the database for the +Criteria+.
+    #
+    # Example:
+    #
+    # <tt>criteria.all</tt>
+    #
+    # Returns: <tt>Array</tt>
+    def all
+      collect
     end
 
     # Get the count of matching documents in the database for the +Criteria+.
@@ -90,10 +101,13 @@ module MongoDoc #:nodoc:
     def each(&block)
       @collection ||= execute
       if block_given?
-        @collection.each(&block)
-      else
-        self
+        @collection = collection.inject([]) do |container, item|
+          container << item
+          yield item
+          container
+        end
       end
+      self
     end
 
     GROUP_REDUCE = "function(obj, prev) { prev.group.push(obj); }"
@@ -219,15 +233,15 @@ module MongoDoc #:nodoc:
     #
     # Options:
     #
-    # object_id: A +String+ representation of a <tt>Mongo::ObjectID</tt>
+    # id_or_object_id: A +String+ representation of a <tt>Mongo::ObjectID</tt>
     #
     # Example:
     #
     # <tt>criteria.id("4ab2bc4b8ad548971900005c")</tt>
     #
     # Returns: <tt>self</tt>
-    def id(object_id)
-      selector[:_id] = object_id; self
+    def id(id_or_object_id)
+      selector[:_id] = id_or_object_id; self
     end
 
     # Adds a criterion to the +Criteria+ that specifies values where any can
@@ -328,7 +342,7 @@ module MongoDoc #:nodoc:
     def paginate
       @collection ||= execute
       WillPaginate::Collection.create(page, per_page, count) do |pager|
-        pager.replace(@collection.to_a)
+        pager.replace(collection.to_a)
       end
     end
 
@@ -380,15 +394,24 @@ module MongoDoc #:nodoc:
     #
     # Options:
     #
-    # selectior: A +Hash+ that must match the attributes of the +Document+.
+    # selector_or_js: A +Hash+ that must match the attributes of the +Document+
+    # or a +String+ of js code.
     #
     # Example:
     #
     # <tt>criteria.where(:field1 => "value1", :field2 => 15)</tt>
     #
+    # <tt>criteria.where('this.a > 3')</tt>
+    #
     # Returns: <tt>self</tt>
-    def where(add_selector = {})
-      selector.merge!(add_selector); self
+    def where(selector_or_js = {})
+      case selector_or_js
+      when String
+        selector['$where'] = selector_or_js
+      else
+        selector.merge!(selector_or_js)
+      end
+      self
     end
     alias :and :where
     alias :conditions :where
@@ -413,7 +436,7 @@ module MongoDoc #:nodoc:
     #
     # Returns a new +Criteria+ object.
     def self.translate(klass, params = {})
-      return new(klass).id(params).one if params.is_a?(String)
+      return new(klass).id(params).one unless params.is_a?(Hash)
       return new(klass).criteria(params)
     end
 

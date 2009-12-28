@@ -56,6 +56,13 @@ describe MongoDoc::Criteria do
     @criteria = MongoDoc::Criteria.new(Person)
   end
 
+  describe "#all" do
+    it "calls collect" do
+      @criteria.should_receive(:collect).with(no_args)
+      @criteria.all
+    end
+  end
+
   describe "#aggregate" do
     before do
       @reduce = "function(obj, prev) { prev.count++; }"
@@ -90,7 +97,7 @@ describe MongoDoc::Criteria do
     end
 
     it "calls each" do
-      @cursor.should_receive(:each).and_return(@cursor)
+      @criteria.should_receive(:each).and_return(@criteria)
       @criteria.collect
     end
 
@@ -147,6 +154,12 @@ describe MongoDoc::Criteria do
         @criteria.each
       end
 
+      it "has memoized the result of execute" do
+        @criteria.stub(:execute).and_return(@cursor)
+        @criteria.each
+        @criteria.collection.should == @cursor
+      end
+
       it "returns self" do
         @criteria.stub(:execute).and_return(@cursor)
         @criteria.each.should == @criteria
@@ -154,7 +167,22 @@ describe MongoDoc::Criteria do
     end
 
     context "when a block is given" do
+      class CursorStub
+        include Enumerable
+
+        attr_accessor :data
+
+        def each(*args, &block)
+          data.each(*args, &block)
+        end
+      end
+
       context "when the criteria has not been executed" do
+        before do
+          @cursor = CursorStub.new
+          @cursor.data = [@person]
+        end
+
         it "executes the criteria" do
           @criteria.should_receive(:execute).and_return(@cursor)
           @criteria.each do |person|
@@ -169,6 +197,15 @@ describe MongoDoc::Criteria do
           end
           @result.should == @person
         end
+
+        it "has memoized the cursor iteration" do
+          @criteria.stub(:execute).and_return(@cursor)
+          @criteria.each do |person|
+            @result = person
+          end
+          @criteria.collection.should == [@person]
+        end
+
 
         it "returns self" do
           @criteria.stub(:execute).and_return(@cursor)
@@ -284,15 +321,21 @@ describe MongoDoc::Criteria do
 
   describe "#id" do
 
-    it "adds the _id query to the selector" do
+    it "adds the ObjectID as the _id query to the selector" do
+      id = Mongo::ObjectID.new
+      @criteria.id(id)
+      @criteria.selector.should == { :_id => id }
+    end
+
+    it "adds the string as the _id query to the selector" do
       id = Mongo::ObjectID.new.to_s
       @criteria.id(id)
       @criteria.selector.should == { :_id => id }
     end
 
     it "and_return self" do
-      id = Mongo::ObjectID.new.to_s
-      @criteria.id(id.to_s).should == @criteria
+      id = Mongo::ObjectID.new
+      @criteria.id(id).should == @criteria
     end
 
   end
@@ -704,6 +747,11 @@ describe MongoDoc::Criteria do
     it "adds the clause to the selector" do
       @criteria.where(:title => "Title", :text => "Text")
       @criteria.selector.should == { :title => "Title", :text => "Text" }
+    end
+
+    it "accepts a js where clause" do
+      @criteria.where("this.a > 3")
+      @criteria.selector.should == { '$where' => "this.a > 3" }
     end
 
     it "and return self" do
