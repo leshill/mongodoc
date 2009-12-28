@@ -6,6 +6,10 @@ describe "MongoDoc::Cursor" do
     @cursor = MongoDoc::Cursor.new(@mongo_cursor)
   end
 
+  it "is Enumerable" do
+    Enumerable.should === @cursor
+  end
+
   it ".new wraps a Mongo::Cursor" do
     @cursor._cursor.should == @mongo_cursor
   end

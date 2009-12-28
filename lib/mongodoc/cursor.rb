@@ -1,5 +1,7 @@
 module MongoDoc
   class Cursor
+    include Enumerable
+
     attr_accessor :_cursor
     delegate :close, :closed?, :count, :explain, :limit, :query_options_hash, :query_opts, :skip, :sort, :to => :_cursor
 
