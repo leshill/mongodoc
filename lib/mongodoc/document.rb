@@ -70,6 +70,10 @@ module MongoDoc
     end
 
     class << self
+      def all
+        collection.find
+      end
+
       def bson_create(bson_hash, options = {})
         new.tap do |obj|
           bson_hash.each do |name, value|
@@ -105,6 +109,10 @@ module MongoDoc
 
       def criteria
         Criteria.new(self)
+      end
+
+      def find(conditions_or_id)
+        Criteria.translate(self, conditions_or_id)
       end
 
       def find_one(id)

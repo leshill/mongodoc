@@ -4,10 +4,9 @@ def query(klass_name = nil)
   @query = klass.criteria
 end
 
-# When /^I query (.*) with all "([^\"]*)"$/ do |doc, selections_text|
-  # selections = eval(selections_text)
-  # query(doc).all(selections)
-# end
+When /^I query (.*) with all$/ do |doc|
+  query(doc).all
+end
 
 When /^I query (.*) to select fields? "([^\"]*)"$/ do |doc, fields|
   fields = fields.split

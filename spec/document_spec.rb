@@ -657,6 +657,14 @@ describe "MongoDoc::Document" do
     class ClassMethods < MongoDoc::Document
     end
 
+    it ".all calls collection find with no args" do
+      cursor = stub('cursor')
+      collection = stub('collection')
+      ClassMethods.stub(:collection).and_return(collection)
+      collection.should_receive(:find).with().and_return(cursor)
+      ClassMethods.all
+    end
+
     it ".count calls the collection count" do
       collection = stub('collection')
       ClassMethods.stub(:collection).and_return(collection)
@@ -673,6 +681,13 @@ describe "MongoDoc::Document" do
       db.should_receive(:collection).with(ClassMethods.to_s.tableize.gsub('/', '.'))
       MongoDoc.should_receive(:database).and_return(db)
       MongoDoc::Collection.should === ClassMethods.collection
+    end
+
+    it ".find creates a criteria" do
+      criteria = stub('criteria')
+      conditions = {:where => 'this.a > 3', :limit => 10}
+      MongoDoc::Criteria.should_receive(:translate).with(ClassMethods, conditions).and_return(criteria)
+      ClassMethods.find(conditions)
     end
   end
 end

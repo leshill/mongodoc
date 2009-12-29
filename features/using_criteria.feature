@@ -143,3 +143,7 @@ Feature: MongoDoc::Base
     When I query contacts with every "{'interests' => ['ruby', 'rails']}"
     And I set the query on contacts to skip 1
     Then the size of the query result is 2
+
+  Scenario: All
+    When I query contacts with all
+    Then the size of the query result is 3

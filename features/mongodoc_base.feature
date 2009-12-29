@@ -107,3 +107,12 @@ Feature: MongoDoc::Base
     When I update the document 'address' with the hash named 'street'
     Then the Place collection should have 1 document
     And the document 'hashrocket' roundtrips
+
+  Scenario: Finder
+    Given an empty Contact document collection
+    And a Contact document named 'hashrocket' :
+      | Name       | Type    |
+      | Hashrocket | company |
+    And I save the last document
+    When I query contacts with find {:where => {'type' => 'company'}}
+    Then the size of the last return value is 1

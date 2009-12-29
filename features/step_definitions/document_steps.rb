@@ -47,11 +47,11 @@ end
 
 When /^I save the document '(.*)'$/ do |name|
   object = instance_variable_get("@#{name}")
- @last_return = object.save
+  @last_return = object.save
 end
 
 When /^I save the last document$/ do
- @last_return = @last.save
+  @last_return = @last.save
 end
 
 When /^I create an (.*) '(.*)' from the hash '(.*)'$/ do |doc, name, hash|
@@ -63,7 +63,13 @@ end
 When /^I update the document '(.*)' with the hash named '(.*)'$/ do |doc_name, hash_name|
   doc = instance_variable_get("@#{doc_name}")
   attrs = instance_variable_get("@#{hash_name}")
- @last_return = doc.update_attributes(attrs)
+  @last_return = doc.update_attributes(attrs)
+end
+
+When /^I query (.*) with find (.*)$/ do |doc, criteria_text|
+  klass = doc.singularize.camelize.constantize
+  criteria = eval(criteria_text)
+  @last_return = klass.find(criteria).all
 end
 
 Then /^'(.*)' is not a new record$/ do |name|
@@ -103,3 +109,6 @@ Then /^the (\w*) of '(.*)' roundtrips$/ do |assoc, name|
   object.send(assoc).id.should == from_db.send(assoc).id
 end
 
+Then /^the size of the last return value is (.*)$/ do |count|
+  @last_return.size.should == count.to_i
+end
