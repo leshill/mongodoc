@@ -43,6 +43,10 @@ describe "MongoDoc::Attributes" do
       it "has the keys from the parent class" do
         TestChild._keys.should include(*TestParent._keys)
       end
+
+      it "does not add keys to the parent class" do
+        TestParent._keys.should_not include(:child_attr)
+      end
     end
   end
 
