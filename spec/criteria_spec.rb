@@ -72,7 +72,7 @@ describe MongoDoc::Criteria do
 
     it "calls group on the collection with the aggregate js" do
       @collection.should_receive(:group).with([:field1], {}, {:count => 0}, @reduce)
-      @criteria.select(:field1).aggregate
+      @criteria.only(:field1).aggregate
     end
   end
 
@@ -315,7 +315,7 @@ describe MongoDoc::Criteria do
 
     it "calls group on the collection with the aggregate js" do
       @collection.should_receive(:group).with([:field1], {}, {:group => []}, @reduce).and_return(@grouping)
-      @criteria.select(:field1).group
+      @criteria.only(:field1).group
     end
   end
 
@@ -571,7 +571,7 @@ describe MongoDoc::Criteria do
     before do
       @collection = mock
       Person.should_receive(:collection).and_return(@collection)
-      @criteria.select.where(:_id => "1").skip(60).limit(20)
+      @criteria.where(:_id => "1").skip(60).limit(20)
       @cursor = mock('cursor', :count => 20, :to_a => [])
       @collection.should_receive(:find).with({:_id => "1"}, :skip => 60, :limit => 20).and_return(@cursor)
       @results = @criteria.paginate
@@ -608,17 +608,17 @@ describe MongoDoc::Criteria do
 
   end
 
-  describe "#select" do
+  describe "#only" do
 
     context "when args are provided" do
 
       it "adds the options for limiting by fields" do
-        @criteria.select(:title, :text)
+        @criteria.only(:title, :text)
         @criteria.options.should == { :fields => [ :title, :text ] }
       end
 
       it "and_return self" do
-        @criteria.select.should == @criteria
+        @criteria.only.should == @criteria
       end
 
     end
@@ -626,7 +626,7 @@ describe MongoDoc::Criteria do
     context "when no args provided" do
 
       it "does not add the field option" do
-        @criteria.select
+        @criteria.only
         @criteria.options[:fields].should be_nil
       end
 

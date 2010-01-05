@@ -12,7 +12,7 @@ module MongoDoc #:nodoc:
   #
   # <tt>criteria = Criteria.new</tt>
   #
-  # <tt>criteria.select(:field => "value").only(:field).skip(20).limit(20)</tt>
+  # <tt>criteria.only(:field => "value").only(:field).skip(20).limit(20)</tt>
   #
   # <tt>criteria.execute</tt>
   class Criteria
@@ -65,7 +65,7 @@ module MongoDoc #:nodoc:
     #
     # Example:
     #
-    # <tt>criteria.select(:field1).where(:field1 => "Title").aggregate</tt>
+    # <tt>criteria.only(:field1).where(:field1 => "Title").aggregate</tt>
     def aggregate
       klass.collection.group(options[:fields], selector, { :count => 0 }, AGGREGATE_REDUCE)
     end
@@ -118,7 +118,7 @@ module MongoDoc #:nodoc:
     #
     # Example:
     #
-    # <tt>criteria.select(:field1).where(:field1 => "Title").group</tt>
+    # <tt>criteria.only(:field1).where(:field1 => "Title").group</tt>
     def group
       klass.collection.group(
         options[:fields],
@@ -134,7 +134,7 @@ module MongoDoc #:nodoc:
     #
     # Example:
     #
-    # <tt>Criteria.select(:name).where(:name = "Chrissy").last</tt>
+    # <tt>Criteria.only(:name).where(:name = "Chrissy").last</tt>
     def last
       opts = options.dup
       sorting = opts[:sort]
@@ -147,7 +147,7 @@ module MongoDoc #:nodoc:
     #
     # Example:
     #
-    # <tt>Criteria.select(:name).where(:name = "Chrissy").one</tt>
+    # <tt>Criteria.only(:name).where(:name = "Chrissy").one</tt>
     def one
       klass.collection.find_one(selector, options.dup)
     end
@@ -361,10 +361,10 @@ module MongoDoc #:nodoc:
     #
     # Example:
     #
-    # <tt>criteria.select(:field1, :field2, :field3)</tt>
+    # <tt>criteria.only(:field1, :field2, :field3)</tt>
     #
     # Returns: <tt>self</tt>
-    def select(*args)
+    def only(*args)
       options[:fields] = args.flatten if args.any?; self
     end
 
