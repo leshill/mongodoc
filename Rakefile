@@ -80,3 +80,35 @@ namespace :mongo do
     puts "\n"
   end
 end
+
+namespace :bench do
+  desc 'Run benchmark for MongoDoc'
+  task 'mongodoc' do
+    $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), 'lib'))
+    require 'perf/mongodoc_runner'
+    MongoDocRunner.benchmark
+  end
+
+  desc 'Run profiler for driver'
+  task 'driver' do
+    $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), 'lib'))
+    require 'perf/ruby_driver_runner'
+    RubyDriverRunner.benchmark
+  end
+end
+
+namespace :prof do
+  desc 'Run profiler for MongoDoc'
+  task 'mongodoc' do
+    $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), 'lib'))
+    require 'perf/mongodoc_runner'
+    MongoDocRunner.profile
+  end
+
+  desc 'Run profiler for driver'
+  task 'driver' do
+    $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), 'lib'))
+    require 'perf/ruby_driver_runner'
+    RubyDriverRunner.profile
+  end
+end
