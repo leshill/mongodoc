@@ -10,7 +10,7 @@ end
 
 When /^I query (.*) to select fields? "([^\"]*)"$/ do |doc, fields|
   fields = fields.split
-  query(doc).select(*fields)
+  query(doc).only(*fields)
 end
 
 When /^I query (.*) where "([^\"]*)"$/ do |doc, where_text|
