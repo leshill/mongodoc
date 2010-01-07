@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{mongodoc}
-  s.version = "0.1.2"
+  s.version = "0.1.3"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Les Hill"]
-  s.date = %q{2009-12-09}
+  s.date = %q{2010-01-06}
   s.description = %q{ODM for MongoDB}
   s.email = %q{leshill@gmail.com}
   s.extra_rdoc_files = [
@@ -26,12 +26,15 @@ Gem::Specification.new do |s|
      "data/.gitignore",
      "features/mongodb.yml",
      "features/mongodoc_base.feature",
+     "features/named_scopes.feature",
+     "features/new_record.feature",
      "features/saving_an_object.feature",
      "features/step_definitions/collection_steps.rb",
      "features/step_definitions/criteria_steps.rb",
      "features/step_definitions/document_steps.rb",
      "features/step_definitions/documents.rb",
      "features/step_definitions/json_steps.rb",
+     "features/step_definitions/named_scope_steps.rb",
      "features/step_definitions/object_steps.rb",
      "features/step_definitions/objects.rb",
      "features/step_definitions/util_steps.rb",
@@ -60,11 +63,15 @@ Gem::Specification.new do |s|
      "lib/mongodoc/ext/string.rb",
      "lib/mongodoc/ext/symbol.rb",
      "lib/mongodoc/ext/time.rb",
+     "lib/mongodoc/named_scope.rb",
      "lib/mongodoc/parent_proxy.rb",
      "lib/mongodoc/proxy.rb",
      "lib/mongodoc/query.rb",
      "mongod.example.yml",
+     "mongodb.example.yml",
      "mongodoc.gemspec",
+     "perf/mongodoc_runner.rb",
+     "perf/ruby_driver_runner.rb",
      "script/console",
      "spec/attributes_spec.rb",
      "spec/bson_matchers.rb",
@@ -75,8 +82,11 @@ Gem::Specification.new do |s|
      "spec/cursor_spec.rb",
      "spec/document_ext.rb",
      "spec/document_spec.rb",
+     "spec/hash_matchers.rb",
      "spec/mongodb.yml",
      "spec/mongodb_pairs.yml",
+     "spec/named_scope_spec.rb",
+     "spec/new_record_spec.rb",
      "spec/parent_proxy_spec.rb",
      "spec/query_spec.rb",
      "spec/spec.opts",
@@ -97,6 +107,9 @@ Gem::Specification.new do |s|
      "spec/cursor_spec.rb",
      "spec/document_ext.rb",
      "spec/document_spec.rb",
+     "spec/hash_matchers.rb",
+     "spec/named_scope_spec.rb",
+     "spec/new_record_spec.rb",
      "spec/parent_proxy_spec.rb",
      "spec/query_spec.rb",
      "spec/spec_helper.rb"
@@ -107,24 +120,24 @@ Gem::Specification.new do |s|
     s.specification_version = 3
 
     if Gem::Version.new(Gem::RubyGemsVersion) >= Gem::Version.new('1.2.0') then
-      s.add_runtime_dependency(%q<mongo>, ["= 0.18.1"])
-      s.add_runtime_dependency(%q<mongo_ext>, ["= 0.18.1"])
-      s.add_runtime_dependency(%q<durran-validatable>, ["= 1.8.3"])
+      s.add_runtime_dependency(%q<mongo>, ["= 0.18.2"])
+      s.add_runtime_dependency(%q<mongo_ext>, ["= 0.18.2"])
+      s.add_runtime_dependency(%q<durran-validatable>, ["= 1.8.4"])
       s.add_runtime_dependency(%q<leshill-will_paginate>, ["= 2.3.11"])
       s.add_development_dependency(%q<rspec>, ["= 1.2.9"])
       s.add_development_dependency(%q<cucumber>, ["= 0.4.4"])
     else
-      s.add_dependency(%q<mongo>, ["= 0.18.1"])
-      s.add_dependency(%q<mongo_ext>, ["= 0.18.1"])
-      s.add_dependency(%q<durran-validatable>, ["= 1.8.3"])
+      s.add_dependency(%q<mongo>, ["= 0.18.2"])
+      s.add_dependency(%q<mongo_ext>, ["= 0.18.2"])
+      s.add_dependency(%q<durran-validatable>, ["= 1.8.4"])
       s.add_dependency(%q<leshill-will_paginate>, ["= 2.3.11"])
       s.add_dependency(%q<rspec>, ["= 1.2.9"])
       s.add_dependency(%q<cucumber>, ["= 0.4.4"])
     end
   else
-    s.add_dependency(%q<mongo>, ["= 0.18.1"])
-    s.add_dependency(%q<mongo_ext>, ["= 0.18.1"])
-    s.add_dependency(%q<durran-validatable>, ["= 1.8.3"])
+    s.add_dependency(%q<mongo>, ["= 0.18.2"])
+    s.add_dependency(%q<mongo_ext>, ["= 0.18.2"])
+    s.add_dependency(%q<durran-validatable>, ["= 1.8.4"])
     s.add_dependency(%q<leshill-will_paginate>, ["= 2.3.11"])
     s.add_dependency(%q<rspec>, ["= 1.2.9"])
     s.add_dependency(%q<cucumber>, ["= 0.4.4"])

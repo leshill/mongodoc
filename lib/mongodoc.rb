@@ -1,8 +1,8 @@
 require 'rubygems'
 
-gem 'mongo', '0.18.1'
-gem 'mongo_ext', '0.18.1'
-gem 'durran-validatable', '1.8.3'
+gem 'mongo', '0.18.2'
+gem 'mongo_ext', '0.18.2'
+gem 'durran-validatable', '1.8.4'
 gem 'leshill-will_paginate', '2.3.11'
 
 require 'mongo'

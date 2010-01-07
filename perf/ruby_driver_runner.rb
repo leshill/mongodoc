@@ -11,7 +11,7 @@ class RubyDriverRunner
     puts "Starting benchmark..."
 
     10.times do |n|
-      person = {:birth_date => Date.new(1970, 1, 1), :phones => []}
+      person = {:birth_date => Date.new(1970, 1, 1).to_bson, :phones => []}
       name = {:given => "James", :family => "Kirk", :middle => "Tiberius"}
       address = {:street => "1 Starfleet Command Way", :city => "San Francisco", :state => "CA", :post_code => "94133", :type => "Work"}
       phone = {:country_code => 1, :number => "415-555-1212", :type => "Mobile"}
@@ -24,7 +24,7 @@ class RubyDriverRunner
     Benchmark.bm do |bm|
       bm.report('Driver') do
         10000.times do |n|
-          person = {:birth_date => Date.new(1970, 1, 1), :phones => []}
+          person = {:birth_date => Date.new(1970, 1, 1).to_bson, :phones => []}
           name = {:given => "James", :family => "Kirk", :middle => "Tiberius"}
           address = {:street => "1 Starfleet Command Way", :city => "San Francisco", :state => "CA", :post_code => "94133", :type => "Work"}
           phone = {:country_code => 1, :number => "415-555-1212", :type => "Mobile"}
