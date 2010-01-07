@@ -58,7 +58,7 @@ describe "MongoDoc::Document _id and #new_record?" do
           @collection.stub(:insert).and_raise(Mongo::OperationFailure)
           expect do
             Parent.create!(:data => 'data', :child => @child)
-          end.should raise_error Mongo::OperationFailure
+          end.should raise_error(Mongo::OperationFailure)
           @child.should be_new_record
         end
       end
@@ -104,7 +104,7 @@ describe "MongoDoc::Document _id and #new_record?" do
           parent = Parent.new(:data => 'data', :child => @child)
           expect do
             parent.save!
-          end.should raise_error Mongo::OperationFailure
+          end.should raise_error(Mongo::OperationFailure)
           @child.should be_new_record
         end
       end
@@ -153,7 +153,7 @@ describe "MongoDoc::Document _id and #new_record?" do
           @collection.stub(:insert).and_raise(Mongo::OperationFailure)
           expect do
             Parent.create!(:data => 'data', :children => [@child])
-          end.should raise_error Mongo::OperationFailure
+          end.should raise_error(Mongo::OperationFailure)
           @child.should be_new_record
         end
       end
@@ -204,7 +204,7 @@ describe "MongoDoc::Document _id and #new_record?" do
           parent.children << @child
           expect do
             parent.save!
-          end.should raise_error Mongo::OperationFailure
+          end.should raise_error(Mongo::OperationFailure)
           @child.should be_new_record
         end
       end
