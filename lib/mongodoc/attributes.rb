@@ -81,10 +81,12 @@ module MongoDoc
 
         validates_associated name
 
-        define_method("#{name}=") do |array|
+        define_method("#{name}=") do |arrayish|
           proxy = send("#{name}")
           proxy.clear
-          proxy << array
+          Array.wrap(arrayish).each do|item|
+            proxy << item
+          end
         end
       end
     end

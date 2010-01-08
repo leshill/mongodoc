@@ -39,16 +39,14 @@ module MongoDoc
     end
 
     alias_method :append, :<<
-    def <<(items)
-      items = [items] unless items.kind_of?(Array)
-      items.each do |item|
-        item = collection_class.new(item) if Hash === item
-        raise NotADocumentError unless collection_class === item
-        append item
+    def <<(item)
+      item = build(item) if Hash === item
+      if Document === item
         item._parent = self
         item._root = _root
         _root.send(:register_save_observer, item)
       end
+      append item
       self
     end
     alias_method :push, :<<
@@ -63,6 +61,10 @@ module MongoDoc
 
     def path_to_root(attrs)
       _parent.path_to_root(attrs)
+    end
+
+    def build(attrs)
+      collection_class.new(attrs)
     end
 
     protected
