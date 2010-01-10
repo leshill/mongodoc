@@ -48,20 +48,6 @@ describe "MongoDoc::Document" do
     end
   end
 
-  context ".criteria" do
-    class CriteriaTest < MongoDoc::Document
-      key :data
-    end
-
-    it "creates a new criteria for the document" do
-      CriteriaTest.criteria.should be_a_kind_of(MongoDoc::Criteria)
-    end
-
-    it "sets the criteria klass" do
-      CriteriaTest.criteria.klass.should == CriteriaTest
-    end
-  end
-
   context "saving" do
     class SaveRoot < MongoDoc::Document
       has_many :save_children
@@ -657,21 +643,6 @@ describe "MongoDoc::Document" do
     class ClassMethods < MongoDoc::Document
     end
 
-    it ".all calls collection find with no args" do
-      cursor = stub('cursor')
-      collection = stub('collection')
-      ClassMethods.stub(:collection).and_return(collection)
-      collection.should_receive(:find).with().and_return(cursor)
-      ClassMethods.all
-    end
-
-    it ".count calls the collection count" do
-      collection = stub('collection')
-      ClassMethods.stub(:collection).and_return(collection)
-      collection.should_receive(:count).and_return(1)
-      ClassMethods.count
-    end
-
     it ".collection_name returns the name of the collection for this class" do
       ClassMethods.collection_name.should == ClassMethods.to_s.tableize.gsub('/', '.')
     end
@@ -681,13 +652,6 @@ describe "MongoDoc::Document" do
       db.should_receive(:collection).with(ClassMethods.to_s.tableize.gsub('/', '.'))
       MongoDoc.should_receive(:database).and_return(db)
       MongoDoc::Collection.should === ClassMethods.collection
-    end
-
-    it ".find creates a criteria" do
-      criteria = stub('criteria')
-      conditions = {:where => 'this.a > 3', :limit => 10}
-      MongoDoc::Criteria.should_receive(:translate).with(ClassMethods, conditions).and_return(criteria)
-      ClassMethods.find(conditions)
     end
   end
 end

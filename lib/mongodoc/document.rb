@@ -2,6 +2,7 @@ require 'mongodoc/bson'
 require 'mongodoc/query'
 require 'mongodoc/attributes'
 require 'mongodoc/criteria'
+require 'mongodoc/finders'
 require 'mongodoc/named_scope'
 
 module MongoDoc
@@ -10,6 +11,7 @@ module MongoDoc
 
   class Document
     extend Attributes
+    extend Finders
     extend NamedScope
     include Validatable
 
@@ -70,10 +72,6 @@ module MongoDoc
     end
 
     class << self
-      def all
-        collection.find
-      end
-
       def bson_create(bson_hash, options = {})
         new.tap do |obj|
           bson_hash.each do |name, value|
@@ -90,10 +88,6 @@ module MongoDoc
         self.to_s.tableize.gsub('/', '.')
       end
 
-      def count
-        collection.count
-      end
-
       def create(attrs = {})
         instance = new(attrs)
         _create(instance, false) if instance.valid?
@@ -107,17 +101,6 @@ module MongoDoc
         instance
       end
 
-      def criteria
-        Criteria.new(self)
-      end
-
-      def find(conditions_or_id)
-        Criteria.translate(self, conditions_or_id)
-      end
-
-      def find_one(id)
-        MongoDoc::BSON.decode(collection.find_one(id))
-      end
     end
 
     protected

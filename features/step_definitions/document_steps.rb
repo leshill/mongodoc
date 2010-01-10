@@ -69,7 +69,7 @@ end
 When /^I query (.*) with find (.*)$/ do |doc, criteria_text|
   klass = doc.singularize.camelize.constantize
   criteria = eval(criteria_text)
-  @last_return = klass.find(criteria).all
+  @last_return = klass.find(:all, criteria)
 end
 
 Then /^'(.*)' is not a new record$/ do |name|
