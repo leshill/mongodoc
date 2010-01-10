@@ -1,21 +1,18 @@
-def query=(query)
-  @query = query
+def scope_query=(scope)
+  @query = scope
 end
 
 When /^I query (.*) with scope '(.*)'$/ do |doc, scope|
-  klass = doc.singularize.camelize.constantize
-  self.query = klass.send(scope)
+  self.scope_query = klass(doc).send(scope)
 end
 
 When /^I query (.*) with scopes '(.*)'$/ do |doc, scopes|
-  klass = doc.singularize.camelize.constantize
-  self.query = scopes.split(',').inject(klass) do |result, scope|
+  self.scope_query = scopes.split(',').inject(klass(doc)) do |result, scope|
     result.send(scope.strip)
   end
 end
 
 When /^I query (.*) with lambda scope '(.*)' with parameters '(.*)'$/ do |doc, scope, params_text|
-  klass = doc.singularize.camelize.constantize
   params = params_text.split(',').map(&:strip)
-  self.query = klass.send(scope, *params)
+  self.scope_query = klass(doc).send(scope, *params)
 end

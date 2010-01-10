@@ -116,7 +116,7 @@ Feature: MongoDoc::Base
     Then the query result has 3 documents
 
   Scenario: Selecting a contact with the id operator
-    When I query contacts with 'hashrocket' id
+    When I query contacts with the 'hashrocket' id
     Then the query result has 1 documents
     And the first query result is equal to the document 'hashrocket'
 
@@ -145,5 +145,5 @@ Feature: MongoDoc::Base
     Then the size of the query result is 2
 
   Scenario: All
-    When I query contacts with all
+    When I query contacts with 'all'
     Then the size of the query result is 3
