@@ -22,7 +22,11 @@ Then /^the aggregate query result with "(.*)" == "(.*)" has a count of (.*)$/ do
 end
 
 Then /^the query result has (.*) documents*$/ do |count|
-  query.count.should == count.to_i
+  if query.respond_to?(:size)
+    query.size.should == count.to_i
+  else
+    query.count.should == count.to_i
+  end
 end
 
 Then /^the size of the query result is (.*)$/ do |count|
@@ -33,5 +37,15 @@ Then /^the group query result with "([^\"]*)" == "([^\"]*)" has the document '(.
   object = instance_variable_get("@#{name}")
   result = query.group
   result.find {|r| r.has_key?(key) and r[key] == value }['group'].should include(object)
+end
+
+Then /^the query result is the document '(.*)'$/ do |name|
+  object = instance_variable_get("@#{name}")
+  if query.kind_of?(Array)
+    query.size.should == 1
+    query.first.should == object
+  else
+    query.should == object
+  end
 end
 
