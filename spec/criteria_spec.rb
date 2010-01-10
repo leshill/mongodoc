@@ -83,7 +83,7 @@ describe MongoDoc::Criteria do
       @criteria.selector.should == { :title => { "$all" => ["title1", "title2"] } }
     end
 
-    it "and_return self" do
+    it "returns self" do
       @criteria.every(:title => [ "title1" ]).should == @criteria
     end
 
@@ -247,7 +247,7 @@ describe MongoDoc::Criteria do
       @criteria.selector.should == { :title => { "$ne" => "Bad Title"}, :text => { "$ne" => "Bad Text" } }
     end
 
-    it "and_return self" do
+    it "returns self" do
       @criteria.excludes(:title => "Bad").should == @criteria
     end
 
@@ -293,7 +293,7 @@ describe MongoDoc::Criteria do
       @criteria.options.should == { :skip => 10 }
     end
 
-    it "and_return self" do
+    it "returns self" do
       @criteria.extras({}).should == @criteria
     end
 
@@ -333,7 +333,7 @@ describe MongoDoc::Criteria do
       @criteria.selector.should == { :_id => id }
     end
 
-    it "and_return self" do
+    it "returns self" do
       id = Mongo::ObjectID.new
       @criteria.id(id).should == @criteria
     end
@@ -347,7 +347,7 @@ describe MongoDoc::Criteria do
       @criteria.selector.should == { :title => { "$in" => ["title1", "title2"] }, :text => { "$in" => ["test"] } }
     end
 
-    it "and_return self" do
+    it "returns self" do
       @criteria.in(:title => ["title1"]).should == @criteria
     end
 
@@ -378,7 +378,7 @@ describe MongoDoc::Criteria do
         @collection.should_receive(:find_one).with(@criteria.selector, { :sort => [[:_id, :desc]] }).and_return(nil)
       end
 
-      it "and_return nil" do
+      it "returns nil" do
         @criteria.last.should be_nil
       end
 
@@ -420,7 +420,7 @@ describe MongoDoc::Criteria do
 
     end
 
-    it "and_return self" do
+    it "returns self" do
       @criteria.limit.should == @criteria
     end
 
@@ -433,7 +433,7 @@ describe MongoDoc::Criteria do
       @criteria.selector.should == { :title => { "$nin" => ["title1", "title2"] }, :text => { "$nin" => ["test"] } }
     end
 
-    it "and_return self" do
+    it "returns self" do
       @criteria.not_in(:title => ["title1"]).should == @criteria
     end
 
@@ -447,7 +447,7 @@ describe MongoDoc::Criteria do
         @criteria.extras({ :per_page => 20, :page => 3 })
       end
 
-      it "and_return the per_page option" do
+      it "returns the per_page option" do
         @criteria.offset.should == 40
       end
 
@@ -459,7 +459,7 @@ describe MongoDoc::Criteria do
         @criteria.extras({ :skip => 20 })
       end
 
-      it "and_return the skip option" do
+      it "returns the skip option" do
         @criteria.offset.should == 20
       end
 
@@ -473,7 +473,7 @@ describe MongoDoc::Criteria do
           @criteria.extras({ :page => 2 })
         end
 
-        it "adds the skip option to the options and and_return it" do
+        it "adds the skip option to the options and returns it" do
           @criteria.offset.should == 20
           @criteria.options[:skip].should == 20
         end
@@ -482,7 +482,7 @@ describe MongoDoc::Criteria do
 
       context "when page option does not exist" do
 
-        it "and_return nil" do
+        it "returns nil" do
           @criteria.offset.should be_nil
           @criteria.options[:skip].should be_nil
         end
@@ -536,7 +536,7 @@ describe MongoDoc::Criteria do
 
     end
 
-    it "and_return self" do
+    it "returns self" do
       @criteria.order_by.should == @criteria
     end
 
@@ -550,7 +550,7 @@ describe MongoDoc::Criteria do
         @criteria.extras({ :page => 5 })
       end
 
-      it "and_return the page option" do
+      it "returns the page option" do
         @criteria.page.should == 5
       end
 
@@ -592,7 +592,7 @@ describe MongoDoc::Criteria do
         @criteria.extras({ :per_page => 10 })
       end
 
-      it "and_return the per_page option" do
+      it "returns the per_page option" do
         @criteria.per_page.should == 10
       end
 
@@ -617,7 +617,7 @@ describe MongoDoc::Criteria do
         @criteria.options.should == { :fields => [ :title, :text ] }
       end
 
-      it "and_return self" do
+      it "returns self" do
         @criteria.only.should == @criteria
       end
 
@@ -654,7 +654,7 @@ describe MongoDoc::Criteria do
 
     end
 
-    it "and_return self" do
+    it "returns self" do
       @criteria.skip.should == @criteria
     end
 
@@ -687,11 +687,11 @@ describe MongoDoc::Criteria do
           @criteria = MongoDoc::Criteria.translate(Person, :conditions => { :title => "Test" })
         end
 
-        it "and_return a criteria with a selector from the conditions" do
+        it "returns a criteria with a selector from the conditions" do
           @criteria.selector.should == { :title => "Test" }
         end
 
-        it "and_return a criteria with klass Person" do
+        it "returns a criteria with klass Person" do
           @criteria.klass.should == Person
         end
 
@@ -703,11 +703,11 @@ describe MongoDoc::Criteria do
           @criteria = MongoDoc::Criteria.translate(Person, :conditions => { :title => "Test" })
         end
 
-        it "and_return a criteria with a selector from the conditions" do
+        it "returns a criteria with a selector from the conditions" do
           @criteria.selector.should == { :title => "Test" }
         end
 
-        it "and_return a criteria with klass Person" do
+        it "returns a criteria with klass Person" do
           @criteria.klass.should == Person
         end
 
@@ -719,11 +719,11 @@ describe MongoDoc::Criteria do
           @criteria = MongoDoc::Criteria.translate(Person, :conditions => { :title => "Test" })
         end
 
-        it "and_return a criteria with a selector from the conditions" do
+        it "returns a criteria with a selector from the conditions" do
           @criteria.selector.should == { :title => "Test" }
         end
 
-        it "and_return a criteria with klass Person" do
+        it "returns a criteria with klass Person" do
           @criteria.klass.should == Person
         end
       end
