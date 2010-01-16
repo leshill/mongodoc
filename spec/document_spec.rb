@@ -5,6 +5,8 @@ describe "MongoDoc::Document" do
   context "satisfies form_for requirements" do
     class FormForTest
       include MongoDoc::Document
+
+      key :data
     end
 
     before do
@@ -28,6 +30,26 @@ describe "MongoDoc::Document" do
 
       it "is false when the object has an id" do
         @doc.should_not be_new_record
+      end
+    end
+
+    context "attributes" do
+      it "has an initialize method that takes a hash" do
+        data = 'data'
+        FormForTest.new(:data => data).data.should == data
+      end
+
+      it "can set attributes from a hash" do
+        test = FormForTest.new
+        data = 'data'
+        test.attributes = {:data => data}
+        test.data.should == data
+      end
+
+      it "returns all its attributes" do
+        data = 'data'
+        test = FormForTest.new(:data => data)
+        test.attributes.should == {:data => data}
       end
     end
   end

@@ -33,6 +33,13 @@ module MongoDoc
       self.class._attributes.all? {|var| self.send(var) == other.send(var)}
     end
 
+    def attributes
+      self.class._attributes.inject({}) do |hash, attr|
+        hash[attr] = send(attr)
+        hash
+      end
+    end
+
     def attributes=(attrs)
       attrs.each do |key, value|
         send("#{key}=", value)
