@@ -3,7 +3,8 @@ require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 describe "MongoDoc::Document" do
 
   context "satisfies form_for requirements" do
-    class FormForTest < MongoDoc::Document
+    class FormForTest
+      include MongoDoc::Document
     end
 
     before do
@@ -32,13 +33,15 @@ describe "MongoDoc::Document" do
   end
 
   context "validations" do
-    class SimpleValidationTest < MongoDoc::Document
+    class SimpleValidationTest
+      include MongoDoc::Document
+
       key :data
       validates_presence_of :data
     end
 
-    it "are part of Base" do
-      Validatable.should === MongoDoc::Document.new
+    it "are included by MongoDoc::Document" do
+      Validatable.should === SimpleValidationTest.new
     end
 
     it "valid? fails when a document is invalid" do
@@ -49,11 +52,15 @@ describe "MongoDoc::Document" do
   end
 
   context "saving" do
-    class SaveRoot < MongoDoc::Document
+    class SaveRoot
+      include MongoDoc::Document
+
       has_many :save_children
     end
 
-    class SaveChild < MongoDoc::Document
+    class SaveChild
+      include MongoDoc::Document
+
       key :data
     end
 
@@ -152,7 +159,8 @@ describe "MongoDoc::Document" do
   end
 
   context "#_save" do
-    class SaveTest < MongoDoc::Document
+    class SaveTest
+      include MongoDoc::Document
     end
 
     before do
@@ -182,7 +190,9 @@ describe "MongoDoc::Document" do
   end
 
   context "creating" do
-    class CreateTest < MongoDoc::Document
+    class CreateTest
+      include MongoDoc::Document
+
       key :data
       validates_presence_of :data
     end
@@ -254,7 +264,8 @@ describe "MongoDoc::Document" do
   end
 
   context "#_create" do
-    class CreateTest < MongoDoc::Document
+    class CreateTest
+      include MongoDoc::Document
     end
 
     before do
@@ -285,11 +296,15 @@ describe "MongoDoc::Document" do
   end
 
   context "updating attributes" do
-    class UpdateAttributesRoot < MongoDoc::Document
+    class UpdateAttributesRoot
+      include MongoDoc::Document
+
       has_one :update_attribute_child
     end
 
-    class UpdateAttributesChild < MongoDoc::Document
+    class UpdateAttributesChild
+      include MongoDoc::Document
+
       key :data
     end
 
@@ -376,7 +391,8 @@ describe "MongoDoc::Document" do
   end
 
   context "#_propose_update_attributes" do
-    class ProposeUpdateAttributes < MongoDoc::Document
+    class ProposeUpdateAttributes
+      include MongoDoc::Document
     end
 
     before do
@@ -422,7 +438,8 @@ describe "MongoDoc::Document" do
   end
 
   context "#_update_attributes" do
-    class UpdateAttributes < MongoDoc::Document
+    class UpdateAttributes
+      include MongoDoc::Document
     end
 
     before do
@@ -455,15 +472,21 @@ describe "MongoDoc::Document" do
   end
 
   context "from a nested document" do
-    class NestedDocsRoot < MongoDoc::Document
+    class NestedDocsRoot
+      include MongoDoc::Document
+
       has_many :nested_children
     end
 
-    class NestedChild < MongoDoc::Document
+    class NestedChild
+      include MongoDoc::Document
+
       has_one :leaf
     end
 
-    class LeafDoc < MongoDoc::Document
+    class LeafDoc
+      include MongoDoc::Document
+
       key :data
     end
 
@@ -529,11 +552,15 @@ describe "MongoDoc::Document" do
   end
 
   describe "bson" do
-    class BSONTest < MongoDoc::Document
+    class BSONTest
+      include MongoDoc::Document
+
       key :other
     end
 
     class BSONDerived < BSONTest
+      include MongoDoc::Document
+
       key :derived
     end
 
@@ -580,11 +607,15 @@ describe "MongoDoc::Document" do
 
     context "associations" do
       context "has_one" do
-        class TestHasOneBsonDoc < MongoDoc::Document
+        class TestHasOneBsonDoc
+          include MongoDoc::Document
+
           has_one :subdoc
         end
 
-        class SubHasOneBsonDoc < MongoDoc::Document
+        class SubHasOneBsonDoc
+          include MongoDoc::Document
+
           key :attr
         end
 
@@ -607,11 +638,14 @@ describe "MongoDoc::Document" do
 
       context "has_many" do
 
-        class SubHasManyBsonDoc < MongoDoc::Document
+        class SubHasManyBsonDoc
+          include MongoDoc::Document
+
           key :attr
         end
 
-        class TestHasManyBsonDoc < MongoDoc::Document
+        class TestHasManyBsonDoc
+          include MongoDoc::Document
           has_many :subdoc, :class_name => 'SubHasManyBsonDoc'
         end
 
@@ -640,7 +674,8 @@ describe "MongoDoc::Document" do
   end
 
   context "misc class methods" do
-    class ClassMethods < MongoDoc::Document
+    class ClassMethods
+      include MongoDoc::Document
     end
 
     it ".collection_name returns the name of the collection for this class" do

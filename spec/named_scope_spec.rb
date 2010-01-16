@@ -8,7 +8,9 @@ describe MongoDoc::NamedScope do
     end
   end
 
-  class NamedScopeTest < MongoDoc::Document
+  class NamedScopeTest
+    include MongoDoc::Document
+
     key :active
     key :count
 

@@ -2,7 +2,8 @@ require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
 describe "MongoDoc::Attributes" do
   context ".key" do
-    class TestKeys < MongoDoc::Document
+    class TestKeys
+      include MongoDoc::Document
     end
 
     it "adds its arguments to _keys" do
@@ -28,7 +29,9 @@ describe "MongoDoc::Attributes" do
     end
 
     describe "used with inheritance" do
-      class TestParent < MongoDoc::Document
+      class TestParent
+        include MongoDoc::Document
+
         key :parent_attr
       end
 
@@ -51,11 +54,15 @@ describe "MongoDoc::Attributes" do
   end
 
   context ".has_one" do
-    class TestDoc < MongoDoc::Document
+    class TestDoc
+      include MongoDoc::Document
+
       has_one :subdoc
     end
 
-    class SubDoc < MongoDoc::Document
+    class SubDoc
+      include MongoDoc::Document
+
       key :data
     end
 
@@ -81,7 +88,9 @@ describe "MongoDoc::Attributes" do
       subdoc._root.should == doc
     end
 
-    class HasOneValidationTest < MongoDoc::Document
+    class HasOneValidationTest
+      include MongoDoc::Document
+
       key :data
       validates_presence_of :data
     end
@@ -94,7 +103,9 @@ describe "MongoDoc::Attributes" do
   end
 
   context "._attributes" do
-    class TestHasOneDoc < MongoDoc::Document
+    class TestHasOneDoc
+      include MongoDoc::Document
+
       key :key
       has_one :has_one
     end
@@ -106,15 +117,21 @@ describe "MongoDoc::Attributes" do
 
   context ".has_many" do
 
-    class SubHasManyDoc < MongoDoc::Document
+    class SubHasManyDoc
+      include MongoDoc::Document
+
       key :data
     end
 
-    class TestHasManyDoc < MongoDoc::Document
+    class TestHasManyDoc
+      include MongoDoc::Document
+
       has_many :sub_docs, :class_name => 'SubHasManyDoc'
     end
 
-    class TestImplicitHasManyDoc < MongoDoc::Document
+    class TestImplicitHasManyDoc
+      include MongoDoc::Document
+
       has_many :sub_has_many_docs
     end
 
@@ -139,12 +156,16 @@ describe "MongoDoc::Attributes" do
       doc = TestImplicitHasManyDoc.new(:sub_has_many_docs => [subdoc])
     end
 
-    class HasManyValidationChild < MongoDoc::Document
+    class HasManyValidationChild
+      include MongoDoc::Document
+
       key :data
       validates_presence_of :data
     end
 
-    class HasManyValidationTest < MongoDoc::Document
+    class HasManyValidationTest
+      include MongoDoc::Document
+
       has_many :subdocs, :class_name => 'HasManyValidationChild'
     end
 

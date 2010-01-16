@@ -1,17 +1,23 @@
-class Address < MongoDoc::Document
+class Address
+  include MongoDoc::Document
+
   key :street
   key :city
   key :state
   key :zip_code
 end
 
-class Place < MongoDoc::Document
+class Place
+  include MongoDoc::Document
+
   key :name
   key :type
   has_one :address
 end
 
-class Contact < MongoDoc::Document
+class Contact
+  include MongoDoc::Document
+
   key :name
   key :type
   key :interests

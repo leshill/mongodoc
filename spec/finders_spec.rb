@@ -1,7 +1,9 @@
 require File.expand_path(File.join(File.dirname(__FILE__), "spec_helper.rb"))
 
 describe MongoDoc::Finders do
-  class FindersTest < MongoDoc::Document
+  class FindersTest
+    include MongoDoc::Document
+
     key :data
   end
 

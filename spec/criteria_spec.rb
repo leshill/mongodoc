@@ -1,32 +1,44 @@
 require File.expand_path(File.join(File.dirname(__FILE__), "spec_helper.rb"))
 
 describe MongoDoc::Criteria do
-  class CountryCode < MongoDoc::Document
+  class CountryCode
+    include MongoDoc::Document
+
     key :code
   end
 
-  class Phone < MongoDoc::Document
+  class Phone
+    include MongoDoc::Document
+
     key :number
     has_one :country_code
   end
 
-  class Animal < MongoDoc::Document
+  class Animal
+    include MongoDoc::Document
+
     key :name
   end
 
-  class Address < MongoDoc::Document
+  class Address
+    include MongoDoc::Document
+
     key :street
     key :city
     key :state
     key :post_code
   end
 
-  class Name < MongoDoc::Document
+  class Name
+    include MongoDoc::Document
+
     key :first_name
     key :last_name
   end
 
-  class Person < MongoDoc::Document
+  class Person
+    include MongoDoc::Document
+
     key :title
     key :terms
     key :age

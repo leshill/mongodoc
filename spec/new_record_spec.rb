@@ -1,10 +1,13 @@
 require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
 describe "MongoDoc::Document _id and #new_record?" do
-  class Child < MongoDoc::Document
+  class Child
+    include MongoDoc::Document
   end
 
-  class Parent < MongoDoc::Document
+  class Parent
+    include MongoDoc::Document
+
     has_one :child
     has_many :children
 

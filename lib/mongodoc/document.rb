@@ -9,15 +9,21 @@ module MongoDoc
   class DocumentInvalidError < RuntimeError; end
   class NotADocumentError < RuntimeError; end
 
-  class Document
-    extend Attributes
-    extend Finders
-    extend NamedScope
-    include Validatable
+  module Document
 
-    attr_accessor :_id
-    alias :id :_id
-    alias :to_param :_id
+    def self.included(klass)
+      klass.class_eval do
+        extend ClassMethods
+        extend Attributes
+        extend Finders
+        extend NamedScope
+        include Validatable
+
+        attr_accessor :_id
+        alias :id :_id
+        alias :to_param :_id
+      end
+    end
 
     def initialize(attrs = {})
       self.attributes = attrs
@@ -71,7 +77,7 @@ module MongoDoc
       _propose_update_attributes(self, path_to_root(attrs), true)
     end
 
-    class << self
+    module ClassMethods
       def bson_create(bson_hash, options = {})
         new.tap do |obj|
           bson_hash.each do |name, value|
@@ -101,6 +107,17 @@ module MongoDoc
         instance
       end
 
+      protected
+
+      def _create(instance, safe)
+        instance.send(:notify_before_save_observers)
+        instance._id = collection.insert(instance, :safe => safe)
+        instance.send(:notify_save_success_observers)
+        instance._id
+      rescue Mongo::MongoDBError => e
+        instance.send(:notify_save_failed_observers)
+        raise e
+      end
     end
 
     protected
@@ -126,18 +143,6 @@ module MongoDoc
 
     def _update_attributes(attrs,  safe)
       _collection.update({'_id' => self._id}, MongoDoc::Query.set_modifier(attrs), :safe => safe)
-    end
-
-    class << self
-      def _create(instance, safe)
-        instance.send(:notify_before_save_observers)
-        instance._id = collection.insert(instance, :safe => safe)
-        instance.send(:notify_save_success_observers)
-        instance._id
-      rescue Mongo::MongoDBError => e
-        instance.send(:notify_save_failed_observers)
-        raise e
-      end
     end
 
     def before_save_callback(root)

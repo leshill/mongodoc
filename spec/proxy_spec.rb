@@ -1,7 +1,9 @@
 require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
 describe MongoDoc::Proxy do
-  class ProxyTest < MongoDoc::Document
+  class ProxyTest
+    include MongoDoc::Document
+
     key :name
   end
 
