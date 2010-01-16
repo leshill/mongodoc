@@ -38,10 +38,30 @@ describe MongoDoc::Finders do
   end
 
   context ".find_one" do
-    it "calls find with :first" do
-      conditions = {:where => 'this.a > 3'}
-      FindersTest.should_receive(:find).with(:first, conditions)
-      FindersTest.find_one(conditions)
+    context "with an id" do
+      it "calls translate with the id" do
+        id = 'an id'
+        MongoDoc::Criteria.should_receive(:translate).with(FindersTest, id)
+        FindersTest.find_one(id)
+      end
+    end
+
+    context "with conditions" do
+      before do
+        @criteria = stub('criteria').as_null_object
+        @conditions = {:where => 'this.a > 3'}
+      end
+
+      it "calls translate with the conditions" do
+        MongoDoc::Criteria.should_receive(:translate).with(FindersTest, @conditions).and_return(@criteria)
+        FindersTest.find_one(@conditions)
+      end
+
+      it "call :one on the result" do
+        MongoDoc::Criteria.stub(:translate).and_return(@criteria)
+        @criteria.should_receive(:one)
+        FindersTest.find_one(@conditions)
+      end
     end
   end
 

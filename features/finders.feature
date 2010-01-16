@@ -66,3 +66,7 @@ Feature: Finders
   Scenario: Last
     When I query contacts with last
     Then the query result is the document 'contractor'
+
+  Scenario: Find One
+    When I query contacts to find_one with the id of the 'contractor' document
+    Then the query result is the document 'contractor'

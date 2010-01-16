@@ -19,7 +19,11 @@ module MongoDoc
     end
 
     def find_one(conditions_or_id)
-      find(:first, conditions_or_id)
+      if Hash === conditions_or_id
+        Criteria.translate(self, conditions_or_id).one
+      else
+        Criteria.translate(self, conditions_or_id)
+      end
     end
   end
 end
