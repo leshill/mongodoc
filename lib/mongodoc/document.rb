@@ -13,13 +13,12 @@ module MongoDoc
 
     def self.included(klass)
       klass.class_eval do
+        include Attributes
         extend ClassMethods
-        extend Attributes
         extend Finders
         extend NamedScope
         include Validatable
 
-        attr_accessor :_id
         alias :id :_id
         alias :to_param :_id
       end

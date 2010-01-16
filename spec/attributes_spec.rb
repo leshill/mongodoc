@@ -1,6 +1,15 @@
 require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
 describe "MongoDoc::Attributes" do
+  class AttributesTest
+    include MongoDoc::Attributes
+  end
+
+  it "defines _id attribute" do
+    AttributesTest.new.should respond_to(:_id)
+    AttributesTest.new.should respond_to(:_id=)
+  end
+
   context ".key" do
     class TestKeys
       include MongoDoc::Document
