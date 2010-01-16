@@ -680,12 +680,12 @@ describe MongoDoc::Criteria do
         @id = Mongo::ObjectID.new.to_s
         @document = stub
         @criteria = mock
-        MongoDoc::Criteria.should_receive(:new).and_return(@criteria)
-        @criteria.should_receive(:id).with(@id).and_return(@criteria)
-        @criteria.should_receive(:one).and_return(@document)
       end
 
       it "creates a criteria for a string" do
+        MongoDoc::Criteria.should_receive(:new).and_return(@criteria)
+        @criteria.should_receive(:id).with(@id).and_return(@criteria)
+        @criteria.should_receive(:one).and_return(@document)
         MongoDoc::Criteria.translate(Person, @id)
       end
 
