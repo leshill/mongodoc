@@ -161,7 +161,7 @@ module MongoDoc #:nodoc:
     #
     # Example:
     #
-    # <tt>criteria.translate(:where => { :field => "value"}, :limit => 20)</tt>
+    # <tt>criteria.criteria(:where => { :field => "value"}, :limit => 20)</tt>
     #
     # Returns <tt>self</tt>
     def criteria(criteria_conditions = {})
