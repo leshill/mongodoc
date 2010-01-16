@@ -73,14 +73,14 @@ module MongoDoc
 
     def update_attributes(attrs)
       self.attributes = attrs
-      return _propose_update_attributes(self, path_to_root(attrs), false) if valid?
+      return _propose_update_attributes(self, _path_to_root(attrs), false) if valid?
       false
     end
 
     def update_attributes!(attrs)
       self.attributes = attrs
       raise DocumentInvalidError unless valid?
-      _propose_update_attributes(self, path_to_root(attrs), true)
+      _propose_update_attributes(self, _path_to_root(attrs), true)
     end
 
     module ClassMethods

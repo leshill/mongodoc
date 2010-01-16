@@ -2,7 +2,7 @@ require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
 describe "MongoDoc::ParentProxy" do
   class Parent
-    def path_to_root(attrs)
+    def _path_to_root(attrs)
       attrs
     end
   end
@@ -36,7 +36,7 @@ describe "MongoDoc::ParentProxy" do
     end.should raise_error
   end
 
-  it "inserts the association name the path_to_root" do
-    subject.path_to_root({:name1 => 'value1', :name2 => 'value2'}).should == {"#{@assoc_name}.name1" => 'value1', "#{@assoc_name}.name2" => "value2"}
+  it "inserts the association name the _path_to_root" do
+    subject._path_to_root({:name1 => 'value1', :name2 => 'value2'}).should == {"#{@assoc_name}.name1" => 'value1', "#{@assoc_name}.name2" => "value2"}
   end
 end

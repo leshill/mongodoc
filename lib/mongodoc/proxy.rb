@@ -59,8 +59,8 @@ module MongoDoc
     end
     alias kind_of? is_a?
 
-    def path_to_root(attrs)
-      _parent.path_to_root(attrs)
+    def _path_to_root(attrs)
+      _parent._path_to_root(attrs)
     end
 
     def build(attrs)

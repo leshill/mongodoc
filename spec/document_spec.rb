@@ -346,7 +346,7 @@ describe "MongoDoc::Document" do
       end
 
       it "normalizes the attributes to the parent" do
-        @doc.should_receive(:path_to_root)
+        @doc.should_receive(:_path_to_root)
         @doc.update_attributes(@attrs)
       end
 
@@ -381,7 +381,7 @@ describe "MongoDoc::Document" do
       end
 
       it "normalizes the attributes to the parent" do
-        @doc.should_receive(:path_to_root)
+        @doc.should_receive(:_path_to_root)
         @doc.update_attributes!(@attrs)
       end
 
