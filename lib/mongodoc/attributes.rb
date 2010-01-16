@@ -4,12 +4,12 @@ require 'mongodoc/parent_proxy'
 module MongoDoc
   module Attributes
     def self.extended(klass)
-      klass.class_inheritable_array :_keys
-      klass._keys = []
-      klass.class_inheritable_array :_associations
-      klass._associations = []
+      klass.class_eval do
+        class_inheritable_array :_keys
+        self._keys = []
+        class_inheritable_array :_associations
+        self._associations = []
 
-      klass.class_eval <<-RUBY, __FILE__, __LINE__ + 1
         attr_accessor :_parent
 
         def _root
@@ -28,7 +28,7 @@ module MongoDoc
           return prev unless _parent
           _parent.path_to_root(prev)
         end
-      RUBY
+      end
     end
 
     def _attributes
