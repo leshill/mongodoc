@@ -45,6 +45,19 @@ Given /^I set the id on the document '(.*)' to (.*)$/ do |doc_name, value|
   doc._id = Mongo::ObjectID.new([value.to_i])
 end
 
+Given /^'(.+)' has one (.+?) as (.+?) \(identified by '(.+)'\):$/ do |doc_name, class_name, assoc_name, var_name, table|
+  doc = instance_variable_get("@#{doc_name}")
+  obj = class_name.constantize.new
+  table.hashes.each do |hash|
+    hash.each do |key, value|
+      obj.send("#{key.underscore.gsub(' ', '_')}=", value)
+    end
+  end
+  instance_variable_set("@#{var_name}", obj)
+  doc.send("#{assoc_name.underscore.gsub(' ', '_')}=", obj)
+  @last = obj
+end
+
 When /^I save the document '(.*)'$/ do |name|
   object = instance_variable_get("@#{name}")
   @last_return = object.save
@@ -72,6 +85,11 @@ When /^I query (.*) with find (.*)$/ do |doc, criteria_text|
   @last_return = klass.find(:all, criteria)
 end
 
+When /^'(.+)' is the first (.+?) of '(.+)'$/ do |var_name, single_assoc, doc_name|
+  doc = instance_variable_get("@#{doc_name}")
+  instance_variable_set("@#{var_name}", doc.send(single_assoc.pluralize).first)
+end
+
 Then /^'(.*)' is not a new record$/ do |name|
   instance_variable_get("@#{name}").new_record?.should be_false
 end
@@ -88,8 +106,8 @@ Then /^the document '(.*)' roundtrips$/ do |name|
   instance_variable_set("@#{name}", from_db)
 end
 
-Then /^the last return value is false$/ do
-  @last_return.should be_false
+Then /^the last return value is (.+)$/ do |bool_val|
+  @last_return.should send("be_#{bool_val}")
 end
 
 Then /^the first (.*) of '(.*)' is not a new record$/ do |assoc, name|

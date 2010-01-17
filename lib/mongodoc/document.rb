@@ -73,14 +73,14 @@ module MongoDoc
 
     def update_attributes(attrs)
       self.attributes = attrs
-      return _propose_update_attributes(self, _path_to_root(attrs), false) if valid?
+      return _naive_update_attributes(_path_to_root(self, attrs), false) if valid?
       false
     end
 
     def update_attributes!(attrs)
       self.attributes = attrs
       raise DocumentInvalidError unless valid?
-      _propose_update_attributes(self, _path_to_root(attrs), true)
+      _naive_update_attributes(_path_to_root(self, attrs), true)
     end
 
     module ClassMethods
@@ -132,9 +132,9 @@ module MongoDoc
       self.class.collection
     end
 
-    def _propose_update_attributes(src, attrs, safe)
-      return _parent.send(:_propose_update_attributes, src, attrs, safe) if _parent
-      _update_attributes(attrs, safe)
+    def _naive_update_attributes(attrs, safe)
+      return _root.send(:_naive_update_attributes, attrs, safe) if _root
+      _collection.update({'_id' => self._id}, MongoDoc::Query.set_modifier(attrs), :safe => safe)
     end
 
     def _save(safe)
@@ -145,10 +145,6 @@ module MongoDoc
     rescue Mongo::MongoDBError => e
       notify_save_failed_observers
       raise e
-    end
-
-    def _update_attributes(attrs,  safe)
-      _collection.update({'_id' => self._id}, MongoDoc::Query.set_modifier(attrs), :safe => safe)
     end
 
     def before_save_callback(root)

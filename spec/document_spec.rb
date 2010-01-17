@@ -336,10 +336,11 @@ describe "MongoDoc::Document" do
       UpdateAttributesRoot.new.update_attribute_child = @doc
       @attrs = {:data => @data}
       @path_attrs = {'update_attribute_child.data' => @data}
-      @doc.stub(:_propose_update_attributes)
+      @doc.stub(:_naive_update_attributes)
     end
 
     context "#update_attributes" do
+
       it "sets the attributes" do
         @doc.update_attributes(@attrs)
         @doc.data.should == @data
@@ -361,14 +362,14 @@ describe "MongoDoc::Document" do
       end
 
       context "if valid" do
-        it "delegates to _propose_update_attributes" do
-          @doc.should_receive(:_propose_update_attributes).with(@doc, @path_attrs, false)
+        it "delegates to _naive_update_attributes" do
+          @doc.should_receive(:_naive_update_attributes).with(@path_attrs, false)
           @doc.update_attributes(@attrs)
         end
 
-        it "returns the result of _propose_update_attributes" do
+        it "returns the result of _naive_update_attributes" do
           result = 'check'
-          @doc.stub(:_propose_update_attributes).and_return(result)
+          @doc.stub(:_naive_update_attributes).and_return(result)
           @doc.update_attributes(@attrs).should == result
         end
       end
@@ -398,179 +399,47 @@ describe "MongoDoc::Document" do
       end
 
       context "if valid" do
-        it "delegates to _propose_update_attributes with safe == true" do
-          @doc.should_receive(:_propose_update_attributes).with(@doc, @path_attrs, true)
+        it "delegates to _naive_update_attributes with safe == true" do
+          @doc.should_receive(:_naive_update_attributes).with(@path_attrs, true)
           @doc.update_attributes!(@attrs)
         end
 
-        it "returns the result of _propose_update_attributes" do
+        it "returns the result of _naive_update_attributes" do
           result = 'check'
-          @doc.stub(:_propose_update_attributes).and_return(result)
+          @doc.stub(:_naive_update_attributes).and_return(result)
           @doc.update_attributes!(@attrs).should == result
         end
       end
     end
   end
 
-  context "#_propose_update_attributes" do
-    class ProposeUpdateAttributes
+  context "#_naive_update_attributes" do
+    class NaiveUpdateAttributes
       include MongoDoc::Document
     end
 
     before do
-      @attrs = {:data => 1}
-      @safe = true
-    end
-
-    context "when not a child" do
-      before do
-        @obj = ProposeUpdateAttributes.new
-      end
-
-      it "delegates to _update_attributes when not a child" do
-        @obj.should_receive(:_update_attributes).with(@attrs, @safe)
-        @obj.send(:_propose_update_attributes, @obj, @attrs, @safe)
-      end
-
-      it "returns the results of _update_attributes" do
-        result = 'check'
-        @obj.stub(:_update_attributes).and_return(result)
-        @obj.send(:_propose_update_attributes, @obj, @attrs, @safe).should == result
-      end
-    end
-
-    context "when a child" do
-      before do
-        @obj = ProposeUpdateAttributes.new
-        @parent = stub('parent')
-        @obj._parent = @parent
-      end
-
-      it "delegates to the parent when a child" do
-        @parent.should_receive(:_propose_update_attributes).with(@obj, @attrs, @safe)
-        @obj.send(:_propose_update_attributes, @obj, @attrs, @safe)
-      end
-
-      it "returns the results of the parent's _propose_update_attributes" do
-        result = 'check'
-        @parent.stub(:_propose_update_attributes).and_return(result)
-        @obj.send(:_propose_update_attributes, @obj, @attrs, @safe).should == result
-      end
-    end
-  end
-
-  context "#_update_attributes" do
-    class UpdateAttributes
-      include MongoDoc::Document
-    end
-
-    before do
+      @id = 'id'
+      @attrs = {:data => 'data'}
+      @safe = false
+      @doc = NaiveUpdateAttributes.new
+      @doc.stub(:_id).and_return(@id)
       @collection = stub('collection')
       @collection.stub(:update)
-      @doc = UpdateAttributes.new
-      @doc.stub(:_id).and_return(@id)
-      UpdateAttributes.stub(:collection).and_return(@collection)
-      @attrs = {:data => 'value'}
+      @doc.stub(:_collection).and_return(@collection)
     end
 
-    it "uses the set modifier for the attributes" do
-      safe = true
-      MongoDoc::Query.should_receive(:set_modifier).with(@attrs)
-      @collection.stub(:update)
-      @doc.send(:_update_attributes, @attrs, safe)
+    it "calls update on the collection without a root" do
+      @collection.should_receive(:update).with({'_id' => @id}, MongoDoc::Query.set_modifier(@attrs), {:safe => @safe})
+      @doc.send(:_naive_update_attributes, @attrs, @safe)
     end
 
-    it "delegates to the collection update with safe" do
-      safe = true
-      @collection.should_receive(:update).with({'_id' => @id}, MongoDoc::Query.set_modifier(@attrs), {:safe => safe})
-      @doc.send(:_update_attributes, @attrs, safe)
+    it "with a root, calls _naive_update_attributes on the root" do
+      root = NaiveUpdateAttributes.new
+      @doc.stub(:_root).and_return(root)
+      root.should_receive(:_naive_update_attributes).with(@attrs, @safe)
+      @doc.send(:_naive_update_attributes, @attrs, @safe)
     end
-
-    it "returns the result" do
-      result = 'check'
-      @collection.stub(:update).and_return(result)
-      @doc.send(:_update_attributes, @attrs, true)
-    end
-  end
-
-  context "from a nested document" do
-    class NestedDocsRoot
-      include MongoDoc::Document
-
-      has_many :nested_children
-    end
-
-    class NestedChild
-      include MongoDoc::Document
-
-      has_one :leaf
-    end
-
-    class LeafDoc
-      include MongoDoc::Document
-
-      key :data
-    end
-
-    context "#save" do
-      before do
-        @leaf = LeafDoc.new
-        @root = NestedDocsRoot.new(:nested_children => [NestedChild.new(:leaf => @leaf)])
-      end
-
-      it "calls the root document's save" do
-        @root.should_receive(:save).with(true)
-        @leaf.save
-      end
-
-      it "(with bang!) calls the root documents save!" do
-        @root.should_receive(:save!)
-        @leaf.save!
-      end
-    end
-
-    context "with no has_many, update_attributes" do
-      before do
-        @leaf = LeafDoc.new
-        @root = NestedChild.new(:leaf => @leaf)
-      end
-
-      it "calls the root document's _update_attributes with a full attribute path and not safe" do
-        @root.should_receive(:_update_attributes).with({'leaf.data' => 'data'}, false)
-        @leaf.update_attributes(:data => 'data')
-      end
-
-      it "(with bang!) calls the root document's _update_attributes with a full attribute path and safe" do
-        @root.should_receive(:_update_attributes).with({'leaf.data' => 'data'}, true)
-        @leaf.update_attributes!(:data => 'data')
-      end
-    end
-
-    context "with has_many, update_attributes" do
-      before do
-        @leaf = LeafDoc.new
-        NestedDocsRoot.new(:nested_children => [NestedChild.new(:leaf => @leaf)])
-      end
-
-      it "returns false" do
-        @leaf.update_attributes(:data => 'data').should be_false
-      end
-
-      it "sets an error on base" do
-        @leaf.update_attributes(:data => 'data')
-        @leaf.errors[:base].should_not be_nil
-      end
-
-      it "(with bang!) returns false" do
-        @leaf.update_attributes!(:data => 'data').should be_false
-      end
-
-      it "(with bang!) sets an error on base" do
-        @leaf.update_attributes(:data => 'data')
-        @leaf.errors[:base].should_not be_nil
-      end
-    end
-
   end
 
   describe "bson" do

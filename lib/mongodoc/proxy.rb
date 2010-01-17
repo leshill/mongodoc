@@ -59,19 +59,17 @@ module MongoDoc
     end
     alias kind_of? is_a?
 
-    def _path_to_root(attrs)
-      _parent._path_to_root(attrs)
+    def _path_to_root(src, attrs)
+      assoc_path = "#{assoc_name}.#{index(src)}"
+      assoc_attrs = attrs.inject({}) do |assoc_attrs, (key, value)|
+        assoc_attrs["#{assoc_path}.#{key}"] = value
+        assoc_attrs
+      end
+      _parent._path_to_root(src, assoc_attrs)
     end
 
     def build(attrs)
       collection_class.new(attrs)
-    end
-
-    protected
-
-    def _propose_update_attributes(src, attrs, safe)
-      src.errors.add(:base, 'update_attributes called through a has_many')
-      false
     end
   end
 end

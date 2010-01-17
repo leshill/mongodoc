@@ -29,9 +29,9 @@ module MongoDoc
       end
     end
 
-    def _path_to_root(prev)
-      return prev unless _parent
-      _parent._path_to_root(prev)
+    def _path_to_root(src, attrs)
+      return attrs unless _parent
+      _parent._path_to_root(self, attrs)
     end
 
     module ClassMethods

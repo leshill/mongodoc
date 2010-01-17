@@ -74,7 +74,7 @@ Feature: MongoDoc::Base
     And the Contact collection should have 1 document
     And the document 'hashrocket' roundtrips
 
-  Scenario: failing to update attributes from a has_many child document
+  Scenario: Update attributes from a has_many child document
     Given an empty Contact document collection
     And a Contact document named 'hashrocket' :
       | Name       |
@@ -89,7 +89,8 @@ Feature: MongoDoc::Base
       | Street         |
       | 1a Calle       |
     When I update the document 'chile' with the hash named 'street'
-    Then the last return value is false
+    Then the last return value is true
+    And the document 'hashrocket' roundtrips
 
   Scenario: update attributes from a has_one child document
     Given an empty Place document collection

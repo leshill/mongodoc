@@ -20,6 +20,7 @@ class Contact
 
   key :name
   key :type
+  key :note
   key :interests
   has_many :addresses
 

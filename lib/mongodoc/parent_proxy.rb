@@ -9,12 +9,12 @@ module MongoDoc
       @assoc_name = assoc_name
     end
 
-    def _path_to_root(attrs)
+    def _path_to_root(src, attrs)
       assoc_attrs = attrs.inject({}) do |assoc_attrs, (key, value)|
         assoc_attrs["#{assoc_name}.#{key}"] = value
         assoc_attrs
       end
-      _parent._path_to_root(assoc_attrs)
+      _parent._path_to_root(src, assoc_attrs)
     end
 
     private
