@@ -34,6 +34,11 @@ module MongoDoc
       _parent._path_to_root(self, attrs)
     end
 
+    def _selector_path_to_root(selector)
+      return selector unless _parent
+      _parent._selector_path_to_root(selector)
+    end
+
     module ClassMethods
       def _attributes
         _keys + _associations

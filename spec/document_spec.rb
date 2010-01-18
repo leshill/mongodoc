@@ -362,9 +362,19 @@ describe "MongoDoc::Document" do
       end
 
       context "if valid" do
-        it "delegates to _naive_update_attributes" do
-          @doc.should_receive(:_naive_update_attributes).with(@path_attrs, false)
-          @doc.update_attributes(@attrs)
+        context "and strict" do
+          it "delegates to _strict_update_attributes" do
+            strict_attrs = @attrs.merge(:__strict__ => true)
+            @doc.should_receive(:_strict_update_attributes).with(@path_attrs, false)
+            @doc.update_attributes(strict_attrs)
+          end
+        end
+
+        context "and naive" do
+          it "delegates to _naive_update_attributes" do
+            @doc.should_receive(:_naive_update_attributes).with(@path_attrs, false)
+            @doc.update_attributes(@attrs)
+          end
         end
 
         it "returns the result of _naive_update_attributes" do
@@ -399,9 +409,19 @@ describe "MongoDoc::Document" do
       end
 
       context "if valid" do
-        it "delegates to _naive_update_attributes with safe == true" do
-          @doc.should_receive(:_naive_update_attributes).with(@path_attrs, true)
-          @doc.update_attributes!(@attrs)
+        context "and strict" do
+          it "delegates to _strict_update_attributes with safe == true" do
+            strict_attrs = @attrs.merge(:__strict__ => true)
+            @doc.should_receive(:_strict_update_attributes).with(@path_attrs, true)
+            @doc.update_attributes!(strict_attrs)
+          end
+        end
+
+        context "and naive" do
+          it "delegates to _naive_update_attributes with safe == true" do
+            @doc.should_receive(:_naive_update_attributes).with(@path_attrs, true)
+            @doc.update_attributes!(@attrs)
+          end
         end
 
         it "returns the result of _naive_update_attributes" do
@@ -439,6 +459,50 @@ describe "MongoDoc::Document" do
       @doc.stub(:_root).and_return(root)
       root.should_receive(:_naive_update_attributes).with(@attrs, @safe)
       @doc.send(:_naive_update_attributes, @attrs, @safe)
+    end
+  end
+
+  context "#_strict_update_attributes" do
+    class StrictUpdateAttributes
+      include MongoDoc::Document
+    end
+
+    before do
+      @id = 'id'
+      @attrs = {:data => 'data'}
+      @selector = {'selector' => 'selector'}
+      @safe = false
+      @doc = StrictUpdateAttributes.new
+      @doc.stub(:_id).and_return(@id)
+      @collection = stub('collection')
+      @collection.stub(:update)
+      @doc.stub(:_collection).and_return(@collection)
+    end
+
+    context "without a root" do
+      it "calls update on the collection" do
+        @collection.should_receive(:update).with({'_id' => @id}.merge(@selector), MongoDoc::Query.set_modifier(@attrs), :safe => @safe)
+        @doc.send(:_strict_update_attributes, @attrs, @safe, @selector)
+      end
+    end
+
+    context "with a root" do
+      before do
+        @root = StrictUpdateAttributes.new
+        @root.stub(:_collection).and_return(@collection)
+        @doc.stub(:_root).and_return(@root)
+        @doc.stub(:_selector_path_to_root).and_return({'path._id' => @id})
+      end
+
+      it "calls _selector_path_to_root on our id" do
+        @doc.should_receive(:_selector_path_to_root).with('_id' => @id).and_return({'path._id' => @id})
+        @doc.send(:_strict_update_attributes, @attrs, @safe)
+      end
+
+      it "calls _strict_update_attributes on the root with our selector" do
+        @root.should_receive(:_strict_update_attributes).with(@attrs, @safe, 'path._id' => @id)
+        @doc.send(:_strict_update_attributes, @attrs, @safe)
+      end
     end
   end
 

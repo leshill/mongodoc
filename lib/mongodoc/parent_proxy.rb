@@ -10,11 +10,20 @@ module MongoDoc
     end
 
     def _path_to_root(src, attrs)
-      assoc_attrs = attrs.inject({}) do |assoc_attrs, (key, value)|
-        assoc_attrs["#{assoc_name}.#{key}"] = value
-        assoc_attrs
+      _parent._path_to_root(src, _annotated_keys(attrs))
+    end
+
+    def _selector_path_to_root(selector)
+      _parent._selector_path_to_root(_annotated_keys(selector))
+    end
+
+    protected
+
+    def _annotated_keys(hash)
+      hash.inject({}) do |annotated, (key, value)|
+        annotated["#{assoc_name}.#{key}"] = value
+        annotated
       end
-      _parent._path_to_root(src, assoc_attrs)
     end
 
     private
