@@ -48,6 +48,8 @@ bc.. results = collection.find('addresses.state' => 'FL')
 hashrocket = results.to_a.find {|contact| contact.name == 'Hashrocket'}
 puts hashrocket.addresses.first.phone_number
 
+p. Take a look in the examples directory for more code.
+
 h2. Mapping Documents
 
 MongoDoc provides ActiveRecord-like persistence, associations, named scopes, and validations (from "Validatable":http://github.com/durran/validatable) as well as a mongoDB query language (from "Mongoid":http://mongoid.org/home). MongoDoc also plays nicely with Rails.
@@ -138,3 +140,4 @@ h2. Copyright
 Copyright (c) 2009 Les Hill. See LICENSE for details.
 
 fn1. The Ruby driver exposes an API that understands JSON.
+

@@ -5,38 +5,45 @@
 
 Gem::Specification.new do |s|
   s.name = %q{mongodoc}
-  s.version = "0.1.3"
+  s.version = "0.2.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Les Hill"]
-  s.date = %q{2010-01-06}
+  s.date = %q{2010-01-18}
   s.description = %q{ODM for MongoDB}
   s.email = %q{leshill@gmail.com}
   s.extra_rdoc_files = [
     "LICENSE",
-     "README.rdoc"
+     "README.textile"
   ]
   s.files = [
     ".document",
      ".gitignore",
      "LICENSE",
-     "README.rdoc",
+     "README.textile",
      "Rakefile",
      "VERSION",
      "data/.gitignore",
+     "examples/simple_document.rb",
+     "examples/simple_object.rb",
+     "features/finders.feature",
      "features/mongodb.yml",
      "features/mongodoc_base.feature",
      "features/named_scopes.feature",
      "features/new_record.feature",
+     "features/partial_updates.feature",
      "features/saving_an_object.feature",
      "features/step_definitions/collection_steps.rb",
      "features/step_definitions/criteria_steps.rb",
      "features/step_definitions/document_steps.rb",
      "features/step_definitions/documents.rb",
+     "features/step_definitions/finder_steps.rb",
      "features/step_definitions/json_steps.rb",
      "features/step_definitions/named_scope_steps.rb",
      "features/step_definitions/object_steps.rb",
      "features/step_definitions/objects.rb",
+     "features/step_definitions/partial_update_steps.rb",
+     "features/step_definitions/query_steps.rb",
      "features/step_definitions/util_steps.rb",
      "features/support/support.rb",
      "features/using_criteria.feature",
@@ -63,6 +70,7 @@ Gem::Specification.new do |s|
      "lib/mongodoc/ext/string.rb",
      "lib/mongodoc/ext/symbol.rb",
      "lib/mongodoc/ext/time.rb",
+     "lib/mongodoc/finders.rb",
      "lib/mongodoc/named_scope.rb",
      "lib/mongodoc/parent_proxy.rb",
      "lib/mongodoc/proxy.rb",
@@ -82,12 +90,15 @@ Gem::Specification.new do |s|
      "spec/cursor_spec.rb",
      "spec/document_ext.rb",
      "spec/document_spec.rb",
+     "spec/embedded_save_spec.rb",
+     "spec/finders_spec.rb",
      "spec/hash_matchers.rb",
      "spec/mongodb.yml",
      "spec/mongodb_pairs.yml",
      "spec/named_scope_spec.rb",
      "spec/new_record_spec.rb",
      "spec/parent_proxy_spec.rb",
+     "spec/proxy_spec.rb",
      "spec/query_spec.rb",
      "spec/spec.opts",
      "spec/spec_helper.rb"
@@ -107,12 +118,17 @@ Gem::Specification.new do |s|
      "spec/cursor_spec.rb",
      "spec/document_ext.rb",
      "spec/document_spec.rb",
+     "spec/embedded_save_spec.rb",
+     "spec/finders_spec.rb",
      "spec/hash_matchers.rb",
      "spec/named_scope_spec.rb",
      "spec/new_record_spec.rb",
      "spec/parent_proxy_spec.rb",
+     "spec/proxy_spec.rb",
      "spec/query_spec.rb",
-     "spec/spec_helper.rb"
+     "spec/spec_helper.rb",
+     "examples/simple_document.rb",
+     "examples/simple_object.rb"
   ]
 
   if s.respond_to? :specification_version then
