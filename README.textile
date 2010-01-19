@@ -1,6 +1,6 @@
 h1. MongoDoc
 
-Version: 0.2 1/18/10
+Version: 0.2.1 1/18/10
 
 h2. Introduction
 

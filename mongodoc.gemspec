@@ -138,14 +138,14 @@ Gem::Specification.new do |s|
     if Gem::Version.new(Gem::RubyGemsVersion) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<mongo>, ["= 0.18.2"])
       s.add_runtime_dependency(%q<mongo_ext>, ["= 0.18.2"])
-      s.add_runtime_dependency(%q<durran-validatable>, ["= 1.8.4"])
+      s.add_runtime_dependency(%q<durran-validatable>, ["= 2.0.1"])
       s.add_runtime_dependency(%q<leshill-will_paginate>, ["= 2.3.11"])
       s.add_development_dependency(%q<rspec>, ["= 1.2.9"])
       s.add_development_dependency(%q<cucumber>, ["= 0.4.4"])
     else
       s.add_dependency(%q<mongo>, ["= 0.18.2"])
       s.add_dependency(%q<mongo_ext>, ["= 0.18.2"])
-      s.add_dependency(%q<durran-validatable>, ["= 1.8.4"])
+      s.add_dependency(%q<durran-validatable>, ["= 2.0.1"])
       s.add_dependency(%q<leshill-will_paginate>, ["= 2.3.11"])
       s.add_dependency(%q<rspec>, ["= 1.2.9"])
       s.add_dependency(%q<cucumber>, ["= 0.4.4"])
@@ -153,7 +153,7 @@ Gem::Specification.new do |s|
   else
     s.add_dependency(%q<mongo>, ["= 0.18.2"])
     s.add_dependency(%q<mongo_ext>, ["= 0.18.2"])
-    s.add_dependency(%q<durran-validatable>, ["= 1.8.4"])
+    s.add_dependency(%q<durran-validatable>, ["= 2.0.1"])
     s.add_dependency(%q<leshill-will_paginate>, ["= 2.3.11"])
     s.add_dependency(%q<rspec>, ["= 1.2.9"])
     s.add_dependency(%q<cucumber>, ["= 0.4.4"])

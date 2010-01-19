@@ -12,7 +12,7 @@ begin
     gem.authors = ["Les Hill"]
     gem.add_dependency "mongo", "= 0.18.2"
     gem.add_dependency "mongo_ext", "= 0.18.2"
-    gem.add_dependency "durran-validatable", "= 1.8.4"
+    gem.add_dependency "durran-validatable", "= 2.0.1"
     gem.add_dependency "leshill-will_paginate", "= 2.3.11"
     gem.add_development_dependency "rspec", "= 1.2.9"
     gem.add_development_dependency "cucumber", "= 0.4.4"
