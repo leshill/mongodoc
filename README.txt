@@ -1,0 +1,139 @@
+h1. MongoDoc
+
+Version: 0.2 1/18/10
+
+h2. Introduction
+
+MongoDoc is simple and easy to use ActiveRecord-like object mapper for "mongoDB":http://www.mongodb.org in Ruby.
+MongoDoc is _also_ an extension of the "Mongo Ruby Driver":http://github.com/mongodb/mongo-ruby-driver making it a snap to get Ruby in and out of mongoDB.
+
+MongoDoc is *not* ActiveRecord for mongoDB.  We do not have callbacks, nor do we have dynamic finders.  We do have associations, named scopes, and other features.
+
+MongoDoc *is* simple, easy-to-use, and fast. And it works with Rails (2.3.x at the moment, 3 soonish?).
+
+MongoDoc is designed to work with document data, if you are looking to map relational data in mongoDB, you will have to look elsewhere.
+
+h2. Ruby objects in mongoDB
+
+Lets just get right into it and save some Ruby objects in mongoDB!
+
+bc.. class Contact
+  attr_accessor :name, :addresses, :interests
+end
+
+class Address
+  attr_accessor :street, :city, :state, :zip, :phone_number
+end
+
+p. With MongoDoc, instead of saving JSON[1], we can save an object directly.
+
+bc.. contact = Contact.new
+contact.name = 'Hashrocket'
+contact.interests = ['ruby', 'rails', 'agile']
+
+address = Address.new
+address.street = '320 First Street North, #712'
+address.city = 'Jacksonville Beach'
+address.state = 'FL'
+address.zip = '32250'
+address.phone_number = '877 885 8846'
+contact.addresses = [address]
+
+collection.save(contact)
+
+p. We can query using the powerful mongoDB query syntax, and have it return Ruby objects.
+
+bc.. results = collection.find('addresses.state' => 'FL')
+hashrocket = results.to_a.find {|contact| contact.name == 'Hashrocket'}
+puts hashrocket.addresses.first.phone_number
+
+h2. Mapping Documents
+
+MongoDoc provides ActiveRecord-like persistence, associations, named scopes, and validations (from "Validatable":http://github.com/durran/validatable) as well as a mongoDB query language (from "Mongoid":http://mongoid.org/home).
+MongoDoc also plays nicely with Rails.
+
+@MongoDoc::Document@ provides all these features as a mixin.  A @MongoDoc::Document@
+can either be a top-level mongoDB document, or an embedded document contained within a top-level document.
+Top-level documents are stored in collections named after their class: @Contact@ objects are stored in the 'contacts' collection (much like ActiveRecord).
+
+Lets define a @Contact@ document with an @Address@ embedded document.
+
+bc.. class Address
+  include MongoDoc::Document
+
+  key :street
+  key :city
+  key :state
+  key :zip_code
+  key :phone_number
+end
+
+class Contact
+  include MongoDoc::Document
+
+  key :name
+  key :interests
+  has_many :addresses
+
+  named_scope :in_state, lambda {|state| {:where => {'addresses.state' => state}}}
+end
+
+p. Since a mongoDB document has no fixed schema, we define the composition of a document directly in our classes.
+Please note we do not specify types! We can also specify @has_one@ or @has_many@ associations.
+
+Building and saving a document is easy:
+
+bc.. contact = Contact.new(:name => 'Hashrocket', :interests => ['ruby', 'rails', 'agile'])
+contact.addresses << Address.new(:street => '320 1st Street North, #712', :city => 'Jacksonville Beach', :state => 'FL', :zip_code => '32250', :phone_number => '877 885 8846')
+contact.save
+
+p. Now that we have some data, we can query using our named scope:
+
+bc. hashrocket = Contact.in_state('FL').find {|contact| contact.name == 'Hashrocket'}
+
+p. And we can even perform partial updates:
+
+bc. hashrocket.addresses.first.update_attributes(:street => '320 First Street North, #712')
+
+h2. Installation
+
+bc. sudo gem install mongodoc
+
+h2. Configuration
+
+Configure your database connection in ./mongodb.yml, you do not need one if you are running on localhost with the default port
+
+bc. name: test
+host: localhost
+port: 27017
+options:
+  auto_reconnect: true
+
+You can change the location of the configuration file:
+
+bc. MongoDoc.config_path = './config/mongodb.yml'
+
+h2. Credits
+
+Les Hill, leshill on github
+
+h3. Thanks
+
+Thanks to Sandro and Durran for some great conversations and some lovely code.
+
+h2. Note on Patches/Pull Requests
+
+* Fork the project.
+* Make your feature addition or bug fix.
+* Add tests for it. This is important so I don't break it in a
+  future version unintentionally.
+* Commit, do not mess with rakefile, version, or history.
+  (if you want to have your own version, that is fine but
+  bump version in a commit by itself I can ignore when I pull)
+* Send me a pull request. Bonus points for topic branches.
+
+h2. Copyright
+
+Copyright (c) 2009 Les Hill. See LICENSE for details.
+
+fn1. The Ruby driver exposes an API that understands JSON.
