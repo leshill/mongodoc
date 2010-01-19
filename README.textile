@@ -5,6 +5,7 @@ Version: 0.2 1/18/10
 h2. Introduction
 
 MongoDoc is simple and easy to use ActiveRecord-like object mapper for "mongoDB":http://www.mongodb.org in Ruby.
+
 MongoDoc is _also_ an extension of the "Mongo Ruby Driver":http://github.com/mongodb/mongo-ruby-driver making it a snap to get Ruby in and out of mongoDB.
 
 MongoDoc is *not* ActiveRecord for mongoDB.  We do not have callbacks, nor do we have dynamic finders.  We do have associations, named scopes, and other features.
@@ -25,7 +26,7 @@ class Address
   attr_accessor :street, :city, :state, :zip, :phone_number
 end
 
-p. With MongoDoc, instead of saving JSON[1], we can save an object directly.
+p. With MongoDoc, instead of saving JSON[1], we can save an object directly:
 
 bc.. contact = Contact.new
 contact.name = 'Hashrocket'
@@ -41,7 +42,7 @@ contact.addresses = [address]
 
 collection.save(contact)
 
-p. We can query using the powerful mongoDB query syntax, and have it return Ruby objects.
+p. We can query using the powerful mongoDB query syntax, and have it return Ruby objects:
 
 bc.. results = collection.find('addresses.state' => 'FL')
 hashrocket = results.to_a.find {|contact| contact.name == 'Hashrocket'}
@@ -49,14 +50,11 @@ puts hashrocket.addresses.first.phone_number
 
 h2. Mapping Documents
 
-MongoDoc provides ActiveRecord-like persistence, associations, named scopes, and validations (from "Validatable":http://github.com/durran/validatable) as well as a mongoDB query language (from "Mongoid":http://mongoid.org/home).
-MongoDoc also plays nicely with Rails.
+MongoDoc provides ActiveRecord-like persistence, associations, named scopes, and validations (from "Validatable":http://github.com/durran/validatable) as well as a mongoDB query language (from "Mongoid":http://mongoid.org/home). MongoDoc also plays nicely with Rails.
 
-@MongoDoc::Document@ provides all these features as a mixin.  A @MongoDoc::Document@
-can either be a top-level mongoDB document, or an embedded document contained within a top-level document.
-Top-level documents are stored in collections named after their class: @Contact@ objects are stored in the 'contacts' collection (much like ActiveRecord).
+@MongoDoc::Document@ provides all these features as a mixin.  A @MongoDoc::Document@ can either be a top-level mongoDB document, or an embedded document contained within a top-level document. Top-level documents are stored in collections named after their class: @Contact@ objects are stored in the 'contacts' collection (much like ActiveRecord).
 
-Lets define a @Contact@ document with an @Address@ embedded document.
+Lets define a @Contact@ document with an @Address@ embedded document:
 
 bc.. class Address
   include MongoDoc::Document
@@ -78,13 +76,16 @@ class Contact
   named_scope :in_state, lambda {|state| {:where => {'addresses.state' => state}}}
 end
 
-p. Since a mongoDB document has no fixed schema, we define the composition of a document directly in our classes.
-Please note we do not specify types! We can also specify @has_one@ or @has_many@ associations.
+p. Since a mongoDB document has no fixed schema, we define the composition of a document directly in our classes. Please note we do not specify types! We can also specify @has_one@ or @has_many@ associations.
 
 Building and saving a document is easy:
 
 bc.. contact = Contact.new(:name => 'Hashrocket', :interests => ['ruby', 'rails', 'agile'])
-contact.addresses << Address.new(:street => '320 1st Street North, #712', :city => 'Jacksonville Beach', :state => 'FL', :zip_code => '32250', :phone_number => '877 885 8846')
+contact.addresses << Address.new(:street => '320 1st Street North, #712',
+  :city => 'Jacksonville Beach',
+  :state => 'FL',
+  :zip_code => '32250',
+  :phone_number => '877 885 8846')
 contact.save
 
 p. Now that we have some data, we can query using our named scope:
