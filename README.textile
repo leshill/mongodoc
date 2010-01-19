@@ -100,6 +100,8 @@ bc. hashrocket.addresses.first.update_attributes(:street => '320 First Street No
 
 h2. Installation
 
+MongoDoc *requires* mongoDB v1.3 or later.
+
 bc. sudo gem install mongodoc
 
 h2. Configuration
