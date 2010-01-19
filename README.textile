@@ -4,7 +4,7 @@ Version: 0.2.1 1/18/10
 
 h2. Introduction
 
-MongoDoc is simple and easy to use ActiveRecord-like object mapper for "mongoDB":http://www.mongodb.org in Ruby.
+MongoDoc is a simple and easy to use ActiveRecord-like object mapper for "mongoDB":http://www.mongodb.org in Ruby.
 
 MongoDoc is _also_ an extension of the "Mongo Ruby Driver":http://github.com/mongodb/mongo-ruby-driver making it a snap to get Ruby in and out of mongoDB.
 
