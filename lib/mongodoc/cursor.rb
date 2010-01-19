@@ -10,13 +10,13 @@ module MongoDoc
     end
 
     def each
-      _cursor.each do |next_object|
-        yield MongoDoc::BSON.decode(next_object)
+      _cursor.each do |next_document|
+        yield MongoDoc::BSON.decode(next_document)
       end
     end
 
-    def next_object
-      MongoDoc::BSON.decode(_cursor.next_object)
+    def next_document
+      MongoDoc::BSON.decode(_cursor.next_document)
     end
 
     def to_a

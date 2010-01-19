@@ -45,22 +45,22 @@ describe "MongoDoc::Cursor" do
     end
   end
 
-  context "#next_object" do
+  context "#next_document" do
     it "delegates to the cursor" do
-      @mongo_cursor.should_receive(:next_object)
-      @cursor.next_object
+      @mongo_cursor.should_receive(:next_document)
+      @cursor.next_document
     end
 
     it "decodes the return from the delegate" do
       bson = stub('bson')
-      @mongo_cursor.stub(:next_object).and_return(bson)
+      @mongo_cursor.stub(:next_document).and_return(bson)
       MongoDoc::BSON.should_receive(:decode).with(bson)
-      @cursor.next_object
+      @cursor.next_document
     end
 
     it "returns nil if the delegate returns nil" do
-      @mongo_cursor.stub(:next_object)
-      @cursor.next_object.should be_nil
+      @mongo_cursor.stub(:next_document)
+      @cursor.next_document.should be_nil
     end
   end
 

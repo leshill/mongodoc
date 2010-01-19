@@ -143,7 +143,7 @@ describe "MongoDoc::Collection" do
         @spec = { 'sample' => 'old' }
         @doc = { 'sample' => 'data' }
         @options = {:safe => false}
-        @database = stub('database', :db_command => nil)
+        @database = stub('database', :command => nil)
         MongoDoc.stub(:database).and_return(@database)
       end
 
@@ -160,14 +160,14 @@ describe "MongoDoc::Collection" do
 
       it "gets the last error from the database" do
         @mongo_collection.stub(:update)
-        @database.should_receive(:db_command).with({'getlasterror' => 1})
+        @database.should_receive(:command).with({'getlasterror' => 1})
         MongoDoc::Collection.new('collection_name').update(@spec, @doc, @options)
       end
 
       it "returns the updateExisting value of get last error" do
         result = 'check'
         @mongo_collection.stub(:update)
-        @database.stub(:db_command).and_return({'updatedExisting' => result})
+        @database.stub(:command).and_return({'updatedExisting' => result})
         MongoDoc::Collection.new('collection_name').update(@spec, @doc, @options).should == result
       end
 

@@ -83,7 +83,7 @@ describe MongoDoc::Criteria do
     end
 
     it "calls group on the collection with the aggregate js" do
-      @collection.should_receive(:group).with([:field1], {}, {:count => 0}, @reduce)
+      @collection.should_receive(:group).with([:field1], {}, {:count => 0}, @reduce, true)
       @criteria.only(:field1).aggregate
     end
   end
@@ -326,7 +326,7 @@ describe MongoDoc::Criteria do
     end
 
     it "calls group on the collection with the aggregate js" do
-      @collection.should_receive(:group).with([:field1], {}, {:group => []}, @reduce).and_return(@grouping)
+      @collection.should_receive(:group).with([:field1], {}, {:group => []}, @reduce, true).and_return(@grouping)
       @criteria.only(:field1).group
     end
   end

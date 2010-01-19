@@ -67,7 +67,7 @@ module MongoDoc #:nodoc:
     #
     # <tt>criteria.only(:field1).where(:field1 => "Title").aggregate</tt>
     def aggregate
-      klass.collection.group(options[:fields], selector, { :count => 0 }, AGGREGATE_REDUCE)
+      klass.collection.group(options[:fields], selector, { :count => 0 }, AGGREGATE_REDUCE, true)
     end
 
     # Get all the matching documents in the database for the +Criteria+.
@@ -124,7 +124,8 @@ module MongoDoc #:nodoc:
         options[:fields],
         selector,
         { :group => [] },
-        GROUP_REDUCE
+        GROUP_REDUCE,
+        true
       ).collect {|docs| docs["group"] = MongoDoc::BSON.decode(docs["group"]); docs }
     end
 

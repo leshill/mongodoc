@@ -34,7 +34,7 @@ module MongoDoc
 
     def update(spec, doc, options = {})
       _collection.update(spec, doc.to_bson, options)
-      result = MongoDoc.database.db_command({'getlasterror' => 1})
+      result = MongoDoc.database.command({'getlasterror' => 1})
       (result and result.has_key?('updatedExisting')) ? result['updatedExisting'] : false
     end
 
