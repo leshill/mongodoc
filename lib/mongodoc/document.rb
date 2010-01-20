@@ -64,7 +64,7 @@ module MongoDoc
 
     def to_bson(*args)
       {MongoDoc::BSON::CLASS_KEY => self.class.name}.tap do |bson_hash|
-        bson_hash['_id'] = _id unless _id.nil?
+        bson_hash['_id'] = _id unless new_record?
         self.class._attributes.each do |name|
           bson_hash[name.to_s] = send(name).to_bson(args)
         end
@@ -112,27 +112,14 @@ module MongoDoc
 
       def create(attrs = {})
         instance = new(attrs)
-        _create(instance, false) if instance.valid?
+        instance.save(false)
         instance
       end
 
       def create!(attrs = {})
         instance = new(attrs)
-        raise MongoDoc::DocumentInvalidError unless instance.valid?
-        _create(instance, true)
+        instance.save!(true)
         instance
-      end
-
-      protected
-
-      def _create(instance, safe)
-        instance.send(:notify_before_save_observers)
-        instance._id = collection.insert(instance, :safe => safe)
-        instance.send(:notify_save_success_observers)
-        instance._id
-      rescue Mongo::MongoDBError => e
-        instance.send(:notify_save_failed_observers)
-        raise e
       end
     end
 
@@ -197,6 +184,5 @@ module MongoDoc
     def notify_save_failed_observers
       save_observers.each {|obs| obs.save_failed_callback(self) }
     end
-
   end
 end

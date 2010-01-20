@@ -219,101 +219,56 @@ describe "MongoDoc::Document" do
       validates_presence_of :data
     end
 
+    let(:data) { 'data' }
+    let(:instance) { CreateTest.new(:data => data) }
+
     before do
-      @value = 'value'
-      CreateTest.stub(:_create).and_return(true)
+      instance.stub(:save)
+      instance.stub(:save!)
     end
 
     context ".create" do
-      it "creates a new document" do
-        obj = CreateTest.new
-        CreateTest.should_receive(:new).and_return(obj)
-        CreateTest.create
+      it "creates a new document with the attributes" do
+        CreateTest.should_receive(:new).with(:data => data).and_return(instance)
+        CreateTest.create(:data => data)
       end
 
-      it "delegates to _create with safe => false" do
-        obj = CreateTest.new(:data => @value)
-        CreateTest.stub(:new).and_return(obj)
-        CreateTest.should_receive(:_create).with(obj, false).and_return(true)
-        CreateTest.create(:data => @value)
-      end
+      context "with the new document" do
+        before do
+          CreateTest.stub(:new).and_return(instance)
+        end
 
-      it "sets the passed attributes" do
-        CreateTest.create(:data => @value).data.should == @value
-      end
+        it "calls save on the instance with safe => false" do
+          instance.should_receive(:save).with(false)
+          CreateTest.create(:data => data)
+        end
 
-      it "returns a valid document" do
-        CreateTest.should === CreateTest.create(:data => @value)
-      end
-
-      it "validates" do
-        CreateTest.create.errors.should_not be_empty
-      end
-
-      it "returns an invalid document" do
-        CreateTest.should === CreateTest.create
+        it "returns the new object" do
+          CreateTest.create(:data => data).should == instance
+        end
       end
     end
 
     context ".create!" do
-      it "creates a new document" do
-        obj = CreateTest.new
-        CreateTest.should_receive(:new).and_return(obj)
-        CreateTest.create! rescue nil
+      it "creates a new document with the attributes" do
+        CreateTest.should_receive(:new).with(:data => data).and_return(instance)
+        CreateTest.create!(:data => data)
       end
 
-      it "delegates to _create with safe => true" do
-        obj = CreateTest.new(:data => @value)
-        CreateTest.stub(:new).and_return(obj)
-        CreateTest.should_receive(:_create).with(obj, true).and_return(true)
-        CreateTest.create!(:data => @value)
+      context "with the new document" do
+        before do
+          CreateTest.stub(:new).and_return(instance)
+        end
+
+        it "calls save! on the instance" do
+          instance.should_receive(:save!)
+          CreateTest.create!(:data => data)
+        end
+
+        it "returns the new object" do
+          CreateTest.create!(:data => data).should == instance
+        end
       end
-
-      it "sets the passed attributes" do
-        CreateTest.create!(:data => @value).data.should == @value
-      end
-
-      it "returns a valid document" do
-        CreateTest.should === CreateTest.create!(:data => @value)
-      end
-
-      it "raises when invalid" do
-        expect do
-          CreateTest.create!
-        end.should raise_error(MongoDoc::DocumentInvalidError)
-      end
-    end
-  end
-
-  context "#_create" do
-    class CreateTest
-      include MongoDoc::Document
-    end
-
-    before do
-      @collection = stub('collection')
-      @collection.stub(:insert)
-      @doc = CreateTest.new
-      CreateTest.stub(:collection).and_return(@collection)
-    end
-
-    it "delegates to the collection insert with safe" do
-      safe = true
-      @collection.should_receive(:insert).with(@doc, hash_including(:safe => safe))
-      CreateTest.send(:_create, @doc, safe)
-    end
-
-    it "sets the _id of the document" do
-      id = 'id'
-      @collection.stub(:insert).and_return(id)
-      CreateTest.send(:_create, @doc, false)
-      @doc._id.should == id
-    end
-
-    it "returns the _id" do
-      id = 'id'
-      @collection.stub(:insert).and_return(id)
-      CreateTest.send(:_create, @doc, false).should == id
     end
   end
 
