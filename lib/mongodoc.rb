@@ -11,8 +11,9 @@ require 'validatable'
 require 'will_paginate/collection'
 
 module MongoDoc
-  VERSION = '0.1.2'
+  VERSION = '0.3.0'
 
+  class UnsupportedServerVersionError < RuntimeError; end
   class NoConnectionError < RuntimeError; end
   class NoDatabaseError < RuntimeError; end
 end

@@ -16,10 +16,15 @@ module MongoDoc
     options = opts.empty? ? configuration['options'] || {} : opts
     self.connection = Mongo::Connection.new(host, port, options)
     raise NoConnectionError unless connection
+    verify_server_version
     connection
   end
 
   def self.configuration
     self.config ||= File.exists?(config_path || '') ? YAML.load_file(config_path) : {}
+  end
+
+  def self.verify_server_version
+    raise UnsupportedServerVersionError.new('MongoDoc requires at least mongoDB version 1.3.1') unless connection.server_version >= "1.3.1"
   end
 end

@@ -6,23 +6,43 @@ describe "MongoDoc Connections" do
     MongoDoc.config_path.should == './mongodb.yml'
   end
 
+  describe ".verify_server_version" do
+    let (:connection) { stub('connection') }
+
+    before do
+      MongoDoc.stub(:connection).and_return(connection)
+    end
+
+    it "raises when the server version is unsupported" do
+      connection.stub(:server_version).and_return(Mongo::ServerVersion.new('1.3.0'))
+      lambda { MongoDoc.verify_server_version }.should raise_error(MongoDoc::UnsupportedServerVersionError)
+    end
+
+    it "returns when the server version is supported" do
+      connection.stub(:server_version).and_return(Mongo::ServerVersion.new('1.3.1'))
+      lambda { MongoDoc.verify_server_version }.should_not raise_error(MongoDoc::UnsupportedServerVersionError)
+    end
+  end
+
   describe ".connect" do
+    let (:connection) { stub('connection') }
+
     before do
       MongoDoc.config_path = nil
       MongoDoc.connection = nil
       MongoDoc.config = nil
-      @connection = stub('connection')
+      MongoDoc.stub(:verify_server_version)
     end
 
     it "when called with no params just connects" do
-      Mongo::Connection.should_receive(:new).and_return(@connection)
+      Mongo::Connection.should_receive(:new).and_return(connection)
       MongoDoc.connect
     end
 
     it "sets the connection" do
-      Mongo::Connection.stub(:new).and_return(@connection)
+      Mongo::Connection.stub(:new).and_return(connection)
       MongoDoc.connect
-      MongoDoc.connection.should == @connection
+      MongoDoc.connection.should == connection
     end
 
     it "raises NoConnectionError if the connection fails" do
@@ -30,23 +50,29 @@ describe "MongoDoc Connections" do
       lambda { MongoDoc.connect }.should raise_error(MongoDoc::NoConnectionError)
     end
 
+    it "raises UnsupportedServerVersionError if the server version is unsupported" do
+      Mongo::Connection.stub(:new).and_return(connection)
+      MongoDoc.stub(:verify_server_version).and_raise(MongoDoc::UnsupportedServerVersionError)
+      lambda { MongoDoc.connect }.should raise_error(MongoDoc::UnsupportedServerVersionError)
+    end
+
     context "mimics the Mongo::Connection API" do
       it "accepts the host param" do
         host = 'localhost'
-        Mongo::Connection.should_receive(:new).with(host, nil, {}).and_return(@connection)
+        Mongo::Connection.should_receive(:new).with(host, nil, {}).and_return(connection)
         MongoDoc.connect(host)
       end
 
       it "accepts the port param" do
         host = 'localhost'
         port = 3000
-        Mongo::Connection.should_receive(:new).with(host, 3000, {}).and_return(@connection)
+        Mongo::Connection.should_receive(:new).with(host, 3000, {}).and_return(connection)
         MongoDoc.connect(host, port)
       end
 
       it "accepts an options hash" do
         opts = {:slave_ok => true}
-        Mongo::Connection.should_receive(:new).with(nil, nil, opts).and_return(@connection)
+        Mongo::Connection.should_receive(:new).with(nil, nil, opts).and_return(connection)
         MongoDoc.connect(opts)
       end
 
@@ -54,7 +80,7 @@ describe "MongoDoc Connections" do
         host = 'localhost'
         port = 3000
         opts = {:slave_ok => true}
-        Mongo::Connection.should_receive(:new).with(host, 3000, opts).and_return(@connection)
+        Mongo::Connection.should_receive(:new).with(host, 3000, opts).and_return(connection)
         MongoDoc.connect(host, port, opts)
       end
     end
@@ -71,7 +97,7 @@ describe "MongoDoc Connections" do
       context "with a host config file" do
 
         it "and no params connects to the database with the values from the file" do
-          Mongo::Connection.should_receive(:new).with(@host, @port, @db_options).and_return(@connection)
+          Mongo::Connection.should_receive(:new).with(@host, @port, @db_options).and_return(connection)
           MongoDoc.connect
         end
 
@@ -79,7 +105,7 @@ describe "MongoDoc Connections" do
           host = 'p_host'
           port = 890
           options = {:option => 'p_opt'}
-          Mongo::Connection.should_receive(:new).with(host, port, options).and_return(@connection)
+          Mongo::Connection.should_receive(:new).with(host, port, options).and_return(connection)
           MongoDoc.connect(host, port, options)
         end
       end
@@ -94,7 +120,7 @@ describe "MongoDoc Connections" do
         end
 
         it "connects to the database with the host pairs value from the file" do
-          Mongo::Connection.should_receive(:new).with(@host_pairs, @port, @db_options).and_return(@connection)
+          Mongo::Connection.should_receive(:new).with(@host_pairs, @port, @db_options).and_return(connection)
           MongoDoc.connect
         end
       end
