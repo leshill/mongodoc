@@ -19,7 +19,12 @@ describe "Saving embedded documents" do
     key :data
   end
 
-  let(:leaf) { LeafDoc.new }
+  let(:leaf) do
+    doc = LeafDoc.new
+    doc._id = 'id'
+    doc
+  end
+
   let(:data) { 'data' }
 
   context "#save" do

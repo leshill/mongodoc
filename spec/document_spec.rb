@@ -285,104 +285,127 @@ describe "MongoDoc::Document" do
       key :data
     end
 
+    let(:data) {'data'}
+
+    let(:attrs) {{:data => data}}
+
+    let(:path_attrs) {{'update_attribute_child.data' => data}}
+
+    let(:doc) do
+      doc = UpdateAttributesChild.new
+      doc._id = 'id'
+      doc.stub(:_naive_update_attributes)
+      doc
+    end
+
     before do
-      @data = 'data'
-      @doc = UpdateAttributesChild.new
-      UpdateAttributesRoot.new.update_attribute_child = @doc
-      @attrs = {:data => @data}
-      @path_attrs = {'update_attribute_child.data' => @data}
-      @doc.stub(:_naive_update_attributes)
+      root = UpdateAttributesRoot.new
+      root.update_attribute_child = doc
+      root._id = 'id'
     end
 
     context "#update_attributes" do
+      it "delegates to save if the object is a new record" do
+        check = 'check'
+        doc.stub(:new_record?).and_return(true)
+        doc.should_receive(:save).and_return(check)
+        doc.update_attributes(attrs).should == check
+      end
 
       it "sets the attributes" do
-        @doc.update_attributes(@attrs)
-        @doc.data.should == @data
+        doc.update_attributes(attrs)
+        doc.data.should == data
       end
 
       it "normalizes the attributes to the parent" do
-        @doc.should_receive(:_path_to_root)
-        @doc.update_attributes(@attrs)
+        doc.should_receive(:_path_to_root)
+        doc.update_attributes(attrs)
       end
 
       it "validates" do
-        @doc.should_receive(:valid?)
-        @doc.update_attributes(@attrs)
+        doc.should_receive(:valid?)
+        doc.update_attributes(attrs)
       end
 
       it "returns false if the object is not valid" do
-        @doc.stub(:valid?).and_return(false)
-        @doc.update_attributes(@attrs).should be_false
+        doc.stub(:valid?).and_return(false)
+        doc.update_attributes(attrs).should be_false
       end
 
       context "if valid" do
         context "and strict" do
           it "delegates to _strict_update_attributes" do
-            strict_attrs = @attrs.merge(:__strict__ => true)
-            @doc.should_receive(:_strict_update_attributes).with(@path_attrs, false)
-            @doc.update_attributes(strict_attrs)
+            strict_attrs = attrs.merge(:__strict__ => true)
+            doc.should_receive(:_strict_update_attributes).with(path_attrs, false)
+            doc.update_attributes(strict_attrs)
           end
         end
 
         context "and naive" do
           it "delegates to _naive_update_attributes" do
-            @doc.should_receive(:_naive_update_attributes).with(@path_attrs, false)
-            @doc.update_attributes(@attrs)
+            doc.should_receive(:_naive_update_attributes).with(path_attrs, false)
+            doc.update_attributes(attrs)
           end
         end
 
         it "returns the result of _naive_update_attributes" do
           result = 'check'
-          @doc.stub(:_naive_update_attributes).and_return(result)
-          @doc.update_attributes(@attrs).should == result
+          doc.stub(:_naive_update_attributes).and_return(result)
+          doc.update_attributes(attrs).should == result
         end
       end
     end
 
     context "#update_attributes!" do
+      it "delegates to save! if the object is a new record" do
+        check = 'check'
+        doc.stub(:new_record?).and_return(true)
+        doc.should_receive(:save!).and_return(check)
+        doc.update_attributes!(attrs).should == check
+      end
+
       it "sets the attributes" do
-        @doc.update_attributes!(@attrs)
-        @doc.data.should == @data
+        doc.update_attributes!(attrs)
+        doc.data.should == data
       end
 
       it "normalizes the attributes to the parent" do
-        @doc.should_receive(:_path_to_root)
-        @doc.update_attributes!(@attrs)
+        doc.should_receive(:_path_to_root)
+        doc.update_attributes!(attrs)
       end
 
       it "validates" do
-        @doc.should_receive(:valid?).and_return(true)
-        @doc.update_attributes!(@attrs)
+        doc.should_receive(:valid?).and_return(true)
+        doc.update_attributes!(attrs)
       end
 
       it "raises if not valid" do
-        @doc.stub(:valid?).and_return(false)
+        doc.stub(:valid?).and_return(false)
         expect do
-          @doc.update_attributes!(@attrs)
+          doc.update_attributes!(attrs)
         end.should raise_error(MongoDoc::DocumentInvalidError)
       end
 
       context "if valid" do
         context "and strict" do
           it "delegates to _strict_update_attributes with safe == true" do
-            strict_attrs = @attrs.merge(:__strict__ => true)
-            @doc.should_receive(:_strict_update_attributes).with(@path_attrs, true)
-            @doc.update_attributes!(strict_attrs)
+            strict_attrs = attrs.merge(:__strict__ => true)
+            doc.should_receive(:_strict_update_attributes).with(path_attrs, true)
+            doc.update_attributes!(strict_attrs)
           end
         end
 
         context "and naive" do
           it "delegates to _naive_update_attributes with safe == true" do
-            @doc.should_receive(:_naive_update_attributes).with(@path_attrs, true)
-            @doc.update_attributes!(@attrs)
+            doc.should_receive(:_naive_update_attributes).with(path_attrs, true)
+            doc.update_attributes!(attrs)
           end
         end
 
         it "returns the result of _naive_update_attributes" do
           result = 'check'
-          @doc.stub(:_naive_update_attributes).and_return(result)
-          @doc.update_attributes!(@attrs).should == result
+          doc.stub(:_naive_update_attributes).and_return(result)
+          doc.update_attributes!(attrs).should == result
         end
       end
     end

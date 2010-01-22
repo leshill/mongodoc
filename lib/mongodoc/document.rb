@@ -74,6 +74,7 @@ module MongoDoc
     def update_attributes(attrs)
       strict = attrs.delete(:__strict__)
       self.attributes = attrs
+      return save if new_record?
       return false unless valid?
       if strict
         _strict_update_attributes(_path_to_root(self, attrs), false)
@@ -85,6 +86,7 @@ module MongoDoc
     def update_attributes!(attrs)
       strict = attrs.delete(:__strict__)
       self.attributes = attrs
+      return save! if new_record?
       raise DocumentInvalidError unless valid?
       if strict
         _strict_update_attributes(_path_to_root(self, attrs), true)
