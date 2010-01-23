@@ -121,6 +121,7 @@ describe MongoDoc::Criteria do
 
       before do
         @count = 27
+        @collection = mock
         @cursor = stub('cursor', :count => @count)
         Person.stub(:collection).and_return(@collection)
       end
