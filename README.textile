@@ -2,6 +2,8 @@ h1. MongoDoc
 
 Version: 0.2.1 1/18/10
 
+2010-01-23 Tracking MongoDoc with @git@? *READ THIS NOTE*[1]
+
 h2. Introduction
 
 MongoDoc is a simple and easy to use ActiveRecord-like object mapper for "mongoDB":http://www.mongodb.org in Ruby.
@@ -26,7 +28,7 @@ class Address
   attr_accessor :street, :city, :state, :zip, :phone_number
 end
 
-p. With MongoDoc, instead of saving JSON[1], we can save an object directly:
+p. With MongoDoc, instead of saving JSON[2], we can save an object directly:
 
 bc.. contact = Contact.new
 contact.name = 'Hashrocket'
@@ -100,13 +102,13 @@ bc. hashrocket.addresses.first.update_attributes(:street => '320 First Street No
 
 h2. Installation
 
-MongoDoc *requires* mongoDB v1.3 or later.
+MongoDoc *requires* mongoDB v1.3.2 or later.
 
 bc. sudo gem install mongodoc
 
 h2. Configuration
 
-Configure your database connection in ./mongodb.yml, you do not need one if you are running on localhost with the default port
+Configure your database connection in @./mongodb.yml@, you do not need one if you are running on localhost with the default port
 
 bc. name: test
 host: localhost
@@ -141,5 +143,6 @@ h2. Copyright
 
 Copyright (c) 2009 - 2010 Les Hill. See LICENSE for details.
 
-fn1. The Ruby driver exposes an API that understands JSON.
+fn1. Building from @HEAD@? MongoDoc *requires* mongoDB v1.3.2 or later. That means you must be using the 1.3.x nightly build as of 2010-01-22 .
 
+fn2. The Ruby driver exposes an API that understands JSON.

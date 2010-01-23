@@ -96,12 +96,12 @@ describe "Saving embedded documents" do
       let(:root) { NestedDocsRoot.new(:nested_children => [NestedChild.new(:leaf => leaf)]) }
 
       it "calls the root document's _naive_update_attributes with a full attribute path and not safe" do
-        root.should_receive(:_strict_update_attributes).with({'nested_children.0.leaf.data' => data}, false, 'nested_children.leaf._id' => leaf_id)
+        root.should_receive(:_strict_update_attributes).with({'nested_children.0.leaf.data' => data}, false, 'nested_children.0.leaf._id' => leaf_id)
         leaf.update_attributes(:data => data, :__strict__ => true)
       end
 
       it "(with bang!) calls the root document's _naive_update_attributes with a full attribute path and safe" do
-        root.should_receive(:_strict_update_attributes).with({'nested_children.0.leaf.data' => data}, true, 'nested_children.leaf._id' => leaf_id)
+        root.should_receive(:_strict_update_attributes).with({'nested_children.0.leaf.data' => data}, true, 'nested_children.0.leaf._id' => leaf_id)
         leaf.update_attributes!(:data => data, :__strict__ => true)
       end
     end

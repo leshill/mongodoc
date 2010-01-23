@@ -133,12 +133,16 @@ module MongoDoc
 
     def _naive_update_attributes(attrs, safe)
       return _root.send(:_naive_update_attributes, attrs, safe) if _root
-      _collection.update({'_id' => self._id}, MongoDoc::Query.set_modifier(attrs), :safe => safe)
+      _update({}, attrs, safe)
     end
 
     def _strict_update_attributes(attrs, safe, selector = {})
-      return _root.send(:_strict_update_attributes, attrs, safe, _selector_path_to_root('_id' => _id)) if _root
-      _collection.update({'_id' => _id}.merge(selector), MongoDoc::Query.set_modifier(attrs), :safe => safe)
+      return _root.send(:_strict_update_attributes, attrs, safe, _path_to_root(self, '_id' => _id)) if _root
+      _update(selector, attrs, safe)
+    end
+
+    def _update(selector, data, safe)
+      _collection.update({'_id' => _id}.merge(selector), MongoDoc::Query.set_modifier(data), :safe => safe)
     end
 
     def _save(safe)

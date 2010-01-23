@@ -416,27 +416,29 @@ describe "MongoDoc::Document" do
       include MongoDoc::Document
     end
 
-    before do
-      @id = 'id'
-      @attrs = {:data => 'data'}
-      @safe = false
-      @doc = NaiveUpdateAttributes.new
-      @doc.stub(:_id).and_return(@id)
-      @collection = stub('collection')
-      @collection.stub(:update)
-      @doc.stub(:_collection).and_return(@collection)
+
+    let(:id) { 'id' }
+
+    let(:attrs) { {:data => 'data'} }
+
+    let(:safe) { false }
+
+    let(:doc) do
+      doc = NaiveUpdateAttributes.new
+      doc.stub(:_id).and_return(id)
+      doc
     end
 
-    it "calls update on the collection without a root" do
-      @collection.should_receive(:update).with({'_id' => @id}, MongoDoc::Query.set_modifier(@attrs), {:safe => @safe})
-      @doc.send(:_naive_update_attributes, @attrs, @safe)
+    it "without a root delegates to _update" do
+      doc.should_receive(:_update).with({}, attrs, safe)
+      doc.send(:_naive_update_attributes, attrs, safe)
     end
 
     it "with a root, calls _naive_update_attributes on the root" do
       root = NaiveUpdateAttributes.new
-      @doc.stub(:_root).and_return(root)
-      root.should_receive(:_naive_update_attributes).with(@attrs, @safe)
-      @doc.send(:_naive_update_attributes, @attrs, @safe)
+      doc.stub(:_root).and_return(root)
+      root.should_receive(:_naive_update_attributes).with(attrs, safe)
+      doc.send(:_naive_update_attributes, attrs, safe)
     end
   end
 
@@ -445,41 +447,45 @@ describe "MongoDoc::Document" do
       include MongoDoc::Document
     end
 
-    before do
-      @id = 'id'
-      @attrs = {:data => 'data'}
-      @selector = {'selector' => 'selector'}
-      @safe = false
-      @doc = StrictUpdateAttributes.new
-      @doc.stub(:_id).and_return(@id)
-      @collection = stub('collection')
-      @collection.stub(:update)
-      @doc.stub(:_collection).and_return(@collection)
+    let(:id) { 'id' }
+
+    let(:attrs) { {:data => 'data'} }
+
+    let(:selector) { {:selector => 'selector'} }
+
+    let(:safe) { false }
+
+    let(:doc) do
+      doc = StrictUpdateAttributes.new
+      doc.stub(:_id).and_return(id)
+      doc
     end
 
     context "without a root" do
-      it "calls update on the collection" do
-        @collection.should_receive(:update).with({'_id' => @id}.merge(@selector), MongoDoc::Query.set_modifier(@attrs), :safe => @safe)
-        @doc.send(:_strict_update_attributes, @attrs, @safe, @selector)
+      it "without a root delegates to _update" do
+        doc.should_receive(:_update).with(selector, attrs, safe)
+        doc.send(:_strict_update_attributes, attrs, safe, selector)
       end
     end
 
     context "with a root" do
+      let(:root) { StrictUpdateAttributes.new }
+
       before do
-        @root = StrictUpdateAttributes.new
-        @root.stub(:_collection).and_return(@collection)
-        @doc.stub(:_root).and_return(@root)
-        @doc.stub(:_selector_path_to_root).and_return({'path._id' => @id})
+        doc.stub(:_root).and_return(root)
       end
 
-      it "calls _selector_path_to_root on our id" do
-        @doc.should_receive(:_selector_path_to_root).with('_id' => @id).and_return({'path._id' => @id})
-        @doc.send(:_strict_update_attributes, @attrs, @safe)
+      it "calls _path_to_root on our id" do
+        root.stub(:_strict_update_attributes)
+        doc.should_receive(:_path_to_root).with(doc, '_id' => id)
+        doc.send(:_strict_update_attributes, attrs, safe)
       end
 
       it "calls _strict_update_attributes on the root with our selector" do
-        @root.should_receive(:_strict_update_attributes).with(@attrs, @safe, 'path._id' => @id)
-        @doc.send(:_strict_update_attributes, @attrs, @safe)
+        selector = {'path._id' => id}
+        doc.stub(:_path_to_root).with(doc, '_id' => id).and_return(selector)
+        root.should_receive(:_strict_update_attributes).with(attrs, safe, selector)
+        doc.send(:_strict_update_attributes, attrs, safe)
       end
     end
   end
