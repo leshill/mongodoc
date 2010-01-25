@@ -14,12 +14,12 @@ describe "MongoDoc Connections" do
     end
 
     it "raises when the server version is unsupported" do
-      connection.stub(:server_version).and_return(Mongo::ServerVersion.new('1.3.0'))
+      connection.stub(:server_version).and_return(Mongo::ServerVersion.new('1.3.1'))
       lambda { MongoDoc.verify_server_version }.should raise_error(MongoDoc::UnsupportedServerVersionError)
     end
 
     it "returns when the server version is supported" do
-      connection.stub(:server_version).and_return(Mongo::ServerVersion.new('1.3.1'))
+      connection.stub(:server_version).and_return(Mongo::ServerVersion.new('1.3.2'))
       lambda { MongoDoc.verify_server_version }.should_not raise_error(MongoDoc::UnsupportedServerVersionError)
     end
   end
