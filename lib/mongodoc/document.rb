@@ -50,6 +50,16 @@ module MongoDoc
       _id.nil?
     end
 
+    def remove
+      raise UnsupportedOperation.new('Document#remove is not supported for embedded documents') if _root
+      _remove
+    end
+
+    def remove_document
+      return _root.remove_document if _root
+      remove
+    end
+
     def save(validate = true)
       return _root.save(validate) if _root
       return _save(false) unless validate and not valid?
@@ -134,6 +144,10 @@ module MongoDoc
     def _naive_update_attributes(attrs, safe)
       return _root.send(:_naive_update_attributes, attrs, safe) if _root
       _update({}, attrs, safe)
+    end
+
+    def _remove
+      _collection.remove({'_id' => _id})
     end
 
     def _strict_update_attributes(attrs, safe, selector = {})

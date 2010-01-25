@@ -612,6 +612,39 @@ describe "MongoDoc::Document" do
     end
   end
 
+  context "removing documents" do
+    class RemoveDocument
+      include MongoDoc::Document
+    end
+
+    let(:doc) { RemoveDocument.new }
+
+    context "#remove" do
+      it "when called on a embedded document with a _root raises UnsupportedOperationForEmbeddedDocument" do
+        doc._root = RemoveDocument.new
+        expect { doc.remove }.to raise_error(MongoDoc::UnsupportedOperation)
+      end
+
+      it "removes the document" do
+        doc.should_receive(:_remove)
+        doc.remove
+      end
+    end
+
+    context "#remove_document" do
+      it "when the document is the root, removes the document" do
+        doc.should_receive(:_remove)
+        doc.remove_document
+      end
+
+      it "when the document is not the root, calls remove_document on the root" do
+        doc._root = root = RemoveDocument.new
+        root.should_receive(:remove_document)
+        doc.remove_document
+      end
+    end
+  end
+
   context "misc class methods" do
     class ClassMethods
       include MongoDoc::Document
