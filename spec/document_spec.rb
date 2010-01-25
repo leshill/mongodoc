@@ -625,8 +625,8 @@ describe "MongoDoc::Document" do
         expect { doc.remove }.to raise_error(MongoDoc::UnsupportedOperation)
       end
 
-      it "removes the document" do
-        doc.should_receive(:_remove)
+      it "delegates to remove document" do
+        doc.should_receive(:remove_document)
         doc.remove
       end
     end

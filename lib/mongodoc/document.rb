@@ -52,12 +52,12 @@ module MongoDoc
 
     def remove
       raise UnsupportedOperation.new('Document#remove is not supported for embedded documents') if _root
-      _remove
+      remove_document
     end
 
     def remove_document
       return _root.remove_document if _root
-      remove
+      _remove
     end
 
     def save(validate = true)
