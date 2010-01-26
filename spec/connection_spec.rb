@@ -7,7 +7,7 @@ describe "MongoDoc Connections" do
   end
 
   describe ".verify_server_version" do
-    let (:connection) { stub('connection') }
+    let(:connection) { stub('connection') }
 
     before do
       MongoDoc.stub(:connection).and_return(connection)
@@ -25,7 +25,7 @@ describe "MongoDoc Connections" do
   end
 
   describe ".connect" do
-    let (:connection) { stub('connection') }
+    let(:connection) { stub('connection') }
 
     before do
       MongoDoc.config_path = nil
