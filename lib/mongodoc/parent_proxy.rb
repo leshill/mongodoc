@@ -20,10 +20,11 @@ module MongoDoc
     protected
 
     def _annotated_keys(hash)
-      hash.inject({}) do |annotated, (key, value)|
+      annotated = {}
+      hash.each do |(key, value)|
         annotated["#{assoc_name}.#{key}"] = value
-        annotated
       end
+      annotated
     end
 
     private

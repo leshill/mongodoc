@@ -101,11 +101,12 @@ module MongoDoc #:nodoc:
     def each(&block)
       @collection ||= execute
       if block_given?
-        @collection = collection.inject([]) do |container, item|
+        container = []
+        collection.each do |item|
           container << item
           yield item
-          container
         end
+        @collection = container
       end
       self
     end
@@ -166,9 +167,10 @@ module MongoDoc #:nodoc:
     #
     # Returns <tt>self</tt>
     def criteria(criteria_conditions = {})
-      criteria_conditions.inject(self) do |criteria, (key, value)|
-        criteria.send(key, value)
+      criteria_conditions.each do |(key, value)|
+        send(key, value)
       end
+      self
     end
 
     # Adds a criterion to the +Criteria+ that specifies values that must all

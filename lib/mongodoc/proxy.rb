@@ -61,17 +61,17 @@ module MongoDoc
 
     def _path_to_root(src, attrs)
       assoc_path = "#{assoc_name}.#{index(src)}"
-      assoc_attrs = attrs.inject({}) do |assoc_attrs, (key, value)|
+      assoc_attrs = {}
+      attrs.each do |(key, value)|
         assoc_attrs["#{assoc_path}.#{key}"] = value
-        assoc_attrs
       end
       _parent._path_to_root(src, assoc_attrs)
     end
 
     def _selector_path_to_root(selector)
-      annotated_selector = selector.inject({}) do |annotated, (key, value)|
-        annotated["#{assoc_name}.#{key}"] = value
-        annotated
+      annotated_selector = {}
+      selector.each do |(key, value)|
+        annotated_selector["#{assoc_name}.#{key}"] = value
       end
       _parent._selector_path_to_root(annotated_selector)
     end

@@ -34,10 +34,11 @@ module MongoDoc
     end
 
     def attributes
-      self.class._attributes.inject({}) do |hash, attr|
+      hash = {}
+      self.class._attributes.each do |attr|
         hash[attr] = send(attr)
-        hash
       end
+      hash
     end
 
     def attributes=(attrs)
