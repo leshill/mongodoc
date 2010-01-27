@@ -1,7 +1,7 @@
 require 'rubygems'
 
-gem 'mongo', '0.18.2'
-gem 'mongo_ext', '0.18.2'
+gem 'mongo', '0.18.3'
+gem 'mongo_ext', '0.18.3'
 gem 'durran-validatable', '2.0.1'
 gem 'leshill-will_paginate', '2.3.11'
 
