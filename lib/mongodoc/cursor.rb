@@ -2,11 +2,17 @@ module MongoDoc
   class Cursor
     include Enumerable
 
-    attr_accessor :_cursor
-    delegate :close, :closed?, :count, :explain, :limit, :query_options_hash, :query_opts, :skip, :sort, :to => :_cursor
+    attr_accessor :_collection, :_cursor
 
-    def initialize(cursor)
+    delegate :admin, :close, :closed?, :count, :explain, :fields, :full_collection_name, :hint, :limit, :order, :query_options_hash, :query_opts, :selector, :skip, :snapshot, :sort, :timeout, :to => :_cursor
+
+    def initialize(mongodoc_collection, cursor)
+      self._collection = mongodoc_collection
       self._cursor = cursor
+    end
+
+    def collection
+      _collection
     end
 
     def each
