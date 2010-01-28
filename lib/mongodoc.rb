@@ -6,7 +6,7 @@ gem 'durran-validatable', '2.0.1'
 gem 'leshill-will_paginate', '2.3.11'
 
 require 'mongo'
-require 'activesupport'
+require 'active_support'
 require 'validatable'
 require 'will_paginate/collection'
 
