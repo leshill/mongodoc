@@ -68,14 +68,6 @@ module MongoDoc
       _parent._path_to_root(src, assoc_attrs)
     end
 
-    def _selector_path_to_root(selector)
-      annotated_selector = {}
-      selector.each do |(key, value)|
-        annotated_selector["#{assoc_name}.#{key}"] = value
-      end
-      _parent._selector_path_to_root(annotated_selector)
-    end
-
     def build(attrs)
       collection_class.new(attrs)
     end

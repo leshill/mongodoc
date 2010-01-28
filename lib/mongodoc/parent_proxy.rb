@@ -13,10 +13,6 @@ module MongoDoc
       _parent._path_to_root(src, _annotated_keys(attrs))
     end
 
-    def _selector_path_to_root(selector)
-      _parent._selector_path_to_root(_annotated_keys(selector))
-    end
-
     protected
 
     def _annotated_keys(hash)
