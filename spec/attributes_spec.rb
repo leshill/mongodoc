@@ -190,4 +190,69 @@ describe "MongoDoc::Attributes" do
       invalid.should have(1).error_on(:data)
     end
   end
+
+  context ".has_hash" do
+    class SubHasHashDoc
+      include MongoDoc::Document
+
+      key :data
+    end
+
+    class TestHasHashDoc
+      include MongoDoc::Document
+
+      has_hash :sub_docs, :class_name => 'SubHasHashDoc'
+    end
+
+    class TestImplicitHasHashDoc
+      include MongoDoc::Document
+
+      has_hash :sub_has_hash_docs
+    end
+
+    let(:subdoc) { SubHasHashDoc.new }
+    let(:doc) { TestHasHashDoc.new(:sub_docs => {:key => subdoc}) }
+
+    it "uses a proxy" do
+      MongoDoc::HashProxy.should === TestHasHashDoc.new.sub_docs
+    end
+
+    it "sets the subdocuments parent to the proxy" do
+      doc.sub_docs.should == subdoc._parent
+    end
+
+    it "set the subdocuments root to the root" do
+      doc.should == subdoc._root
+    end
+
+    it "uses the association name to find the children's class name" do
+      TestImplicitHasHashDoc.new.sub_has_hash_docs.assoc_class.should == SubHasHashDoc
+    end
+
+    context "validations" do
+      class HasHashValidationChild
+        include MongoDoc::Document
+
+        key :data
+        validates_presence_of :data
+      end
+
+      class HasHashValidationTest
+        include MongoDoc::Document
+
+        has_hash :subdocs, :class_name => 'HasHashValidationChild'
+      end
+
+      let(:invalid_child) { HasHashValidationChild.new }
+      let(:doc) { HasHashValidationTest.new(:subdocs => {:key => invalid_child}) }
+
+      it "cascades validations and marks it in the parent" do
+        doc.should have(1).error_on(:subdocs)
+      end
+
+      it "cascades validations and marks it in the child" do
+        invalid_child.should have(1).error_on(:data)
+      end
+    end
+  end
 end

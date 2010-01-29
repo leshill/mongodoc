@@ -1,5 +1,6 @@
 require 'mongodoc/proxy'
 require 'mongodoc/parent_proxy'
+require 'mongodoc/hash_proxy'
 
 module MongoDoc
   module Attributes
@@ -91,6 +92,32 @@ module MongoDoc
             Array.wrap(arrayish).each do|item|
               proxy << item
             end
+          end
+        end
+      end
+
+      def has_hash(*args)
+        options = args.extract_options!
+        assoc_class = if class_name = options.delete(:class_name)
+          type_name_with_module(class_name).constantize
+        end
+
+        args.each do |name|
+          _associations << name unless _associations.include?(name)
+
+          define_method("#{name}") do
+            association = instance_variable_get("@#{name}")
+            unless association
+              association = HashProxy.new(:root => _root || self, :parent => self, :assoc_name => name, :assoc_class => assoc_class || self.class.type_name_with_module(name.to_s.classify).constantize)
+              instance_variable_set("@#{name}", association)
+            end
+            association
+          end
+
+          validates_each name, :logic => lambda { send("#{name}").validate_children }
+
+          define_method("#{name}=") do |hash|
+            send("#{name}").replace(hash)
           end
         end
       end

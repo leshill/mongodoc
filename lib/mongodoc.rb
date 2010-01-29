@@ -13,6 +13,7 @@ require 'will_paginate/collection'
 module MongoDoc
   VERSION = '0.3.0'
 
+  class InvalidEmbeddedHashKey < RuntimeError; end
   class NoConnectionError < RuntimeError; end
   class NoDatabaseError < RuntimeError; end
   class UnsupportedOperation < RuntimeError; end
