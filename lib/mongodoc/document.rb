@@ -4,6 +4,7 @@ require 'mongodoc/attributes'
 require 'mongodoc/criteria'
 require 'mongodoc/finders'
 require 'mongodoc/named_scope'
+require 'mongodoc/validations/macros'
 
 module MongoDoc
   class DocumentInvalidError < RuntimeError; end
@@ -17,7 +18,8 @@ module MongoDoc
         extend ClassMethods
         extend Finders
         extend NamedScope
-        include Validatable
+        include ::Validatable
+        extend Validations::Macros
 
         alias :id :_id
         alias :to_param :_id

@@ -83,9 +83,13 @@ module MongoDoc
       merge!(other)
     end
 
-    def validate_children
-      unless values.all? {|child| child.valid? }
-        _parent.errors.add(assoc_name, "is invalid")
+    def valid?
+      values.all? do |child|
+        if is_document?(child)
+          child.valid?
+        else
+          true
+        end
       end
     end
 

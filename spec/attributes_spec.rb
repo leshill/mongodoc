@@ -253,6 +253,10 @@ describe "MongoDoc::Attributes" do
       it "cascades validations and marks it in the child" do
         invalid_child.should have(1).error_on(:data)
       end
+
+      it "ignores non-document children" do
+        HasHashValidationTest.new(:subdocs => {:key => 'data'}).should be_valid
+      end
     end
   end
 end

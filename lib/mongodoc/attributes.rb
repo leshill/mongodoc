@@ -114,7 +114,7 @@ module MongoDoc
             association
           end
 
-          validates_each name, :logic => lambda { send("#{name}").validate_children }
+          validates_embedded name
 
           define_method("#{name}=") do |hash|
             send("#{name}").replace(hash)
