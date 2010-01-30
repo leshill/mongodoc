@@ -144,50 +144,53 @@ describe "MongoDoc::Attributes" do
       has_many :sub_has_many_docs
     end
 
+    let(:subdoc) { SubHasManyDoc.new }
+    let(:doc) { TestHasManyDoc.new(:sub_docs => [subdoc]) }
+
     it "uses a proxy" do
-      MongoDoc::Proxy.should === TestHasManyDoc.new.sub_docs
+      MongoDoc::CollectionProxy.should === TestHasManyDoc.new.sub_docs
     end
 
     it "sets the subdocuments parent to the proxy" do
-      subdoc = SubHasManyDoc.new
-      doc = TestHasManyDoc.new(:sub_docs => [subdoc])
-      subdoc._parent.should == doc.sub_docs
+      doc.sub_docs.should == subdoc._parent
     end
 
     it "set the subdocuments root to the root" do
-      subdoc = SubHasManyDoc.new
-      doc = TestHasManyDoc.new(:sub_docs => [subdoc])
-      subdoc._root.should == doc
+      doc.should == subdoc._root
     end
 
     it "uses the association name to find the children's class name" do
-      subdoc = SubHasManyDoc.new
-      doc = TestImplicitHasManyDoc.new(:sub_has_many_docs => [subdoc])
+      TestImplicitHasManyDoc.new.sub_has_many_docs.assoc_class.should == SubHasManyDoc
     end
 
-    class HasManyValidationChild
-      include MongoDoc::Document
+    context "validations" do
+      class HasManyValidationChild
+        include MongoDoc::Document
 
-      key :data
-      validates_presence_of :data
-    end
+        key :data
+        validates_presence_of :data
+      end
 
-    class HasManyValidationTest
-      include MongoDoc::Document
+      class HasManyValidationTest
+        include MongoDoc::Document
 
-      has_many :subdocs, :class_name => 'HasManyValidationChild'
-    end
+        has_many :subdocs, :class_name => 'HasManyValidationChild'
+      end
 
-    it "cascades validations and marks it in the parent" do
-      invalid = HasManyValidationChild.new
-      doc = HasManyValidationTest.new(:subdocs => [invalid])
-      doc.should have(1).error_on(:subdocs)
-    end
+      let(:invalid_child) { HasHashValidationChild.new }
+      let(:doc) { HasHashValidationTest.new(:subdocs => {:key => invalid_child}) }
 
-    it "cascades validations and marks it in the child" do
-      invalid = HasManyValidationChild.new
-      doc = HasManyValidationTest.new(:subdocs => [invalid])
-      invalid.should have(1).error_on(:data)
+      it "cascades validations and marks it in the parent" do
+        doc.should have(1).error_on(:subdocs)
+      end
+
+      it "cascades validations and marks it in the child" do
+        invalid_child.should have(1).error_on(:data)
+      end
+
+      it "ignores non-document children" do
+        HasManyValidationTest.new(:subdocs => ['not a doc']).should be_valid
+      end
     end
   end
 

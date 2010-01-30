@@ -606,7 +606,7 @@ describe "MongoDoc::Document" do
 
         it "roundtrips the proxy" do
           doc = TestHasManyBsonDoc.new(:subdoc => SubHasManyBsonDoc.new(:attr => "value"))
-          MongoDoc::Proxy.should === MongoDoc::BSON.decode(doc.to_bson).subdoc
+          MongoDoc::CollectionProxy.should === MongoDoc::BSON.decode(doc.to_bson).subdoc
         end
       end
     end

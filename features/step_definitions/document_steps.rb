@@ -31,10 +31,10 @@ end
 Given /^'(.*)' has (?:a|an|many) (.*) :$/ do |doc_name, assoc_name, table|
   doc = instance_variable_get("@#{doc_name}")
   table.hashes.each do |hash|
-    doc.send(assoc_name) << hash.inject({}) do |attrs, (attr, value)|
+    doc.send(assoc_name).build(hash.inject({}) do |attrs, (attr, value)|
       attrs["#{attr.underscore.gsub(' ', '_')}"] = value
       attrs
-    end
+    end)
   end
   @all = doc.send(assoc_name)
   @last = @all.last

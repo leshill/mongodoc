@@ -1,4 +1,4 @@
-require 'mongodoc/proxy'
+require 'mongodoc/collection_proxy'
 require 'mongodoc/parent_proxy'
 require 'mongodoc/hash_proxy'
 
@@ -68,7 +68,7 @@ module MongoDoc
 
       def has_many(*args)
         options = args.extract_options!
-        collection_class = if class_name = options.delete(:class_name)
+        assoc_class = if class_name = options.delete(:class_name)
           type_name_with_module(class_name).constantize
         end
 
@@ -78,13 +78,13 @@ module MongoDoc
           define_method("#{name}") do
             association = instance_variable_get("@#{name}")
             unless association
-              association = Proxy.new(:root => _root || self, :parent => self, :assoc_name => name, :collection_class => collection_class || self.class.type_name_with_module(name.to_s.classify).constantize)
+              association = CollectionProxy.new(:root => _root || self, :parent => self, :assoc_name => name, :assoc_class => assoc_class || self.class.type_name_with_module(name.to_s.classify).constantize)
               instance_variable_set("@#{name}", association)
             end
             association
           end
 
-          validates_associated name
+          validates_embedded name
 
           define_method("#{name}=") do |arrayish|
             proxy = send("#{name}")
