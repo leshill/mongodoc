@@ -44,7 +44,7 @@ module MongoDoc
       @_parent = options[:parent]
     end
 
-    alias_method :add, :[]=
+    alias_method :put, :[]=
     def []=(key, value)
       raise InvalidEmbeddedHashKey.new("Key name [#{key}] must be a valid element name, see http://www.mongodb.org/display/DOCS/BSON#BSON-noteonelementname") unless valid_key?(key)
       if is_document?(value)
@@ -52,7 +52,7 @@ module MongoDoc
         value._root = _root
         _root.send(:register_save_observer, value)
       end
-      add(key, value)
+      put(key, value)
     end
     alias_method :store, :[]=
 
