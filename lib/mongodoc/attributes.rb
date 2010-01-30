@@ -1,6 +1,6 @@
-require 'mongodoc/collection_proxy'
-require 'mongodoc/parent_proxy'
-require 'mongodoc/hash_proxy'
+require 'mongodoc/associations/collection_proxy'
+require 'mongodoc/associations/parent_proxy'
+require 'mongodoc/associations/hash_proxy'
 
 module MongoDoc
   module Attributes
@@ -55,7 +55,7 @@ module MongoDoc
           define_method("#{name}=") do |value|
             if value
               raise NotADocumentError unless Document === value
-              value._parent = ParentProxy.new(self, name)
+              value._parent = Associations::ParentProxy.new(self, name)
               value._root = _root || self
               value._root.register_save_observer(value)
             end
@@ -78,7 +78,7 @@ module MongoDoc
           define_method("#{name}") do
             association = instance_variable_get("@#{name}")
             unless association
-              association = CollectionProxy.new(:root => _root || self, :parent => self, :assoc_name => name, :assoc_class => assoc_class || self.class.type_name_with_module(name.to_s.classify).constantize)
+              association = Associations::CollectionProxy.new(:root => _root || self, :parent => self, :assoc_name => name, :assoc_class => assoc_class || self.class.type_name_with_module(name.to_s.classify).constantize)
               instance_variable_set("@#{name}", association)
             end
             association
@@ -108,7 +108,7 @@ module MongoDoc
           define_method("#{name}") do
             association = instance_variable_get("@#{name}")
             unless association
-              association = HashProxy.new(:root => _root || self, :parent => self, :assoc_name => name, :assoc_class => assoc_class || self.class.type_name_with_module(name.to_s.classify).constantize)
+              association = Associations::HashProxy.new(:root => _root || self, :parent => self, :assoc_name => name, :assoc_class => assoc_class || self.class.type_name_with_module(name.to_s.classify).constantize)
               instance_variable_set("@#{name}", association)
             end
             association

@@ -1,6 +1,6 @@
-require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
+require File.expand_path(File.join(File.dirname(__FILE__), '..',  'spec_helper'))
 
-describe "MongoDoc::ParentProxy" do
+describe "MongoDoc::Associations::ParentProxy" do
   class Parent
     include MongoDoc::Document
   end
@@ -15,7 +15,7 @@ describe "MongoDoc::ParentProxy" do
   end
 
   subject do
-    MongoDoc::ParentProxy.new(@parent, @assoc_name)
+    MongoDoc::Associations::ParentProxy.new(@parent, @assoc_name)
   end
 
   it "has the association name" do
@@ -28,13 +28,13 @@ describe "MongoDoc::ParentProxy" do
 
   it "requires a parent" do
     expect do
-      MongoDoc::ParentProxy.new(nil, @assoc_name)
+      MongoDoc::Associations::ParentProxy.new(nil, @assoc_name)
     end.should raise_error
   end
 
   it "requires an association name" do
     expect do
-      MongoDoc::ParentProxy.new(@parent, nil)
+      MongoDoc::Associations::ParentProxy.new(@parent, nil)
     end.should raise_error
   end
 

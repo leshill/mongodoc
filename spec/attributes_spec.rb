@@ -78,7 +78,7 @@ describe "MongoDoc::Attributes" do
     it "sets the subdocuments parent to the parent proxy" do
       subdoc = SubDoc.new
       doc = TestDoc.new(:subdoc => subdoc)
-      MongoDoc::ParentProxy.should === subdoc._parent
+      MongoDoc::Associations::ParentProxy.should === subdoc._parent
       subdoc._parent._parent.should == doc
     end
 
@@ -148,7 +148,7 @@ describe "MongoDoc::Attributes" do
     let(:doc) { TestHasManyDoc.new(:sub_docs => [subdoc]) }
 
     it "uses a proxy" do
-      MongoDoc::CollectionProxy.should === TestHasManyDoc.new.sub_docs
+      MongoDoc::Associations::CollectionProxy.should === TestHasManyDoc.new.sub_docs
     end
 
     it "sets the subdocuments parent to the proxy" do
@@ -217,7 +217,7 @@ describe "MongoDoc::Attributes" do
     let(:doc) { TestHasHashDoc.new(:sub_docs => {:key => subdoc}) }
 
     it "uses a proxy" do
-      MongoDoc::HashProxy.should === TestHasHashDoc.new.sub_docs
+      MongoDoc::Associations::HashProxy.should === TestHasHashDoc.new.sub_docs
     end
 
     it "sets the subdocuments parent to the proxy" do

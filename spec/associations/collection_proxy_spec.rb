@@ -1,6 +1,6 @@
-require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
+require File.expand_path(File.join(File.dirname(__FILE__), '..', '/spec_helper'))
 
-describe MongoDoc::CollectionProxy do
+describe MongoDoc::Associations::CollectionProxy do
   class CollectionProxyTest
     include MongoDoc::Document
 
@@ -8,7 +8,7 @@ describe MongoDoc::CollectionProxy do
   end
 
   let(:root) { stub('root', :register_save_observer => nil) }
-  let(:proxy) { MongoDoc::CollectionProxy.new(:assoc_name => 'has_many_name', :assoc_class => CollectionProxyTest, :root => root, :parent => root) }
+  let(:proxy) { MongoDoc::Associations::CollectionProxy.new(:assoc_name => 'has_many_name', :assoc_class => CollectionProxyTest, :root => root, :parent => root) }
   let(:item) { CollectionProxyTest.new }
 
   context "#<<" do

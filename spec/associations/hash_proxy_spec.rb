@@ -1,6 +1,6 @@
-require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
+require File.expand_path(File.join(File.dirname(__FILE__), '..', '/spec_helper'))
 
-describe MongoDoc::HashProxy do
+describe MongoDoc::Associations::HashProxy do
   class HashProxyTest
     include MongoDoc::Document
 
@@ -8,7 +8,7 @@ describe MongoDoc::HashProxy do
   end
 
   let(:root) { stub('root', :register_save_observer => nil) }
-  let(:proxy) { MongoDoc::HashProxy.new(:assoc_name => 'has_many_name', :assoc_class => HashProxyTest, :root => root, :parent => root) }
+  let(:proxy) { MongoDoc::Associations::HashProxy.new(:assoc_name => 'has_many_name', :assoc_class => HashProxyTest, :root => root, :parent => root) }
   let(:item) { HashProxyTest.new }
   let(:other_item) {[1,2]}
 
