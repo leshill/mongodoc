@@ -44,7 +44,7 @@ module MongoDoc
       @_parent = options[:parent]
     end
 
-    alias_method :put, :[]=
+    alias put []=
     def []=(key, value)
       raise InvalidEmbeddedHashKey.new("Key name [#{key}] must be a valid element name, see http://www.mongodb.org/display/DOCS/BSON#BSON-noteonelementname") unless valid_key?(key)
       if is_document?(value)
@@ -54,7 +54,7 @@ module MongoDoc
       end
       put(key, value)
     end
-    alias_method :store, :[]=
+    alias store []=
 
     def build(attrs)
       assoc_class.new(attrs)
@@ -76,7 +76,7 @@ module MongoDoc
         end
       end
     end
-    alias_method :update, :merge!
+    alias update merge!
 
     def replace(other)
       clear
