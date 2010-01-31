@@ -38,7 +38,7 @@ module MongoDoc
       def _root=(root)
         @_root = root
         collection.each do |item|
-          item._root = root
+          item._root = root if is_document?(item)
         end
       end
 
