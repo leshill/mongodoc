@@ -22,7 +22,8 @@ Dynamic Attributes
 
 Document#[] => reads attribute
 Document#[]= => writes attribute
-Document#dynamic_attributes => list of dynamic attribute names
+Document#dynamic_attributes => key, value for each dynamic attribute
+Document#dynamic_attribute_names => list of dynamic attribute names
 
 Validations
 -----------
