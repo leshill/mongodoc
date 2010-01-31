@@ -10,7 +10,7 @@ module MongoDoc
       end
 
       def _path_to_root(src, attrs)
-        _parent._path_to_root(src, annotated_keys(attrs))
+        _parent._path_to_root(src, annotated_keys(src, attrs))
       end
 
       def _root=(root)
@@ -35,7 +35,7 @@ module MongoDoc
 
       protected
 
-      def annotated_keys(hash)
+      def annotated_keys(src, hash)
         annotated = {}
         hash.each do |(key, value)|
           annotated["#{assoc_name}.#{key}"] = value
