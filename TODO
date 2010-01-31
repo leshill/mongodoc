@@ -1,0 +1,31 @@
+As of 2010-01-30
+
+Associations
+------------
+
+Pull associations out of attributes and refactor
+
+Connection
+----------
+
+Refactor
+Add smart default for db name so that rails default is no initializer needed (thanks to Tiger and Robert)
+
+Documentation
+-------------
+
+How to get started with Rails
+Using mongohq
+
+Dynamic Attributes
+------------------
+
+Document#[] => reads attribute
+Document#[]= => writes attribute
+Document#dynamic_attributes => list of dynamic attribute names
+
+Validations
+-----------
+
+validates_hash_keys :has_hash_name, :in => [array of names]
+
