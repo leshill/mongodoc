@@ -1,5 +1,6 @@
+require 'mongodoc/associations/proxy_base'
 require 'mongodoc/associations/collection_proxy'
-require 'mongodoc/associations/parent_proxy'
+require 'mongodoc/associations/document_proxy'
 require 'mongodoc/associations/hash_proxy'
 
 module MongoDoc
@@ -48,21 +49,26 @@ module MongoDoc
       end
 
       def has_one(*args)
+        options = args.extract_options!
+        assoc_class = if class_name = options.delete(:class_name)
+          type_name_with_module(class_name).constantize
+        end
+
         args.each do |name|
           _associations << name unless _associations.include?(name)
+
           attr_reader name
 
           define_method("#{name}=") do |value|
-            if value
-              raise NotADocumentError unless Document === value
-              value._parent = Associations::ParentProxy.new(self, name)
-              value._root = _root || self
-              value._root.register_save_observer(value)
+            association = instance_variable_get("@#{name}")
+            unless association
+              association = Associations::DocumentProxy.new(:root => _root || self, :parent => self, :assoc_name => name, :assoc_class => assoc_class || self.class.class_from_name(name))
+              instance_variable_set("@#{name}", association)
             end
-            instance_variable_set("@#{name}", value)
+            association.document = value
           end
 
-          validates_associated name
+          validates_embedded name, :if => Proc.new { !send(name).nil? }
         end
       end
 
@@ -120,6 +126,10 @@ module MongoDoc
             send("#{name}").replace(hash)
           end
         end
+      end
+
+      def class_from_name(name)
+        type_name_with_module(name.to_s.classify).constantize rescue nil
       end
 
       def type_name_with_module(type_name)

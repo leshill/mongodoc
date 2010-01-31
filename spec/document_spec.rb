@@ -276,7 +276,7 @@ describe "MongoDoc::Document" do
     class UpdateAttributesRoot
       include MongoDoc::Document
 
-      has_one :update_attribute_child
+      has_one :update_attributes_child
     end
 
     class UpdateAttributesChild
@@ -289,7 +289,7 @@ describe "MongoDoc::Document" do
 
     let(:attrs) {{:data => data}}
 
-    let(:path_attrs) {{'update_attribute_child.data' => data}}
+    let(:path_attrs) {{'update_attributes_child.data' => data}}
 
     let(:doc) do
       doc = UpdateAttributesChild.new
@@ -300,7 +300,7 @@ describe "MongoDoc::Document" do
 
     before do
       root = UpdateAttributesRoot.new
-      root.update_attribute_child = doc
+      root.update_attributes_child = doc
       root._id = 'id'
     end
 

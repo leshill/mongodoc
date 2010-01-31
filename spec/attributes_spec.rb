@@ -66,7 +66,7 @@ describe "MongoDoc::Attributes" do
     class TestDoc
       include MongoDoc::Document
 
-      has_one :subdoc
+      has_one :sub_doc
     end
 
     class SubDoc
@@ -75,39 +75,33 @@ describe "MongoDoc::Attributes" do
       key :data
     end
 
-    it "sets the subdocuments parent to the parent proxy" do
-      subdoc = SubDoc.new
-      doc = TestDoc.new(:subdoc => subdoc)
-      MongoDoc::Associations::ParentProxy.should === subdoc._parent
-      subdoc._parent._parent.should == doc
+    let(:subdoc) { SubDoc.new }
+    let(:doc) { TestDoc.new(:sub_doc => subdoc) }
+
+    it "uses a proxy" do
+      MongoDoc::Associations::DocumentProxy.should === doc.sub_doc
+    end
+
+    it "sets the subdocuments parent to the proxy" do
+      doc.sub_doc.should == subdoc._parent
     end
 
     it "set the subdocuments root" do
-      subdoc = SubDoc.new
-      middoc = TestDoc.new
-      doc = TestDoc.new(:subdoc => middoc)
-      middoc.subdoc = subdoc
-      subdoc._root.should == doc
+      doc.should == subdoc._root
     end
 
-    it "sets the subdocuments root no matter how when it is inserted" do
-      subdoc = SubDoc.new
-      middoc = TestDoc.new(:subdoc => subdoc)
-      doc = TestDoc.new(:subdoc => middoc)
-      subdoc._root.should == doc
-    end
+    context "validations" do
+      class HasOneValidationTest
+        include MongoDoc::Document
 
-    class HasOneValidationTest
-      include MongoDoc::Document
+        key :data
+        validates_presence_of :data
+      end
 
-      key :data
-      validates_presence_of :data
-    end
-
-    it "cascades validations down" do
-      invalid = HasOneValidationTest.new
-      doc = TestDoc.new(:subdoc => invalid)
-      doc.should have(1).error_on(:subdoc)
+      it "cascades validations down" do
+        invalid = HasOneValidationTest.new
+        TestDoc.new(:sub_doc => invalid).should have(1).error_on(:sub_doc)
+      end
     end
   end
 
