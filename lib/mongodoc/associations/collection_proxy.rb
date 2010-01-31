@@ -2,7 +2,7 @@
 # http://github.com/sandro
 module MongoDoc
   module Associations
-    class CollectionProxy
+    class CollectionProxy < ProxyBase
       # List of array methods (that are not in +Object+) that need to be
       # delegated to +collection+.
       ARRAY_METHODS = (Array.instance_methods - Object.instance_methods).map { |n| n.to_s }
@@ -20,20 +20,7 @@ module MongoDoc
         RUBY
       end
 
-      attr_reader :assoc_name, :collection, :assoc_class, :_parent, :_root
-
-      def _parent=(parent)
-        @_parent = parent
-      end
-
-      def _path_to_root(src, attrs)
-        assoc_path = "#{assoc_name}.#{index(src)}"
-        assoc_attrs = {}
-        attrs.each do |(key, value)|
-          assoc_attrs["#{assoc_path}.#{key}"] = value
-        end
-        _parent._path_to_root(src, assoc_attrs)
-      end
+      attr_reader :collection
 
       def _root=(root)
         @_root = root
@@ -43,11 +30,8 @@ module MongoDoc
       end
 
       def initialize(options)
-        @assoc_name = options[:assoc_name]
+        super
         @collection = []
-        @assoc_class = options[:assoc_class]
-        @_root = options[:root]
-        @_parent = options[:parent]
       end
 
       alias _append <<
@@ -64,15 +48,6 @@ module MongoDoc
         add(index, item)
       end
       alias insert []=
-
-      def attach(item)
-        if is_document?(item)
-          item._parent = self
-          item._root = _root
-          _root.send(:register_save_observer, item)
-        end
-        item
-      end
 
       def build(attrs)
         item = assoc_class.new(attrs)
@@ -115,8 +90,13 @@ module MongoDoc
 
       protected
 
-      def is_document?(object)
-        object.respond_to?(:_parent)
+      def annotated_keys(src, attrs)
+        assoc_path = "#{assoc_name}.#{index(src)}"
+        annotated = {}
+        attrs.each do |(key, value)|
+          annotated["#{assoc_path}.#{key}"] = value
+        end
+        annotated
       end
     end
   end
