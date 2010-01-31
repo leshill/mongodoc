@@ -157,7 +157,7 @@ describe MongoDoc::Associations::HashProxy do
   context "#build" do
     it "builds an object of the collection class from the hash attrs" do
       name = 'built'
-      proxy.build({:name => name}).name.should == name
+      proxy.build(:key, {:name => name}).name.should == name
     end
   end
 end

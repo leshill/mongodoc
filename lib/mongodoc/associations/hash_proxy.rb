@@ -1,6 +1,6 @@
 module MongoDoc
   module Associations
-    class HashProxy
+    class HashProxy < ProxyBase
       HASH_METHODS = (Hash.instance_methods - Object.instance_methods).map { |n| n.to_s }
 
       MUST_DEFINE = %w[to_a inspect to_bson ==]
@@ -15,20 +15,7 @@ module MongoDoc
         RUBY
       end
 
-      attr_reader :assoc_name, :hash, :assoc_class, :_parent, :_root
-
-      def _parent=(parent)
-        @_parent = parent
-      end
-
-      def _path_to_root(src, attrs)
-        assoc_path = "#{assoc_name}.#{index(src)}"
-        assoc_attrs = {}
-        attrs.each do |(key, value)|
-          assoc_attrs["#{assoc_path}.#{key}"] = value
-        end
-        _parent._path_to_root(src, assoc_attrs)
-      end
+      attr_reader :hash
 
       def _root=(root)
         @_root = root
@@ -38,27 +25,21 @@ module MongoDoc
       end
 
       def initialize(options)
-        @assoc_name = options[:assoc_name]
+        super
         @hash = {}
-        @assoc_class = options[:assoc_class]
-        @_root = options[:root]
-        @_parent = options[:parent]
       end
 
       alias put []=
       def []=(key, value)
         raise InvalidEmbeddedHashKey.new("Key name [#{key}] must be a valid element name, see http://www.mongodb.org/display/DOCS/BSON#BSON-noteonelementname") unless valid_key?(key)
-        if is_document?(value)
-          value._parent = self
-          value._root = _root
-          _root.send(:register_save_observer, value)
-        end
+        attach(value)
         put(key, value)
       end
       alias store []=
 
-      def build(attrs)
-        assoc_class.new(attrs)
+      def build(key, attrs)
+        item = assoc_class.new(attrs)
+        store(key, item)
       end
 
       # Lie about our class. Borrowed from Rake::FileList
@@ -96,12 +77,17 @@ module MongoDoc
 
       protected
 
-      def valid_key?(key)
-        (String === key or Symbol === key) and key.to_s !~ /(_id|query|\$.*|.*\..*)/
+      def annotated_keys(src, attrs)
+        assoc_path = "#{assoc_name}.#{index(src)}"
+        annotated = {}
+        attrs.each do |(key, value)|
+          annotated["#{assoc_path}.#{key}"] = value
+        end
+        annotated
       end
 
-      def is_document?(object)
-        object.respond_to?(:_parent)
+      def valid_key?(key)
+        (String === key or Symbol === key) and key.to_s !~ /(_id|query|\$.*|.*\..*)/
       end
     end
   end
