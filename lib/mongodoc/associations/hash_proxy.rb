@@ -1,4 +1,6 @@
 module MongoDoc
+  class InvalidEmbeddedHashKey < RuntimeError; end
+
   module Associations
     class HashProxy < ProxyBase
       HASH_METHODS = (Hash.instance_methods - Object.instance_methods).map { |n| n.to_s }
