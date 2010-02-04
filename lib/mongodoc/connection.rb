@@ -4,7 +4,7 @@ module MongoDoc
   attr_writer :config_path, :env, :host, :name, :options, :port, :strict
 
   def config_path
-    @config_path || './mongodb.yml'
+    @config_path || default_path
   end
 
   def configuration
@@ -64,6 +64,13 @@ module MongoDoc
     end
   end
 
+  def default_path
+    if rails?
+      Rails.root + 'config/mongodb.yml'
+    else
+      './mongodb.yml'
+    end
+  end
   def rails?
     Object.const_defined?("Rails")
   end

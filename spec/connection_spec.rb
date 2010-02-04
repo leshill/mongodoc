@@ -17,14 +17,14 @@ end
 
 describe "MongoDoc Connections" do
 
-  it "default the configuration location to './mongodb.yml'" do
-    MongoDoc.config_path.should == './mongodb.yml'
-  end
-
   context "Non-rails environment" do
 
     it "does not see Rails" do
       Object.const_defined?('Rails').should be_false
+    end
+
+    it "default the configuration location to './mongodb.yml'" do
+      MongoDoc.config_path.should == './mongodb.yml'
     end
 
     context "without a configuration" do
@@ -55,6 +55,10 @@ describe "MongoDoc Connections" do
       def env
         'development'
       end
+
+      def root
+        Pathname.new('rails_root')
+      end
     end
 
     before do
@@ -67,6 +71,10 @@ describe "MongoDoc Connections" do
 
     it "sees Rails" do
       Object.const_defined?('Rails').should be_true
+    end
+
+    it "default the configuration location to Rails.root + '/config/mongodb.yml'" do
+      MongoDoc.config_path.should == FauxRails.root + 'config/mongodb.yml'
     end
 
     context "without a configuration" do
