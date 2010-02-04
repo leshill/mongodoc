@@ -65,7 +65,7 @@ module MongoDoc
   end
 
   def rails?
-    const_defined?("Rails")
+    Object.const_defined?("Rails")
   end
 
   def rails_env

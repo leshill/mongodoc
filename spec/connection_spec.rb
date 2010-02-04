@@ -4,6 +4,7 @@ require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 module MongoDoc
   def reset
     @config_path = nil
+    @configuration = nil
     @connection = nil
     @database = nil
     @host = nil
@@ -21,6 +22,11 @@ describe "MongoDoc Connections" do
   end
 
   context "Non-rails environment" do
+
+    it "does not see Rails" do
+      Object.const_defined?('Rails').should be_false
+    end
+
     context "without a configuration" do
       let(:connection) { stub('connection') }
 
@@ -43,9 +49,24 @@ describe "MongoDoc Connections" do
 
   context "Rails environment" do
 
+    module FauxRails
+      extend self
+
+      def env
+        'development'
+      end
+    end
+
     before do
-      MongoDoc.stub(:rails?).and_return(true)
-      MongoDoc.stub(:rails_env).and_return('development')
+      Object.const_set('Rails', FauxRails)
+    end
+
+    after do
+      Object.send(:remove_const, 'Rails')
+    end
+
+    it "sees Rails" do
+      Object.const_defined?('Rails').should be_true
     end
 
     context "without a configuration" do
