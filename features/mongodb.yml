@@ -1,6 +1,7 @@
-name: test
-host: localhost
-port: 27017
-options:
-  auto_reconnect: true
+cucumber:
+  name: cucumber
+  host: localhost
+  port: 27017
+  options:
+    auto_reconnect: true
 
