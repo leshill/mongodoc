@@ -8,8 +8,6 @@ class Address
   attr_accessor :street, :city, :state, :zip, :phone_number
 end
 
-MongoDoc.connect_to_database 'test'
-
 collection = MongoDoc::Collection.new('contacts')
 collection.drop
 

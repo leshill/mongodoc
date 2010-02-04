@@ -106,19 +106,36 @@ MongoDoc *requires* mongoDB v1.3.2 or later.
 
 bc. sudo gem install mongodoc
 
-h2. Configuration
+h2. Connecting
 
-Configure your database connection in @./mongodb.yml@, you do not need one if you are running on localhost with the default port
+By default, MongoDoc will connect to a standard MongoDB server setup and use a database name of either the @"mongodoc"@ or the @Rails.env@. MongoDoc also will read a database configuration file, which defaults to @./mongodb.yml@, for example:
 
-bc. name: test
-host: localhost
-port: 27017
-options:
-  auto_reconnect: true
+bc. development:
+  name: development
+  host: localhost
+  port: 27017
+  options:
+    auto_reconnect: true
+test:
+  name: test
+  host: localhost
+  port: 27017
+  options:
+    auto_reconnect: true
 
-You can change the location of the configuration file:
+If you are not using Rails, the default environment is @development@ and you can set the current environment in your code:
+
+bc. MongoDoc.env = 'test'
+
+You can also change the location of the configuration file:
 
 bc. MongoDoc.config_path = './config/mongodb.yml'
+
+h3. Programmatically setting the database connection information
+
+Finally, if you do not want to use the database configuration file, you can also set the database name, host, port, options, and strict values directly; for example, to set the database name to @stats@:
+
+bc. MongoDoc.name = 'stats'
 
 h2. Credits
 

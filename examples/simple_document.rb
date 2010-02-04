@@ -20,7 +20,6 @@ class Contact
   named_scope :in_state, lambda {|state| {:where => {'addresses.state' => state}}}
 end
 
-MongoDoc.connect_to_database 'test'
 Contact.collection.drop
 
 contact = Contact.new(:name => 'Hashrocket', :interests => ['ruby', 'rails', 'agile'])

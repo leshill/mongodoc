@@ -1,6 +1,14 @@
-name: test
-host: localhost
-port: 27017
-options:
-  auto_reconnect: true
+development:
+  name: development
+  host: localhost
+  port: 27017
+  options:
+    auto_reconnect: true
+
+test:
+  name: test
+  host: localhost
+  port: 27017
+  options:
+    auto_reconnect: true
 
