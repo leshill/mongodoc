@@ -108,7 +108,7 @@ bc. sudo gem install mongodoc
 
 h2. Connecting
 
-By default, MongoDoc will connect to a standard MongoDB server setup and use a database name of either the @"mongodoc"@ or the @Rails.env@. MongoDoc also will read a database configuration file, which defaults to @./mongodb.yml@, for example:
+By default, MongoDoc will connect to a standard MongoDB server setup and use a database name of either @"mongodoc"@ or the @Rails.env@. MongoDoc also will read a database configuration file, which defaults to @./mongodb.yml@, for example:
 
 bc. development:
   name: development
