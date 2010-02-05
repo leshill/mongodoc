@@ -108,7 +108,15 @@ bc. sudo gem install mongodoc
 
 h2. Connecting
 
-By default, MongoDoc will connect to a standard MongoDB server setup and use a database name of either @"mongodoc"@ or the @Rails.env@. MongoDoc also will read a database configuration file, which defaults to @./mongodb.yml@, for example:
+By default, MongoDoc will read its configuration from @./mongodb.yml@. If that file does not exist, it will attempt to connect to a standard MongoDB local server setup and use a database name of @"mongodoc"@.
+
+h3. With Rails
+
+If you are using Rails, MongoDoc will look for its configuration in @config/mongodb.yml@. If that file does not exist, it will attempt to connect to standard MongoDB local server setup and use a database name of @#{Rails.root.basename}_#{Rails.env}@.
+
+h3. Database configuration file
+
+The file is similar to the Rails database.yml file, with environment definitions containing the database configuration attributes. For example:
 
 bc. development:
   name: development
@@ -125,17 +133,17 @@ test:
 
 If you are not using Rails, the default environment is @development@ and you can set the current environment in your code:
 
-bc. MongoDoc.env = 'test'
+bc. MongoDoc::Connection.env = 'test'
 
 You can also change the location of the configuration file:
 
-bc. MongoDoc.config_path = './config/mongodb.yml'
+bc. MongoDoc::Connection.config_path = './config/mongodb.yml'
 
 h3. Programmatically setting the database connection information
 
 Finally, if you do not want to use the database configuration file, you can also set the database name, host, port, options, and strict values directly; for example, to set the database name to @stats@:
 
-bc. MongoDoc.name = 'stats'
+bc. MongoDoc::Connection.name = 'stats'
 
 h2. Credits
 
