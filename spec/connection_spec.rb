@@ -95,7 +95,7 @@ describe "MongoDoc::Connection.Connections" do
       end
 
       it "creates a default database with strict false" do
-        connection.should_receive(:db).with("development", :strict => false)
+        connection.should_receive(:db).with("rails_root_development", :strict => false)
         MongoDoc::Connection.database
       end
     end

@@ -63,7 +63,7 @@ module MongoDoc
 
     def default_name
       if rails?
-        Rails.env
+        "#{Rails.root.basename}_#{Rails.env}"
       else
         "mongodoc"
       end
