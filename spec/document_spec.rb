@@ -620,7 +620,7 @@ describe "MongoDoc::Document" do
     let(:doc) { RemoveDocument.new }
 
     context "#remove" do
-      it "when called on a embedded document with a _root raises UnsupportedOperationForEmbeddedDocument" do
+      it "when called on a embedded document with a _root raises UnsupportedOperation" do
         doc._root = RemoveDocument.new
         expect { doc.remove }.to raise_error(MongoDoc::UnsupportedOperation)
       end
@@ -657,7 +657,7 @@ describe "MongoDoc::Document" do
     it ".collection returns a wrapped MongoDoc::Collection" do
       db = stub('db')
       db.should_receive(:collection).with(ClassMethods.to_s.tableize.gsub('/', '.'))
-      MongoDoc.should_receive(:database).and_return(db)
+      MongoDoc::Connection.should_receive(:database).and_return(db)
       MongoDoc::Collection.should === ClassMethods.collection
     end
   end

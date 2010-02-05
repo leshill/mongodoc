@@ -4,7 +4,7 @@ require 'spec/expectations'
 require 'spec/bson_matchers'
 require 'mongodoc'
 
-MongoDoc.env = 'cucumber'
-MongoDoc.config_path = './features/mongodb.yml'
+MongoDoc::Connection.env = 'cucumber'
+MongoDoc::Connection.config_path = './features/mongodb.yml'
 
 World(BsonMatchers)

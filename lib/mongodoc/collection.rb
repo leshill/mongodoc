@@ -41,7 +41,7 @@ module MongoDoc
     protected
 
     def last_error
-      MongoDoc.database.command({'getlasterror' => 1})
+      MongoDoc::Connection.database.command({'getlasterror' => 1})
     end
 
     def wrapped_cursor(query = {}, options = {})
@@ -49,7 +49,7 @@ module MongoDoc
     end
 
     def self.mongo_collection(name)
-      MongoDoc.database.collection(name)
+      MongoDoc::Connection.database.collection(name)
     end
   end
 end
