@@ -112,7 +112,7 @@ By default, MongoDoc will read its configuration from @./mongodb.yml@. If that f
 
 h3. With Rails
 
-If you are using Rails, MongoDoc will look for its configuration in @config/mongodb.yml@. If that file does not exist, it will attempt to connect to standard MongoDB local server setup and use a database name of @#{Rails.root.basename}_#{Rails.env}@.
+If you are using Rails, MongoDoc will look for its configuration in @config/mongodb.yml@. If that file does not exist, it will attempt to connect to a standard MongoDB local server setup and use a database name of @#{Rails.root.basename}_#{Rails.env}@.
 
 h3. Database configuration file
 
