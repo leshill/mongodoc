@@ -7,6 +7,7 @@ require 'mongodoc/named_scope'
 require 'mongodoc/validations/macros'
 
 module MongoDoc
+  class UnsupportedOperation < RuntimeError; end
   class DocumentInvalidError < RuntimeError; end
   class NotADocumentError < RuntimeError; end
 

@@ -1,5 +1,7 @@
 module MongoDoc
   extend self
+  class NoConnectionError < RuntimeError; end
+  class UnsupportedServerVersionError < RuntimeError; end
 
   attr_writer :config_path, :env, :host, :name, :options, :port, :strict
 

@@ -12,11 +12,6 @@ require 'will_paginate/collection'
 
 module MongoDoc
   VERSION = '0.3.0'
-
-  class NoConnectionError < RuntimeError; end
-  class NoDatabaseError < RuntimeError; end
-  class UnsupportedOperation < RuntimeError; end
-  class UnsupportedServerVersionError < RuntimeError; end
 end
 
 require 'mongodoc/connection'
