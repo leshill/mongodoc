@@ -26,7 +26,7 @@ module MongoDoc
 
     def env
       if rails?
-        rails_env
+        Rails.env
       else
         @env ||= 'development'
       end
@@ -63,7 +63,7 @@ module MongoDoc
 
     def default_name
       if rails?
-        rails_env
+        Rails.env
       else
         "mongodoc"
       end
@@ -76,12 +76,9 @@ module MongoDoc
         './mongodb.yml'
       end
     end
+
     def rails?
       Object.const_defined?("Rails")
-    end
-
-    def rails_env
-      Rails.env
     end
 
     def verify_server_version(connection)
