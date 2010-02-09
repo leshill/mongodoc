@@ -23,7 +23,6 @@ module MongoDoc
         extend Validations::Macros
 
         alias :id :_id
-        alias :to_param :_id
       end
     end
 
@@ -83,6 +82,10 @@ module MongoDoc
           bson_hash[name.to_s] = send(name).to_bson(args)
         end
       end
+    end
+
+    def to_param
+      _id.to_s
     end
 
     def update_attributes(attrs)

@@ -18,8 +18,8 @@ describe "MongoDoc::Document" do
       @doc.id.should == @doc._id
     end
 
-    it "#to_param returns the _id" do
-      @doc.to_param.should == @doc._id
+    it "#to_param returns the string of the _id" do
+      @doc.to_param.should == @doc._id.to_s
     end
 
     context "#new_record?" do
