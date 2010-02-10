@@ -340,9 +340,9 @@ describe MongoDoc::Criteria do
       @criteria.selector.should == { :_id => id }
     end
 
-    it "adds the string as the _id query to the selector" do
-      id = Mongo::ObjectID.new.to_s
-      @criteria.id(id)
+    it "when a string adds ObjectID as the _id query to the selector" do
+      id = Mongo::ObjectID.new
+      @criteria.id(id.to_s)
       @criteria.selector.should == { :_id => id }
     end
 

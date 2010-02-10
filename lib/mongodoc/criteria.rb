@@ -244,6 +244,9 @@ module MongoDoc #:nodoc:
     #
     # Returns: <tt>self</tt>
     def id(id_or_object_id)
+      if id_or_object_id.kind_of?(String)
+        id_or_object_id = Mongo::ObjectID.from_string(id_or_object_id)
+      end
       selector[:_id] = id_or_object_id; self
     end
 
