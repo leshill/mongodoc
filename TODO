@@ -1,15 +1,9 @@
-As of 2010-01-30
+As of 2010-02-05
 
 Associations
 ------------
 
 Pull associations out of attributes and refactor
-
-Connection
-----------
-
-Refactor
-Add smart default for db name so that rails default is no initializer needed (thanks to Tiger and Robert)
 
 Documentation
 -------------
