@@ -5,16 +5,17 @@
 
 Gem::Specification.new do |s|
   s.name = %q{mongodoc}
-  s.version = "0.2.1"
+  s.version = "0.2.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Les Hill"]
-  s.date = %q{2010-01-18}
+  s.date = %q{2010-02-16}
   s.description = %q{ODM for MongoDB}
   s.email = %q{leshill@gmail.com}
   s.extra_rdoc_files = [
     "LICENSE",
-     "README.textile"
+     "README.textile",
+     "TODO"
   ]
   s.files = [
     ".document",
@@ -22,6 +23,7 @@ Gem::Specification.new do |s|
      "LICENSE",
      "README.textile",
      "Rakefile",
+     "TODO",
      "VERSION",
      "data/.gitignore",
      "examples/simple_document.rb",
@@ -32,6 +34,7 @@ Gem::Specification.new do |s|
      "features/named_scopes.feature",
      "features/new_record.feature",
      "features/partial_updates.feature",
+     "features/removing_documents.feature",
      "features/saving_an_object.feature",
      "features/step_definitions/collection_steps.rb",
      "features/step_definitions/criteria_steps.rb",
@@ -44,10 +47,15 @@ Gem::Specification.new do |s|
      "features/step_definitions/objects.rb",
      "features/step_definitions/partial_update_steps.rb",
      "features/step_definitions/query_steps.rb",
+     "features/step_definitions/removing_documents_steps.rb",
      "features/step_definitions/util_steps.rb",
      "features/support/support.rb",
      "features/using_criteria.feature",
      "lib/mongodoc.rb",
+     "lib/mongodoc/associations/collection_proxy.rb",
+     "lib/mongodoc/associations/document_proxy.rb",
+     "lib/mongodoc/associations/hash_proxy.rb",
+     "lib/mongodoc/associations/proxy_base.rb",
      "lib/mongodoc/attributes.rb",
      "lib/mongodoc/bson.rb",
      "lib/mongodoc/collection.rb",
@@ -72,15 +80,18 @@ Gem::Specification.new do |s|
      "lib/mongodoc/ext/time.rb",
      "lib/mongodoc/finders.rb",
      "lib/mongodoc/named_scope.rb",
-     "lib/mongodoc/parent_proxy.rb",
-     "lib/mongodoc/proxy.rb",
      "lib/mongodoc/query.rb",
+     "lib/mongodoc/validations/macros.rb",
+     "lib/mongodoc/validations/validates_embedded.rb",
      "mongod.example.yml",
      "mongodb.example.yml",
      "mongodoc.gemspec",
      "perf/mongodoc_runner.rb",
      "perf/ruby_driver_runner.rb",
      "script/console",
+     "spec/associations/collection_proxy_spec.rb",
+     "spec/associations/document_proxy_spec.rb",
+     "spec/associations/hash_proxy_spec.rb",
      "spec/attributes_spec.rb",
      "spec/bson_matchers.rb",
      "spec/bson_spec.rb",
@@ -97,8 +108,6 @@ Gem::Specification.new do |s|
      "spec/mongodb_pairs.yml",
      "spec/named_scope_spec.rb",
      "spec/new_record_spec.rb",
-     "spec/parent_proxy_spec.rb",
-     "spec/proxy_spec.rb",
      "spec/query_spec.rb",
      "spec/spec.opts",
      "spec/spec_helper.rb"
@@ -106,10 +115,13 @@ Gem::Specification.new do |s|
   s.homepage = %q{http://github.com/leshill/mongodoc}
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
-  s.rubygems_version = %q{1.3.5}
+  s.rubygems_version = %q{1.3.6.pre.3}
   s.summary = %q{ODM for MongoDB}
   s.test_files = [
-    "spec/attributes_spec.rb",
+    "spec/associations/collection_proxy_spec.rb",
+     "spec/associations/document_proxy_spec.rb",
+     "spec/associations/hash_proxy_spec.rb",
+     "spec/attributes_spec.rb",
      "spec/bson_matchers.rb",
      "spec/bson_spec.rb",
      "spec/collection_spec.rb",
@@ -123,8 +135,6 @@ Gem::Specification.new do |s|
      "spec/hash_matchers.rb",
      "spec/named_scope_spec.rb",
      "spec/new_record_spec.rb",
-     "spec/parent_proxy_spec.rb",
-     "spec/proxy_spec.rb",
      "spec/query_spec.rb",
      "spec/spec_helper.rb",
      "examples/simple_document.rb",
@@ -136,27 +146,27 @@ Gem::Specification.new do |s|
     s.specification_version = 3
 
     if Gem::Version.new(Gem::RubyGemsVersion) >= Gem::Version.new('1.2.0') then
-      s.add_runtime_dependency(%q<mongo>, ["= 0.18.2"])
-      s.add_runtime_dependency(%q<mongo_ext>, ["= 0.18.2"])
+      s.add_runtime_dependency(%q<mongo>, ["= 0.18.3"])
+      s.add_runtime_dependency(%q<mongo_ext>, ["= 0.18.3"])
       s.add_runtime_dependency(%q<durran-validatable>, ["= 2.0.1"])
       s.add_runtime_dependency(%q<leshill-will_paginate>, ["= 2.3.11"])
-      s.add_development_dependency(%q<rspec>, ["= 1.2.9"])
-      s.add_development_dependency(%q<cucumber>, ["= 0.4.4"])
+      s.add_development_dependency(%q<rspec>, ["= 1.3.0"])
+      s.add_development_dependency(%q<cucumber>, ["= 0.6.2"])
     else
-      s.add_dependency(%q<mongo>, ["= 0.18.2"])
-      s.add_dependency(%q<mongo_ext>, ["= 0.18.2"])
+      s.add_dependency(%q<mongo>, ["= 0.18.3"])
+      s.add_dependency(%q<mongo_ext>, ["= 0.18.3"])
       s.add_dependency(%q<durran-validatable>, ["= 2.0.1"])
       s.add_dependency(%q<leshill-will_paginate>, ["= 2.3.11"])
-      s.add_dependency(%q<rspec>, ["= 1.2.9"])
-      s.add_dependency(%q<cucumber>, ["= 0.4.4"])
+      s.add_dependency(%q<rspec>, ["= 1.3.0"])
+      s.add_dependency(%q<cucumber>, ["= 0.6.2"])
     end
   else
-    s.add_dependency(%q<mongo>, ["= 0.18.2"])
-    s.add_dependency(%q<mongo_ext>, ["= 0.18.2"])
+    s.add_dependency(%q<mongo>, ["= 0.18.3"])
+    s.add_dependency(%q<mongo_ext>, ["= 0.18.3"])
     s.add_dependency(%q<durran-validatable>, ["= 2.0.1"])
     s.add_dependency(%q<leshill-will_paginate>, ["= 2.3.11"])
-    s.add_dependency(%q<rspec>, ["= 1.2.9"])
-    s.add_dependency(%q<cucumber>, ["= 0.4.4"])
+    s.add_dependency(%q<rspec>, ["= 1.3.0"])
+    s.add_dependency(%q<cucumber>, ["= 0.6.2"])
   end
 end
 
