@@ -1,0 +1,215 @@
+module MongoDoc
+  module Contexts
+    class Mongo
+      include Mongoid::Contexts::Paging
+      attr_reader :criteria
+
+      delegate :klass, :options, :selector, :to => :criteria
+      delegate :collection, :to => :klass
+
+      AGGREGATE_REDUCE = "function(obj, prev) { prev.count++; }"
+      # Aggregate the context. This will take the internally built selector and options
+      # and pass them on to the Ruby driver's +group()+ method on the collection. The
+      # collection itself will be retrieved from the class provided, and once the
+      # query has returned it will provided a grouping of keys with counts.
+      #
+      # Example:
+      #
+      # <tt>context.aggregate</tt>
+      #
+      # Returns:
+      #
+      # A +Hash+ with field values as keys, counts as values
+      def aggregate
+        collection.group(options[:fields], selector, { :count => 0 }, AGGREGATE_REDUCE, true)
+      end
+
+      # Get the count of matching documents in the database for the context.
+      #
+      # Example:
+      #
+      # <tt>context.count</tt>
+      #
+      # Returns:
+      #
+      # An +Integer+ count of documents.
+      def count
+        @count ||= collection.find(selector, options).count
+      end
+
+      # Execute the context. This will take the selector and options
+      # and pass them on to the Ruby driver's +find()+ method on the collection. The
+      # collection itself will be retrieved from the class provided, and once the
+      # query has returned new documents of the type of class provided will be instantiated.
+      #
+      # Example:
+      #
+      # <tt>mongo.execute</tt>
+      #
+      # Returns:
+      #
+      # An enumerable +Cursor+.
+      def execute(paginating = false)
+        cursor = collection.find(selector, options)
+        if cursor
+          @count = cursor.count if paginating
+          cursor
+        else
+          []
+        end
+      end
+
+      GROUP_REDUCE = "function(obj, prev) { prev.group.push(obj); }"
+      # Groups the context. This will take the internally built selector and options
+      # and pass them on to the Ruby driver's +group()+ method on the collection. The
+      # collection itself will be retrieved from the class provided, and once the
+      # query has returned it will provided a grouping of keys with objects.
+      #
+      # Example:
+      #
+      # <tt>context.group</tt>
+      #
+      # Returns:
+      #
+      # A +Hash+ with field values as keys, arrays of documents as values.
+      def group
+        collection.group(
+          options[:fields],
+          selector,
+          { :group => [] },
+          GROUP_REDUCE,
+          true
+        ).collect {|docs| docs["group"] = MongoDoc::BSON.decode(docs["group"]); docs }
+      end
+
+      # Return documents based on an id search. Will handle if a single id has
+      # been passed or mulitple ids.
+      #
+      # Example:
+      #
+      #   context.id_criteria([1, 2, 3])
+      #
+      # Returns:
+      #
+      # The single or multiple documents.
+      def id_criteria(params)
+        criteria.id(params)
+        params.is_a?(Array) ? criteria.entries : one
+      end
+
+      # Create the new mongo context. This will execute the queries given the
+      # selector and options against the database.
+      #
+      # Example:
+      #
+      # <tt>Mongoid::Contexts::Mongo.new(criteria)</tt>
+      def initialize(criteria)
+        @criteria = criteria
+      end
+
+      # Return the last result for the +Context+. Essentially does a find_one on
+      # the collection with the sorting reversed. If no sorting parameters have
+      # been provided it will default to ids.
+      #
+      # Example:
+      #
+      # <tt>context.last</tt>
+      #
+      # Returns:
+      #
+      # The last document in the collection.
+      def last
+        sorting = options[:sort] || [[:_id, :asc]]
+        options[:sort] = sorting.collect { |option| [ option[0], option[1].invert ] }
+        collection.find_one(selector, options)
+      end
+
+      MAX_REDUCE = "function(obj, prev) { if (prev.max == 'start') { prev.max = obj.[field]; } " +
+        "if (prev.max < obj.[field]) { prev.max = obj.[field]; } }"
+      # Return the max value for a field.
+      #
+      # This will take the internally built selector and options
+      # and pass them on to the Ruby driver's +group()+ method on the collection. The
+      # collection itself will be retrieved from the class provided, and once the
+      # query has returned it will provided a grouping of keys with sums.
+      #
+      # Example:
+      #
+      # <tt>context.max(:age)</tt>
+      #
+      # Returns:
+      #
+      # A numeric max value.
+      def max(field)
+        grouped(:max, field.to_s, MAX_REDUCE)
+      end
+
+      MIN_REDUCE = "function(obj, prev) { if (prev.min == 'start') { prev.min = obj.[field]; } " +
+        "if (prev.min > obj.[field]) { prev.min = obj.[field]; } }"
+      # Return the min value for a field.
+      #
+      # This will take the internally built selector and options
+      # and pass them on to the Ruby driver's +group()+ method on the collection. The
+      # collection itself will be retrieved from the class provided, and once the
+      # query has returned it will provided a grouping of keys with sums.
+      #
+      # Example:
+      #
+      # <tt>context.min(:age)</tt>
+      #
+      # Returns:
+      #
+      # A numeric minimum value.
+      def min(field)
+        grouped(:min, field.to_s, MIN_REDUCE)
+      end
+
+      # Return the first result for the +Context+.
+      #
+      # Example:
+      #
+      # <tt>context.one</tt>
+      #
+      # Return:
+      #
+      # The first document in the collection.
+      def one
+        collection.find_one(selector, options)
+      end
+
+      alias :first :one
+
+      SUM_REDUCE = "function(obj, prev) { if (prev.sum == 'start') { prev.sum = 0; } prev.sum += obj.[field]; }"
+      # Sum the context.
+      #
+      # This will take the internally built selector and options
+      # and pass them on to the Ruby driver's +group()+ method on the collection. The
+      # collection itself will be retrieved from the class provided, and once the
+      # query has returned it will provided a grouping of keys with sums.
+      #
+      # Example:
+      #
+      # <tt>context.sum(:age)</tt>
+      #
+      # Returns:
+      #
+      # A numeric value that is the sum.
+      def sum(field)
+        grouped(:sum, field.to_s, SUM_REDUCE)
+      end
+
+      # Common functionality for grouping operations. Currently used by min, max
+      # and sum. Will gsub the field name in the supplied reduce function.
+      def grouped(start, field, reduce)
+        result = collection.group(
+          nil,
+          selector,
+          { start => "start" },
+          reduce.gsub("[field]", field),
+          true
+        )
+        result.empty? ? nil : result.first[start.to_s]
+      end
+    end
+  end
+end

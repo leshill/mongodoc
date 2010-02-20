@@ -1,6 +1,7 @@
 # encoding: utf-8
 require "mongoid/contexts/paging"
 require "mongodoc/contexts/enumerable"
+require "mongodoc/contexts/mongo"
 
 module Mongoid
   module Contexts
@@ -13,6 +14,9 @@ module Mongoid
     #
     # <tt>Contexts.context_for(criteria)</tt>
     def self.context_for(criteria)
+      if criteria.klass.respond_to?(:collection)
+        return MongoDoc::Contexts::Mongo.new(criteria)
+      end
       return MongoDoc::Contexts::Enumerable.new(criteria)
     end
 
