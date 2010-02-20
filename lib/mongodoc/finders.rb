@@ -1,28 +1,42 @@
 module MongoDoc
   module Finders
-    [:all, :count, :first, :last].each do |name|
+
+    # Create a criteria for this +Document+ class
+    #
+    # <tt>Person.criteria</tt>
+    def criteria
+      Mongoid::Criteria.new(self)
+    end
+
+    %w(all count first last).each do |name|
       module_eval <<-RUBY
+        # #{name.humanize} for this +Document+ class
+        #
+        # <tt>Person.#{name}</tt>
         def #{name}
-          Criteria.new(self).#{name}
+          criteria.#{name}
         end
       RUBY
     end
 
-    def criteria
-      Criteria.new(self)
-    end
-
+    # Find a +Document+ based on id (+String+ or +Mongo::ObjectID+)
+    #
+    # <tt>Person.find('1')</tt>
+    # <tt>Person.find(obj_id_1, obj_id_2)</tt>
     def find(*args)
-      query = args.extract_options!
-      which = args.first
-      Criteria.translate(self, query).send(which)
+      criteria.id(*args)
     end
 
+    # Find a +Document+ based on id (+String+ or +Mongo::ObjectID+)
+    # or conditions
+    #
+    # <tt>Person.find_one('1')</tt>
+    # <tt>Person.find_one(:where => {:age.gt > 25})</tt>
     def find_one(conditions_or_id)
       if Hash === conditions_or_id
-        Criteria.translate(self, conditions_or_id).one
+        Mongoid::Criteria.translate(self, conditions_or_id).one
       else
-        Criteria.translate(self, conditions_or_id)
+        Mongoid::Criteria.translate(self, conditions_or_id)
       end
     end
   end

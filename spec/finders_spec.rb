@@ -9,7 +9,7 @@ describe MongoDoc::Finders do
 
   context ".criteria" do
     it "creates a new criteria for the document" do
-      FindersTest.criteria.should be_a_kind_of(MongoDoc::Criteria)
+      FindersTest.criteria.should be_a_kind_of(Mongoid::Criteria)
     end
 
     it "sets the criteria klass" do
@@ -17,63 +17,53 @@ describe MongoDoc::Finders do
     end
   end
 
+  let(:criteria) { stub('criteria').as_null_object }
+
   context ".find" do
     before do
-      @criteria = stub('criteria').as_null_object
-      @conditions = {:where => 'this.a > 3'}
-      MongoDoc::Criteria.stub(:translate).and_return(@criteria)
+      FindersTest.stub(:criteria).and_return(criteria)
     end
 
-    it "creates a criteria" do
-      MongoDoc::Criteria.should_receive(:translate).with(FindersTest, @conditions).and_return(@criteria)
-      FindersTest.find(:first, @conditions)
-    end
-
-    [:all, :first, :last].each do |which|
-      it "calls #{which} on the criteria" do
-        @criteria.should_receive(which)
-        FindersTest.find(which, @conditions)
-      end
+    it "delegates to id for the criteria" do
+      args = [1, 2, 3]
+      criteria.should_receive(:id).with(*args)
+      FindersTest.find(*args)
     end
   end
 
   context ".find_one" do
     context "with an id" do
-      it "calls translate with the id" do
+      it "delegates to translate" do
         id = 'an id'
-        MongoDoc::Criteria.should_receive(:translate).with(FindersTest, id)
+        Mongoid::Criteria.should_receive(:translate).with(FindersTest, id)
         FindersTest.find_one(id)
       end
     end
 
     context "with conditions" do
-      before do
-        @criteria = stub('criteria').as_null_object
-        @conditions = {:where => 'this.a > 3'}
-      end
+      let(:conditions) { {:where => 'this.a > 3'} }
 
       it "calls translate with the conditions" do
-        MongoDoc::Criteria.should_receive(:translate).with(FindersTest, @conditions).and_return(@criteria)
-        FindersTest.find_one(@conditions)
+        Mongoid::Criteria.should_receive(:translate).with(FindersTest, conditions).and_return(criteria)
+        FindersTest.find_one(conditions)
       end
 
-      it "call :one on the result" do
-        MongoDoc::Criteria.stub(:translate).and_return(@criteria)
-        @criteria.should_receive(:one)
-        FindersTest.find_one(@conditions)
+      it "call one on the result" do
+        Mongoid::Criteria.stub(:translate).and_return(criteria)
+        criteria.should_receive(:one)
+        FindersTest.find_one(conditions)
       end
     end
   end
 
   context "all other finders" do
     before do
-      @criteria = stub('criteria').as_null_object
-      MongoDoc::Criteria.stub(:new).and_return(@criteria)
+      FindersTest.stub(:criteria).and_return(criteria)
     end
 
     [:all, :count, :first, :last].each do |which|
       it "calls #{which} on the new criteria" do
-        @criteria.should_receive(which)
+        criteria.should_receive(which)
         FindersTest.send(which)
       end
     end
