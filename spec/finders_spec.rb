@@ -51,7 +51,7 @@ describe MongoDoc::Finders do
       FindersTest.stub(:criteria).and_return(criteria)
     end
 
-    [:all, :count, :first, :last].each do |which|
+    %w(all count first last).each do |which|
       it "calls #{which} on the new criteria" do
         criteria.should_receive(which)
         FindersTest.send(which)
