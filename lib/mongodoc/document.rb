@@ -17,6 +17,7 @@ module MongoDoc
       klass.class_eval do
         include Attributes
         extend ClassMethods
+        extend Criteria
         extend Finders
         extend NamedScope
         include ::Validatable

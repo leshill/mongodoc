@@ -7,16 +7,6 @@ describe MongoDoc::Finders do
     key :data
   end
 
-  context ".criteria" do
-    it "creates a new criteria for the document" do
-      FindersTest.criteria.should be_a_kind_of(Mongoid::Criteria)
-    end
-
-    it "sets the criteria klass" do
-      FindersTest.criteria.klass.should == FindersTest
-    end
-  end
-
   let(:criteria) { stub('criteria').as_null_object }
 
   context ".find" do

@@ -1,11 +1,9 @@
+require 'mongodoc/criteria'
+
 module MongoDoc
   module Finders
-
-    # Create a criteria for this +Document+ class
-    #
-    # <tt>Person.criteria</tt>
-    def criteria
-      Mongoid::Criteria.new(self)
+    def self.extended(base)
+      base.extend(Criteria) unless base === Criteria
     end
 
     %w(all count first last).each do |name|
@@ -39,5 +37,6 @@ module MongoDoc
         Mongoid::Criteria.translate(self, conditions_or_id)
       end
     end
+
   end
 end
