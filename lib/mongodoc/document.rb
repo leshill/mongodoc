@@ -3,7 +3,7 @@ require 'mongodoc/query'
 require 'mongodoc/attributes'
 require 'mongodoc/criteria'
 require 'mongodoc/finders'
-require 'mongodoc/named_scope'
+require 'mongodoc/scope'
 require 'mongodoc/validations/macros'
 
 module MongoDoc
@@ -19,7 +19,7 @@ module MongoDoc
         extend ClassMethods
         extend Criteria
         extend Finders
-        extend NamedScope
+        extend Scope
         include ::Validatable
         extend Validations::Macros
 
