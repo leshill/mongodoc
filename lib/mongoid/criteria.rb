@@ -102,7 +102,7 @@ module Mongoid #:nodoc:
     #
     # <tt>criteria.each { |doc| p doc }</tt>
     def each(&block)
-      return each_cached(&block) if cached?
+      return caching(&block) if cached?
       if block_given?
         execute.each { |doc| yield doc }
       end
@@ -165,7 +165,7 @@ module Mongoid #:nodoc:
     # Returns: <tt>Criteria</tt>
     def method_missing(name, *args)
       if @klass.respond_to?(name)
-        new_scope = @klass.send(name)
+        new_scope = @klass.send(name, *args)
         new_scope.merge(self)
         return new_scope
       else
@@ -203,13 +203,18 @@ module Mongoid #:nodoc:
       unless params.is_a?(Hash)
         return new(klass).id_criteria(params)
       end
-      return new(klass).where(params.delete(:conditions) || {}).extras(params)
+      conditions = params.delete(:conditions) || {}
+      if conditions.include?(:id)
+        conditions[:_id] = conditions[:id]
+        conditions.delete(:id)
+      end
+      return new(klass).where(conditions).extras(params)
     end
 
     protected
 
     # Iterate over each +Document+ in the results and cache the collection.
-    def each_cached(&block)
+    def caching(&block)
       @collection ||= execute
       if block_given?
         docs = []
