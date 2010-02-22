@@ -81,6 +81,27 @@ namespace :mongo do
   end
 end
 
+namespace :mongoid do
+  desc 'Sync criteria from Mongoid'
+  task :sync do
+    require 'pathname'
+
+    src_dir = Pathname.new('../durran-mongoid/lib/mongoid')
+    dest_dir = Pathname.new('lib/mongoid')
+    dest_dir.mkpath
+    %w(criteria.rb contexts/paging.rb criterion extensions/symbol/inflections.rb extensions/hash/criteria_helpers.rb matchers).each do |f|
+      src = src_dir + f
+      if src.directory?
+        FileUtils.cp_r(src, dest_dir)
+      else
+        dest = dest_dir + f
+        dest.dirname.mkpath
+        FileUtils.cp(src, dest)
+      end
+    end
+  end
+end
+
 namespace :bench do
   desc 'Run benchmark for MongoDoc'
   task 'mongodoc' do
