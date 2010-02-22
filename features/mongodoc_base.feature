@@ -109,11 +109,20 @@ Feature: MongoDoc::Base
     Then the Place collection should have 1 document
     And the document 'hashrocket' roundtrips
 
-  Scenario: Finder
+  Scenario: Class criteria
     Given an empty Contact document collection
     And a Contact document named 'hashrocket' :
       | Name       | Type    |
       | Hashrocket | company |
     And I save the last document
-    When I query contacts with find {:where => {'type' => 'company'}}
+    When I query contacts with criteria where('type' => 'company')
+    Then the size of the last return value is 1
+
+  Scenario: Finder
+    Given an empty Contact document collection
+    And a Contact document named 'hashrocket' :
+      | Name       | Type    |
+      | Hashrocket | company |
+    And I save the document 'hashrocket'
+    When I find a contact using the id of 'hashrocket'
     Then the size of the last return value is 1

@@ -79,10 +79,21 @@ When /^I update the document '(.*)' with the hash named '(.*)'$/ do |doc_name, h
   @last_return = doc.update_attributes(attrs)
 end
 
-When /^I query (.*) with find (.*)$/ do |doc, criteria_text|
+When /^I query (.*) with criteria (.*)$/ do |doc, criteria_text|
+  klass = doc.singularize.camelize
+  @query = @last_return = eval("#{klass}.criteria.#{criteria_text}")
+end
+
+When /^I query (.*) with the '(.*)' id$/ do |doc, name|
   klass = doc.singularize.camelize.constantize
-  criteria = eval(criteria_text)
-  @last_return = klass.find(:all, criteria)
+  doc = instance_variable_get("@#{name}")
+  @query = @last_return = klass.criteria.id(doc.id).entries
+end
+
+When /^I find a (.*) using the id of '(.*)'$/ do |type, doc_name|
+  klass = type.camelize.constantize
+  doc = instance_variable_get("@#{doc_name}")
+  @last_return = klass.find(doc.id)
 end
 
 When /^'(.+)' is the first (.+?) of '(.+)'$/ do |var_name, single_assoc, doc_name|

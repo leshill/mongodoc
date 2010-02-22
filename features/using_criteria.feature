@@ -74,76 +74,55 @@ Feature: MongoDoc::Base
     And I save the document 'jax'
 
   Scenario: Counting results
-    When I query contacts with every "{'interests' => ['ruby', 'rails', 'employment']}"
+    When I query contacts with criteria all('interests' => ['ruby', 'rails', 'employment'])
     Then the query result has 2 documents
 
   Scenario: Finding contacts with interests in ruby and rails
-    When I query contacts with every "{'interests' => ['ruby', 'rails', 'employment']}"
-    Then the query result has 2 documents
-    And one of the query results is the document 'rocketeer'
+    When I query contacts with criteria all('interests' => ['ruby', 'rails', 'employment'])
+    Then one of the query results is the document 'rocketeer'
 
-  Scenario: Finding contacts with interests in restaurants and hotels
-    When I query contacts with every "{'interests' => ['ruby', 'rails', 'employment']}"
-    Then the query result has 2 documents
-    And one of the query results is the document 'contractor'
+  Scenario: Finding contacts with interests in restaurants or hotels
+    When I query contacts with criteria in('interests' => ['restaurants', 'hotels'])
+    Then one of the query results is the document 'contractor'
 
   Scenario: Aggregating Places
-    When I query places to select field "type"
-    And I query places where "{'address.state' => 'FL'}"
-    Then the aggregate query result with "type" == "hotel" has a count of 2
+    When I query places with criteria only('type').where('address.state' => 'FL').aggregate
+    Then the query result with "type" == "hotel" has a count of 2
 
   Scenario: Excluding places in Neptune Beach
-    When I query places to select field "type"
-    And I query places that excludes "{'address.city' => 'Neptune Beach'}"
-    Then the aggregate query result with "type" == "hotel" has a count of 1
+    When I query places with criteria only('type').where('address.city' => 'Neptune Beach').aggregate
+    Then the query result with "type" == "hotel" has a count of 1
 
   Scenario: Using extras to limit results
-    When I query contacts with every "{'interests' => ['ruby', 'rails', 'employment']}"
-    And I set the query extras limit on contacts to 1
+    When I query contacts with criteria all('interests' => ['ruby', 'rails', 'employment']).limit(1)
     Then the size of the query result is 1
 
   Scenario: Finding the first result
-    When I query contacts with every "{'interests' => ['ruby', 'rails', 'employment']}"
-    Then the first query result is equal to the document 'hashrocket'
+    When I query contacts with criteria all('interests' => ['ruby', 'rails', 'employment']).first
+    Then the query result is equal to the document 'hashrocket'
 
   Scenario: Grouping places by type
-    When I query places to select field "type"
-    And I query places where "{'type' => 'hotel'}"
-    Then the group query result with "type" == "hotel" has the document 'one_ocean'
+    When I query places with criteria only('type').where('type' => 'hotel').group
+    Then the query result with "type" == "hotel" has the document 'one_ocean'
 
   Scenario: Selecting contacts with in operator
-    When I query contacts with in "{'interests' => ['ruby', 'rails', 'employment']}"
+    When I query contacts with criteria in('interests' => ['ruby', 'rails', 'employment'])
     Then the query result has 3 documents
 
   Scenario: Selecting a contact with the id operator
     When I query contacts with the 'hashrocket' id
     Then the query result has 1 documents
-    And the first query result is equal to the document 'hashrocket'
-
-  Scenario: Finding the last result
-    When I query contacts with every "{'interests' => ['ruby', 'rails', 'employment']}"
-    Then the last query result is equal to the document 'rocketeer'
-
-  Scenario: Using limit on results
-    When I query contacts with every "{'interests' => ['ruby', 'rails', 'employment']}"
-    And I set the query on contacts to limit 1
-    Then the size of the query result is 1
+    And the query result is the document 'hashrocket'
 
   Scenario: Selecting contacts with not in operator
-    When I query contacts with not in "{'interests' => ['contract work', 'employment']}"
+    When I query contacts with criteria not_in('interests' => ['contract work', 'employment'])
     Then the query result has 0 documents
 
   Scenario: Ordering contacts
-    When I query contacts with in "{'interests' => ['ruby', 'rails']}"
-    And I order the contacts query by "[[:name, :asc]]"
-    Then the first query result is equal to the document 'contractor'
-    Then the last query result is equal to the document 'rocketeer'
+    When I query contacts with criteria in('interests' => ['ruby', 'rails']).order_by([[:name, :asc]]).entries
+    Then the first query result is the document 'contractor'
+    And the last query result is the document 'rocketeer'
 
   Scenario: Using skip on results
-    When I query contacts with every "{'interests' => ['ruby', 'rails']}"
-    And I set the query on contacts to skip 1
+    When I query contacts with criteria all('interests' => ['ruby', 'rails']).skip(1)
     Then the size of the query result is 2
-
-  Scenario: All
-    When I query contacts with 'all'
-    Then the size of the query result is 3

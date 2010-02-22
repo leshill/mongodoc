@@ -24,7 +24,7 @@ class Contact
   key :interests
   has_many :addresses
 
-  named_scope :rubyists, :in => {:interests => ['ruby']}
-  named_scope :contract_work, :in => {:interests => ['contract work']}
-  named_scope :in_state, lambda {|state| { :where => {'addresses.state' => state}}}
+  scope :rubyists, criteria.in(:interests => ['ruby'])
+  scope :contract_work, criteria.in(:interests => ['contract work'])
+  scope :in_state, lambda {|state| where('addresses.state' => state)}
 end
