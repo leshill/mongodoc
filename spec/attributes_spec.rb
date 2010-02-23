@@ -132,6 +132,12 @@ describe "MongoDoc::Attributes" do
       has_many :sub_docs, :class_name => 'SubHasManyDoc'
     end
 
+    class TestHasManyDoc2
+      include MongoDoc::Document
+
+      has_many :sub_docs, :class_name => :sub_has_many_doc
+    end
+
     class TestImplicitHasManyDoc
       include MongoDoc::Document
 
@@ -155,6 +161,14 @@ describe "MongoDoc::Attributes" do
 
     it "uses the association name to find the children's class name" do
       TestImplicitHasManyDoc.new.sub_has_many_docs.assoc_class.should == SubHasManyDoc
+    end
+
+    it "uses class_name attribute for the children's class name" do
+      TestHasManyDoc.new.sub_docs.assoc_class.should == SubHasManyDoc
+    end
+
+    it "uses class_name attribute for the children's class name" do
+      TestHasManyDoc2.new.sub_docs.assoc_class.should == SubHasManyDoc
     end
 
     context "validations" do

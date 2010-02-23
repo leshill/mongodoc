@@ -51,7 +51,7 @@ module MongoDoc
       def has_one(*args)
         options = args.extract_options!
         assoc_class = if class_name = options.delete(:class_name)
-          type_name_with_module(class_name).constantize
+          self.class_from_name(class_name)
         end
 
         args.each do |name|
@@ -75,7 +75,7 @@ module MongoDoc
       def has_many(*args)
         options = args.extract_options!
         assoc_class = if class_name = options.delete(:class_name)
-          type_name_with_module(class_name).constantize
+          self.class_from_name(class_name)
         end
 
         args.each do |name|
@@ -84,7 +84,7 @@ module MongoDoc
           define_method("#{name}") do
             association = instance_variable_get("@#{name}")
             unless association
-              association = Associations::CollectionProxy.new(:root => _root || self, :parent => self, :assoc_name => name, :assoc_class => assoc_class || self.class.type_name_with_module(name.to_s.classify).constantize)
+              association = Associations::CollectionProxy.new(:root => _root || self, :parent => self, :assoc_name => name, :assoc_class => assoc_class || self.class.class_from_name(name))
               instance_variable_set("@#{name}", association)
             end
             association
@@ -105,7 +105,7 @@ module MongoDoc
       def has_hash(*args)
         options = args.extract_options!
         assoc_class = if class_name = options.delete(:class_name)
-          type_name_with_module(class_name).constantize
+          self.class_from_name(class_name)
         end
 
         args.each do |name|
@@ -114,7 +114,7 @@ module MongoDoc
           define_method("#{name}") do
             association = instance_variable_get("@#{name}")
             unless association
-              association = Associations::HashProxy.new(:root => _root || self, :parent => self, :assoc_name => name, :assoc_class => assoc_class || self.class.type_name_with_module(name.to_s.classify).constantize)
+              association = Associations::HashProxy.new(:root => _root || self, :parent => self, :assoc_name => name, :assoc_class => assoc_class || self.class.class_from_name(name))
               instance_variable_set("@#{name}", association)
             end
             association
