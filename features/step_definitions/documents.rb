@@ -24,7 +24,7 @@ class Contact
   key :interests
   has_many :addresses
 
-  scope :rubyists, criteria.in(:interests => ['ruby'])
-  scope :contract_work, criteria.in(:interests => ['contract work'])
+  scope :rubyists, any_in(:interests => ['ruby'])
+  scope :contract_work, any_in(:interests => ['contract work'])
   scope :in_state, lambda {|state| where('addresses.state' => state)}
 end

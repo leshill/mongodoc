@@ -15,6 +15,7 @@ module MongoDoc
 
     delegate \
       :and,
+      :any_in,
       :cache,
       :enslave,
       :excludes,
