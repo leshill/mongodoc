@@ -171,8 +171,8 @@ describe "MongoDoc::Attributes" do
         has_many :subdocs, :class_name => 'HasManyValidationChild'
       end
 
-      let(:invalid_child) { HasHashValidationChild.new }
-      let(:doc) { HasHashValidationTest.new(:subdocs => {:key => invalid_child}) }
+      let(:invalid_child) { HasManyValidationChild.new }
+      let(:doc) { HasManyValidationTest.new(:subdocs => [invalid_child]) }
 
       it "cascades validations and marks it in the parent" do
         doc.should have(1).error_on(:subdocs)
