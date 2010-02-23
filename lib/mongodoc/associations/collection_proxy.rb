@@ -2,7 +2,9 @@
 # http://github.com/sandro
 module MongoDoc
   module Associations
-    class CollectionProxy < ProxyBase
+    class CollectionProxy
+      include ProxyBase
+
       # List of array methods (that are not in +Object+) that need to be
       # delegated to +collection+.
       ARRAY_METHODS = (Array.instance_methods - Object.instance_methods).map { |n| n.to_s }

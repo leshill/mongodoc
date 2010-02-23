@@ -1,9 +1,11 @@
 module MongoDoc
   module Associations
-    class ProxyBase
-      undef_method :id, :to_bson
-
-      attr_reader :assoc_name, :assoc_class, :_parent, :_root
+    module ProxyBase
+      def self.included(klass)
+        klass.class_eval do
+          attr_reader :assoc_name, :assoc_class, :_parent, :_root
+        end
+      end
 
       def _parent=(parent)
         @_parent = parent

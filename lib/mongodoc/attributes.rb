@@ -133,7 +133,7 @@ module MongoDoc
       end
 
       def type_name_with_module(type_name)
-        (/^::/ =~ type_name) ? type_name : "#{parents}::#{type_name}"
+        (/^::/ =~ type_name) ? type_name : "#{parent}::#{type_name}"
       end
     end
   end

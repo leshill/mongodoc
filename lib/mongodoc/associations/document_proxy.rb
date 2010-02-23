@@ -1,8 +1,11 @@
 module MongoDoc
   module Associations
-    class DocumentProxy < ProxyBase
+    class DocumentProxy
+      include ProxyBase
 
       attr_reader :document
+
+      delegate :to_bson, :id, :to => :document
 
       def _root=(root)
         @_root = root
