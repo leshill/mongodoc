@@ -1,9 +1,18 @@
-As of 2010-02-05
+As of 2010-02-23
 
 Associations
 ------------
 
 Pull associations out of attributes and refactor
+
+Finders
+-------
+Rename all to find_all
+
+Criteria
+--------
+
+Make critieria module, include into Document, CriteriaProxy, Association?
 
 Documentation
 -------------
