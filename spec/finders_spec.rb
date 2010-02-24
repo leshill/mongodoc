@@ -21,6 +21,18 @@ describe MongoDoc::Finders do
     end
   end
 
+  context ".find_all" do
+    it "delegates to an empty criteria" do
+      FindersTest.should_receive(:criteria)
+      FindersTest.find_all
+    end
+
+    it "returns the empty criteria" do
+      FindersTest.stub(:criteria).and_return(criteria)
+      FindersTest.find_all.should == criteria
+    end
+  end
+
   context ".find_one" do
     context "with an id" do
       it "delegates to translate" do
@@ -51,7 +63,7 @@ describe MongoDoc::Finders do
       FindersTest.stub(:criteria).and_return(criteria)
     end
 
-    %w(all count first last).each do |which|
+    %w(count first last).each do |which|
       it "calls #{which} on the new criteria" do
         criteria.should_receive(which)
         FindersTest.send(which)

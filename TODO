@@ -5,10 +5,6 @@ Associations
 
 Pull associations out of attributes and refactor
 
-Finders
--------
-Rename all to find_all
-
 Criteria
 --------
 

@@ -52,7 +52,7 @@ Feature: Finders
     And I save the document 'contractor'
 
   Scenario: All
-    When I query contacts with all
+    When I query contacts with find_all
     Then the query result has 3 documents
 
   Scenario: Count
