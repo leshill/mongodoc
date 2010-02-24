@@ -1,7 +1,8 @@
 h1. MongoDoc
 
-Version: 0.2.1 1/18/10
+Version: 0.2.4 2/23/10
 
+2010-02-23 API is *changing* significantly
 2010-01-23 Tracking MongoDoc with @git@? *READ THIS NOTE*[1]
 
 h2. Introduction
