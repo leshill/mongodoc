@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{mongodoc}
-  s.version = "0.2.2"
+  s.version = "0.2.4"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Les Hill"]
-  s.date = %q{2010-02-16}
+  s.date = %q{2010-02-23}
   s.description = %q{ODM for MongoDB}
   s.email = %q{leshill@gmail.com}
   s.extra_rdoc_files = [
@@ -31,23 +31,22 @@ Gem::Specification.new do |s|
      "features/finders.feature",
      "features/mongodb.yml",
      "features/mongodoc_base.feature",
-     "features/named_scopes.feature",
      "features/new_record.feature",
      "features/partial_updates.feature",
      "features/removing_documents.feature",
      "features/saving_an_object.feature",
+     "features/scopes.feature",
      "features/step_definitions/collection_steps.rb",
-     "features/step_definitions/criteria_steps.rb",
      "features/step_definitions/document_steps.rb",
      "features/step_definitions/documents.rb",
      "features/step_definitions/finder_steps.rb",
      "features/step_definitions/json_steps.rb",
-     "features/step_definitions/named_scope_steps.rb",
      "features/step_definitions/object_steps.rb",
      "features/step_definitions/objects.rb",
      "features/step_definitions/partial_update_steps.rb",
      "features/step_definitions/query_steps.rb",
      "features/step_definitions/removing_documents_steps.rb",
+     "features/step_definitions/scope_steps.rb",
      "features/step_definitions/util_steps.rb",
      "features/support/support.rb",
      "features/using_criteria.feature",
@@ -60,6 +59,9 @@ Gem::Specification.new do |s|
      "lib/mongodoc/bson.rb",
      "lib/mongodoc/collection.rb",
      "lib/mongodoc/connection.rb",
+     "lib/mongodoc/contexts.rb",
+     "lib/mongodoc/contexts/enumerable.rb",
+     "lib/mongodoc/contexts/mongo.rb",
      "lib/mongodoc/criteria.rb",
      "lib/mongodoc/cursor.rb",
      "lib/mongodoc/document.rb",
@@ -79,10 +81,30 @@ Gem::Specification.new do |s|
      "lib/mongodoc/ext/symbol.rb",
      "lib/mongodoc/ext/time.rb",
      "lib/mongodoc/finders.rb",
-     "lib/mongodoc/named_scope.rb",
+     "lib/mongodoc/matchers.rb",
      "lib/mongodoc/query.rb",
+     "lib/mongodoc/scope.rb",
      "lib/mongodoc/validations/macros.rb",
      "lib/mongodoc/validations/validates_embedded.rb",
+     "lib/mongoid/contexts/paging.rb",
+     "lib/mongoid/criteria.rb",
+     "lib/mongoid/criterion/complex.rb",
+     "lib/mongoid/criterion/exclusion.rb",
+     "lib/mongoid/criterion/inclusion.rb",
+     "lib/mongoid/criterion/optional.rb",
+     "lib/mongoid/extensions/hash/criteria_helpers.rb",
+     "lib/mongoid/extensions/symbol/inflections.rb",
+     "lib/mongoid/matchers/all.rb",
+     "lib/mongoid/matchers/default.rb",
+     "lib/mongoid/matchers/exists.rb",
+     "lib/mongoid/matchers/gt.rb",
+     "lib/mongoid/matchers/gte.rb",
+     "lib/mongoid/matchers/in.rb",
+     "lib/mongoid/matchers/lt.rb",
+     "lib/mongoid/matchers/lte.rb",
+     "lib/mongoid/matchers/ne.rb",
+     "lib/mongoid/matchers/nin.rb",
+     "lib/mongoid/matchers/size.rb",
      "mongod.example.yml",
      "mongodb.example.yml",
      "mongodoc.gemspec",
@@ -97,6 +119,9 @@ Gem::Specification.new do |s|
      "spec/bson_spec.rb",
      "spec/collection_spec.rb",
      "spec/connection_spec.rb",
+     "spec/contexts/enumerable_spec.rb",
+     "spec/contexts/mongo_spec.rb",
+     "spec/contexts_spec.rb",
      "spec/criteria_spec.rb",
      "spec/cursor_spec.rb",
      "spec/document_ext.rb",
@@ -104,18 +129,19 @@ Gem::Specification.new do |s|
      "spec/embedded_save_spec.rb",
      "spec/finders_spec.rb",
      "spec/hash_matchers.rb",
+     "spec/matchers_spec.rb",
      "spec/mongodb.yml",
      "spec/mongodb_pairs.yml",
-     "spec/named_scope_spec.rb",
      "spec/new_record_spec.rb",
      "spec/query_spec.rb",
+     "spec/scope_spec.rb",
      "spec/spec.opts",
      "spec/spec_helper.rb"
   ]
   s.homepage = %q{http://github.com/leshill/mongodoc}
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
-  s.rubygems_version = %q{1.3.6.pre.3}
+  s.rubygems_version = %q{1.3.5}
   s.summary = %q{ODM for MongoDB}
   s.test_files = [
     "spec/associations/collection_proxy_spec.rb",
@@ -126,6 +152,9 @@ Gem::Specification.new do |s|
      "spec/bson_spec.rb",
      "spec/collection_spec.rb",
      "spec/connection_spec.rb",
+     "spec/contexts/enumerable_spec.rb",
+     "spec/contexts/mongo_spec.rb",
+     "spec/contexts_spec.rb",
      "spec/criteria_spec.rb",
      "spec/cursor_spec.rb",
      "spec/document_ext.rb",
@@ -133,9 +162,10 @@ Gem::Specification.new do |s|
      "spec/embedded_save_spec.rb",
      "spec/finders_spec.rb",
      "spec/hash_matchers.rb",
-     "spec/named_scope_spec.rb",
+     "spec/matchers_spec.rb",
      "spec/new_record_spec.rb",
      "spec/query_spec.rb",
+     "spec/scope_spec.rb",
      "spec/spec_helper.rb",
      "examples/simple_document.rb",
      "examples/simple_object.rb"
