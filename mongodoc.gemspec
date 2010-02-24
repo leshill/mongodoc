@@ -141,7 +141,7 @@ Gem::Specification.new do |s|
   s.homepage = %q{http://github.com/leshill/mongodoc}
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
-  s.rubygems_version = %q{1.3.5}
+  s.rubygems_version = %q{1.3.6}
   s.summary = %q{ODM for MongoDB}
   s.test_files = [
     "spec/associations/collection_proxy_spec.rb",
