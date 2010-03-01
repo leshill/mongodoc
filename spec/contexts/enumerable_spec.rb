@@ -113,7 +113,7 @@ describe MongoDoc::Contexts::Enumerable do
 
   end
 
-  describe ".initialize" do
+  describe "#initialize" do
 
     let(:selector) { { :field => "value"  } }
     let(:options) { { :skip => 20 } }
