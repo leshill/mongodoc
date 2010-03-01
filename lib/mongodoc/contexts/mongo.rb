@@ -2,7 +2,7 @@ module MongoDoc
   module Contexts
     class Mongo
       include Mongoid::Contexts::Paging
-      attr_reader :criteria
+      attr_reader :criteria, :cache
 
       delegate :klass, :options, :selector, :to => :criteria
       delegate :collection, :to => :klass
@@ -107,6 +107,21 @@ module MongoDoc
         @criteria = criteria
       end
 
+      # Iterate over each +Document+ in the results. This can take an optional
+      # block to pass to each argument in the results.
+      #
+      # Example:
+      #
+      # <tt>context.iterate { |doc| p doc }</tt>
+      def iterate(&block)
+        return caching(&block) if criteria.cached?
+        if block_given?
+          execute.each do |doc|
+            yield doc
+          end
+        end
+      end
+
       # Return the last result for the +Context+. Essentially does a find_one on
       # the collection with the sorting reversed. If no sorting parameters have
       # been provided it will default to ids.
@@ -209,6 +224,20 @@ module MongoDoc
           true
         )
         result.empty? ? nil : result.first[start.to_s]
+      end
+
+      protected
+
+      def caching(&block)
+        if cache
+          cache.each(&block)
+        else
+          @cache = []
+          execute.each do |doc|
+            @cache << doc
+            yield doc if block_given?
+          end
+        end
       end
     end
   end

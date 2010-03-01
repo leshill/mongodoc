@@ -100,6 +100,68 @@ describe "MongoDoc::Contexts::MongoDoc" do
       end
     end
 
+    context "#iterate" do
+
+      it "delegates to caching if cached" do
+        context.should_receive(:caching)
+        criteria.cache
+        context.iterate
+      end
+
+      it "iterates over the results of execute" do
+        item = stub('item')
+        context.stub(:execute).and_return([item])
+        context.iterate do |doc|
+          doc.should == item
+        end
+      end
+
+      context "#caching" do
+        let(:item) { stub('item') }
+
+        before do
+          criteria.cache
+        end
+
+        context "when not previously cached" do
+          it "iterates over the results of execute" do
+            context.stub(:execute).and_return([item])
+            context.iterate do |doc|
+              doc.should == item
+            end
+          end
+
+          it "memoizes the result" do
+            context.stub(:execute).and_return([item])
+            context.iterate
+            context.cache.should == [item]
+          end
+        end
+
+        context "when previously cached" do
+          before do
+            context.instance_variable_set(:@cache, [item])
+          end
+
+          it "does not execute" do
+            context.should_not_receive(:execute)
+            context.iterate do |doc|
+              doc.should == item
+            end
+          end
+
+          it "iterates over the results of execute" do
+            context.should_not_receive(:execute)
+            acc = []
+            context.iterate do |doc|
+              acc << doc
+            end
+            acc.should == [item]
+          end
+        end
+      end
+    end
+
     context "#last" do
       it "delegates to find_one" do
         collection.should_receive(:find_one).with({}, {:sort=>[[:_id, :desc]]})
