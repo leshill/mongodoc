@@ -311,7 +311,7 @@ describe MongoDoc::Contexts::Enumerable do
           end
 
           it "returns matching documents" do
-            context.should_receive(:execute).and_return(docs)
+            criteria.should_receive(:entries).and_return(docs)
             context.id_criteria(ids).should == docs
           end
 
@@ -320,7 +320,7 @@ describe MongoDoc::Contexts::Enumerable do
         context "when documents are not found" do
 
           it "returns an empty array" do
-            context.should_receive(:execute).and_return([])
+            criteria.should_receive(:entries).and_return([])
             context.id_criteria(ids).should be_empty
           end
 
