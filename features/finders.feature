@@ -70,3 +70,7 @@ Feature: Finders
   Scenario: Find One
     When I query contacts to find_one with the id of the 'contractor' document
     Then the query result is the document 'contractor'
+
+  Scenario: Find One by Param
+    When I query contacts to find_one with the to_param of the 'contractor' document
+    Then the query result is the document 'contractor'

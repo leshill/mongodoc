@@ -3,6 +3,8 @@ module MongoDoc #:nodoc:
   module Contexts #:nodoc:
     class Enumerable
       include Mongoid::Contexts::Paging
+      include MongoDoc::Contexts::Ids
+
       attr_reader :criteria
 
       delegate :first, :last, :to => :execute
@@ -43,22 +45,6 @@ module MongoDoc #:nodoc:
       # An +Array+ of documents that matched the selector.
       def execute(paginating = false)
         limit(documents.select { |document| document.matches?(selector) })
-      end
-
-      # Return documents based on an id search. Will handle if a single id has
-      # been passed or mulitple ids.
-      #
-      # Example:
-      #
-      #   context.id_criteria([1, 2, 3])
-      #
-      # Returns:
-      #
-      # The single or multiple documents.
-      def id_criteria(params)
-        criteria.id(params)
-        result = params.is_a?(String) ? one : criteria.entries
-        return result
       end
 
       # Create the new enumerable context. This will need the selector and

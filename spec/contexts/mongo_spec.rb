@@ -88,18 +88,6 @@ describe "MongoDoc::Contexts::MongoDoc" do
       end
     end
 
-    context "#id_criteria" do
-      it "delegates to one if passed a string or ObjectID" do
-        context.should_receive(:one)
-        context.id_criteria('id')
-      end
-
-      it "delegates to entries if passed an array" do
-        criteria.should_receive(:entries)
-        context.id_criteria(['id'])
-      end
-    end
-
     context "#iterate" do
 
       it "delegates to caching if cached" do

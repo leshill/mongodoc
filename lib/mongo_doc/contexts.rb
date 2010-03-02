@@ -1,5 +1,6 @@
 # encoding: utf-8
 require "mongoid/contexts/paging"
+require "mongo_doc/contexts/ids"
 require "mongo_doc/contexts/enumerable"
 require "mongo_doc/contexts/mongo"
 

@@ -2,6 +2,8 @@ module MongoDoc
   module Contexts
     class Mongo
       include Mongoid::Contexts::Paging
+      include MongoDoc::Contexts::Ids
+
       attr_reader :criteria, :cache
 
       delegate :klass, :options, :selector, :to => :criteria
@@ -80,21 +82,6 @@ module MongoDoc
           GROUP_REDUCE,
           true
         ).collect {|docs| docs["group"] = MongoDoc::BSON.decode(docs["group"]); docs }
-      end
-
-      # Return documents based on an id search. Will handle if a single id has
-      # been passed or mulitple ids.
-      #
-      # Example:
-      #
-      #   context.id_criteria([1, 2, 3])
-      #
-      # Returns:
-      #
-      # The single or multiple documents.
-      def id_criteria(params)
-        criteria.id(params)
-        params.is_a?(Array) ? criteria.entries : one
       end
 
       # Create the new mongo context. This will execute the queries given the
@@ -228,6 +215,7 @@ module MongoDoc
 
       protected
 
+      # Iterate and cache results from execute
       def caching(&block)
         if cache
           cache.each(&block)
