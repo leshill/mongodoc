@@ -4,12 +4,12 @@
 # -*- encoding: utf-8 -*-
 
 Gem::Specification.new do |s|
-  s.name = %q{mongodoc}
-  s.version = "0.2.4"
+  s.name = %q{mongo_doc}
+  s.version = "0.3.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Les Hill"]
-  s.date = %q{2010-02-23}
+  s.date = %q{2010-03-01}
   s.description = %q{ODM for MongoDB}
   s.email = %q{leshill@gmail.com}
   s.extra_rdoc_files = [
@@ -50,42 +50,42 @@ Gem::Specification.new do |s|
      "features/step_definitions/util_steps.rb",
      "features/support/support.rb",
      "features/using_criteria.feature",
-     "lib/mongodoc.rb",
-     "lib/mongodoc/associations/collection_proxy.rb",
-     "lib/mongodoc/associations/document_proxy.rb",
-     "lib/mongodoc/associations/hash_proxy.rb",
-     "lib/mongodoc/associations/proxy_base.rb",
-     "lib/mongodoc/attributes.rb",
-     "lib/mongodoc/bson.rb",
-     "lib/mongodoc/collection.rb",
-     "lib/mongodoc/connection.rb",
-     "lib/mongodoc/contexts.rb",
-     "lib/mongodoc/contexts/enumerable.rb",
-     "lib/mongodoc/contexts/mongo.rb",
-     "lib/mongodoc/criteria.rb",
-     "lib/mongodoc/cursor.rb",
-     "lib/mongodoc/document.rb",
-     "lib/mongodoc/ext/array.rb",
-     "lib/mongodoc/ext/binary.rb",
-     "lib/mongodoc/ext/boolean_class.rb",
-     "lib/mongodoc/ext/date.rb",
-     "lib/mongodoc/ext/date_time.rb",
-     "lib/mongodoc/ext/dbref.rb",
-     "lib/mongodoc/ext/hash.rb",
-     "lib/mongodoc/ext/nil_class.rb",
-     "lib/mongodoc/ext/numeric.rb",
-     "lib/mongodoc/ext/object.rb",
-     "lib/mongodoc/ext/object_id.rb",
-     "lib/mongodoc/ext/regexp.rb",
-     "lib/mongodoc/ext/string.rb",
-     "lib/mongodoc/ext/symbol.rb",
-     "lib/mongodoc/ext/time.rb",
-     "lib/mongodoc/finders.rb",
-     "lib/mongodoc/matchers.rb",
-     "lib/mongodoc/query.rb",
-     "lib/mongodoc/scope.rb",
-     "lib/mongodoc/validations/macros.rb",
-     "lib/mongodoc/validations/validates_embedded.rb",
+     "lib/mongo_doc.rb",
+     "lib/mongo_doc/associations/collection_proxy.rb",
+     "lib/mongo_doc/associations/document_proxy.rb",
+     "lib/mongo_doc/associations/hash_proxy.rb",
+     "lib/mongo_doc/associations/proxy_base.rb",
+     "lib/mongo_doc/attributes.rb",
+     "lib/mongo_doc/bson.rb",
+     "lib/mongo_doc/collection.rb",
+     "lib/mongo_doc/connection.rb",
+     "lib/mongo_doc/contexts.rb",
+     "lib/mongo_doc/contexts/enumerable.rb",
+     "lib/mongo_doc/contexts/mongo.rb",
+     "lib/mongo_doc/criteria.rb",
+     "lib/mongo_doc/cursor.rb",
+     "lib/mongo_doc/document.rb",
+     "lib/mongo_doc/ext/array.rb",
+     "lib/mongo_doc/ext/binary.rb",
+     "lib/mongo_doc/ext/boolean_class.rb",
+     "lib/mongo_doc/ext/date.rb",
+     "lib/mongo_doc/ext/date_time.rb",
+     "lib/mongo_doc/ext/dbref.rb",
+     "lib/mongo_doc/ext/hash.rb",
+     "lib/mongo_doc/ext/nil_class.rb",
+     "lib/mongo_doc/ext/numeric.rb",
+     "lib/mongo_doc/ext/object.rb",
+     "lib/mongo_doc/ext/object_id.rb",
+     "lib/mongo_doc/ext/regexp.rb",
+     "lib/mongo_doc/ext/string.rb",
+     "lib/mongo_doc/ext/symbol.rb",
+     "lib/mongo_doc/ext/time.rb",
+     "lib/mongo_doc/finders.rb",
+     "lib/mongo_doc/matchers.rb",
+     "lib/mongo_doc/query.rb",
+     "lib/mongo_doc/scope.rb",
+     "lib/mongo_doc/validations/macros.rb",
+     "lib/mongo_doc/validations/validates_embedded.rb",
      "lib/mongoid/contexts/paging.rb",
      "lib/mongoid/criteria.rb",
      "lib/mongoid/criterion/complex.rb",
@@ -105,10 +105,10 @@ Gem::Specification.new do |s|
      "lib/mongoid/matchers/ne.rb",
      "lib/mongoid/matchers/nin.rb",
      "lib/mongoid/matchers/size.rb",
+     "mongo_doc.gemspec",
      "mongod.example.yml",
      "mongodb.example.yml",
-     "mongodoc.gemspec",
-     "perf/mongodoc_runner.rb",
+     "perf/mongo_doc_runner.rb",
      "perf/ruby_driver_runner.rb",
      "script/console",
      "spec/associations/collection_proxy_spec.rb",
@@ -176,23 +176,23 @@ Gem::Specification.new do |s|
     s.specification_version = 3
 
     if Gem::Version.new(Gem::RubyGemsVersion) >= Gem::Version.new('1.2.0') then
-      s.add_runtime_dependency(%q<mongo>, ["= 0.18.3"])
-      s.add_runtime_dependency(%q<mongo_ext>, ["= 0.18.3"])
+      s.add_runtime_dependency(%q<mongo>, ["= 0.19"])
+      s.add_runtime_dependency(%q<mongo_ext>, ["= 0.19"])
       s.add_runtime_dependency(%q<durran-validatable>, ["= 2.0.1"])
       s.add_runtime_dependency(%q<leshill-will_paginate>, ["= 2.3.11"])
       s.add_development_dependency(%q<rspec>, ["= 1.3.0"])
       s.add_development_dependency(%q<cucumber>, ["= 0.6.2"])
     else
-      s.add_dependency(%q<mongo>, ["= 0.18.3"])
-      s.add_dependency(%q<mongo_ext>, ["= 0.18.3"])
+      s.add_dependency(%q<mongo>, ["= 0.19"])
+      s.add_dependency(%q<mongo_ext>, ["= 0.19"])
       s.add_dependency(%q<durran-validatable>, ["= 2.0.1"])
       s.add_dependency(%q<leshill-will_paginate>, ["= 2.3.11"])
       s.add_dependency(%q<rspec>, ["= 1.3.0"])
       s.add_dependency(%q<cucumber>, ["= 0.6.2"])
     end
   else
-    s.add_dependency(%q<mongo>, ["= 0.18.3"])
-    s.add_dependency(%q<mongo_ext>, ["= 0.18.3"])
+    s.add_dependency(%q<mongo>, ["= 0.19"])
+    s.add_dependency(%q<mongo_ext>, ["= 0.19"])
     s.add_dependency(%q<durran-validatable>, ["= 2.0.1"])
     s.add_dependency(%q<leshill-will_paginate>, ["= 2.3.11"])
     s.add_dependency(%q<rspec>, ["= 1.3.0"])
