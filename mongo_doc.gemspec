@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Les Hill"]
-  s.date = %q{2010-03-01}
+  s.date = %q{2010-03-02}
   s.description = %q{ODM for MongoDB}
   s.email = %q{leshill@gmail.com}
   s.extra_rdoc_files = [
@@ -61,6 +61,7 @@ Gem::Specification.new do |s|
      "lib/mongo_doc/connection.rb",
      "lib/mongo_doc/contexts.rb",
      "lib/mongo_doc/contexts/enumerable.rb",
+     "lib/mongo_doc/contexts/ids.rb",
      "lib/mongo_doc/contexts/mongo.rb",
      "lib/mongo_doc/criteria.rb",
      "lib/mongo_doc/cursor.rb",
@@ -120,6 +121,7 @@ Gem::Specification.new do |s|
      "spec/collection_spec.rb",
      "spec/connection_spec.rb",
      "spec/contexts/enumerable_spec.rb",
+     "spec/contexts/ids_spec.rb",
      "spec/contexts/mongo_spec.rb",
      "spec/contexts_spec.rb",
      "spec/criteria_spec.rb",
@@ -153,6 +155,7 @@ Gem::Specification.new do |s|
      "spec/collection_spec.rb",
      "spec/connection_spec.rb",
      "spec/contexts/enumerable_spec.rb",
+     "spec/contexts/ids_spec.rb",
      "spec/contexts/mongo_spec.rb",
      "spec/contexts_spec.rb",
      "spec/criteria_spec.rb",
