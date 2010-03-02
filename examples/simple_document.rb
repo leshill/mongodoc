@@ -17,7 +17,7 @@ class Contact
   key :interests
   has_many :addresses
 
-  named_scope :in_state, lambda {|state| {:where => {'addresses.state' => state}}}
+  scope :in_state, lambda {|state| where('addresses.state' => state)}
 end
 
 Contact.collection.drop
@@ -32,4 +32,4 @@ hashrocket = Contact.in_state('FL').find {|contact| contact.name == 'Hashrocket'
 hashrocket_address = hashrocket.addresses.first
 hashrocket_address.update_attributes(:street => '320 First Street North, #712')
 
-puts Contact.find_one(:where => {:name => 'Hashrocket'}).addresses.first.street
+puts Contact.where(:name => 'Hashrocket').first.addresses.first.street
