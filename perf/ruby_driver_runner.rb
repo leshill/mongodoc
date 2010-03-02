@@ -1,10 +1,10 @@
 require "rubygems"
 require "ruby-prof"
-require "mongodoc"
+require "mongo_doc"
 
 class RubyDriverRunner
   def self.benchmark
-    MongoDoc.connect_to_database('mongodoc_perf_test')
+    MongoDoc.connect_to_database('mongo_doc_perf_test')
     collection = MongoDoc.database.collection('people')
     collection.drop
 
@@ -38,7 +38,7 @@ class RubyDriverRunner
   end
 
   def self.profile
-    MongoDoc.connect_to_database('mongodoc_perf_test')
+    MongoDoc.connect_to_database('mongo_doc_perf_test')
     collection = MongoDoc.database.collection('people')
     collection.drop
 

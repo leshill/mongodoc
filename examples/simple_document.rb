@@ -1,4 +1,4 @@
-require 'mongodoc'
+require 'mongo_doc'
 
 class Address
   include MongoDoc::Document

@@ -1,7 +1,7 @@
 # encoding: utf-8
 require "mongoid/contexts/paging"
-require "mongodoc/contexts/enumerable"
-require "mongodoc/contexts/mongo"
+require "mongo_doc/contexts/enumerable"
+require "mongo_doc/contexts/mongo"
 
 module Mongoid
   module Contexts

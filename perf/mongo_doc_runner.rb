@@ -1,6 +1,6 @@
 require "benchmark"
 require "ruby-prof"
-require "mongodoc"
+require "mongo_doc"
 
 class Person < MongoDoc::Document
   key :birth_date
@@ -31,7 +31,7 @@ end
 
 class MongoDocRunner
   def self.benchmark
-    MongoDoc.connect_to_database('mongodoc_perf_test')
+    MongoDoc.connect_to_database('mongo_doc_perf_test')
     MongoDoc.database.collection('people').drop
 
     puts "Starting benchmark..."
@@ -65,7 +65,7 @@ class MongoDocRunner
   end
 
   def self.profile
-    MongoDoc.connect_to_database('mongodoc_perf_test')
+    MongoDoc.connect_to_database('mongo_doc_perf_test')
     MongoDoc.database.collection('people').drop
 
     RubyProf.start

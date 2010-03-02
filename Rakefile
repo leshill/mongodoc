@@ -4,7 +4,7 @@ require 'rake'
 begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
-    gem.name = "mongodoc"
+    gem.name = "mongo_doc"
     gem.summary = %Q{ODM for MongoDB}
     gem.description = %Q{ODM for MongoDB}
     gem.email = "leshill@gmail.com"
@@ -61,7 +61,7 @@ Rake::RDocTask.new do |rdoc|
   end
 
   rdoc.rdoc_dir = 'rdoc'
-  rdoc.title = "mongodoc #{version}"
+  rdoc.title = "MongoDoc #{version}"
   rdoc.rdoc_files.include('README*')
   rdoc.rdoc_files.include('lib/**/*.rb')
 end
@@ -104,9 +104,9 @@ end
 
 namespace :bench do
   desc 'Run benchmark for MongoDoc'
-  task 'mongodoc' do
+  task 'mongo_doc' do
     $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), 'lib'))
-    require 'perf/mongodoc_runner'
+    require 'perf/mongo_doc_runner'
     MongoDocRunner.benchmark
   end
 
@@ -120,9 +120,9 @@ end
 
 namespace :prof do
   desc 'Run profiler for MongoDoc'
-  task 'mongodoc' do
+  task 'mongo_doc' do
     $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), 'lib'))
-    require 'perf/mongodoc_runner'
+    require 'perf/mongo_doc_runner'
     MongoDocRunner.profile
   end
 

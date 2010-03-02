@@ -3,6 +3,6 @@
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 
 require 'irb'
-require 'mongodoc'
+require 'mongo_doc'
 
 IRB.start(__FILE__)

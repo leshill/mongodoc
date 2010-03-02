@@ -1,4 +1,4 @@
-require 'mongodoc/criteria'
+require 'mongo_doc/criteria'
 
 module MongoDoc
   module Finders

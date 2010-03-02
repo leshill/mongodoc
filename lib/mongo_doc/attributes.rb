@@ -1,7 +1,7 @@
-require 'mongodoc/associations/proxy_base'
-require 'mongodoc/associations/collection_proxy'
-require 'mongodoc/associations/document_proxy'
-require 'mongodoc/associations/hash_proxy'
+require 'mongo_doc/associations/proxy_base'
+require 'mongo_doc/associations/collection_proxy'
+require 'mongo_doc/associations/document_proxy'
+require 'mongo_doc/associations/hash_proxy'
 
 module MongoDoc
   module Attributes

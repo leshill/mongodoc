@@ -6,8 +6,8 @@ module MongoDoc
 
     delegate :admin, :close, :closed?, :count, :explain, :fields, :full_collection_name, :hint, :limit, :order, :query_options_hash, :query_opts, :selector, :skip, :snapshot, :sort, :timeout, :to => :_cursor
 
-    def initialize(mongodoc_collection, cursor)
-      self._collection = mongodoc_collection
+    def initialize(mongo_doc_collection, cursor)
+      self._collection = mongo_doc_collection
       self._cursor = cursor
     end
 

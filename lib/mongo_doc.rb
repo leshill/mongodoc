@@ -14,6 +14,6 @@ module MongoDoc
   VERSION = '0.2.4'
 end
 
-require 'mongodoc/connection'
-require 'mongodoc/collection'
-require 'mongodoc/document'
+require 'mongo_doc/connection'
+require 'mongo_doc/collection'
+require 'mongo_doc/document'

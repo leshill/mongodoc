@@ -1,4 +1,4 @@
-require 'mongodoc/cursor'
+require 'mongo_doc/cursor'
 
 module MongoDoc
   class Collection

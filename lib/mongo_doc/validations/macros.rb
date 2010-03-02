@@ -1,4 +1,4 @@
-require 'mongodoc/validations/validates_embedded'
+require 'mongo_doc/validations/validates_embedded'
 
 module MongoDoc
   module Validations

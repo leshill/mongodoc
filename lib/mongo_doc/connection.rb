@@ -65,7 +65,7 @@ module MongoDoc
       if rails?
         "#{Rails.root.basename}_#{Rails.env}"
       else
-        "mongodoc"
+        "mongo_doc"
       end
     end
 

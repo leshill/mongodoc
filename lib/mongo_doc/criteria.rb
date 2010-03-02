@@ -1,7 +1,7 @@
 require 'mongoid/extensions/hash/criteria_helpers'
 require 'mongoid/extensions/symbol/inflections'
-require 'mongodoc/matchers'
-require 'mongodoc/contexts'
+require 'mongo_doc/matchers'
+require 'mongo_doc/contexts'
 require 'mongoid/criteria'
 
 module MongoDoc

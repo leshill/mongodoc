@@ -1,4 +1,4 @@
-require 'mongodoc'
+require 'mongo_doc'
 
 class Contact
   attr_accessor :name, :addresses, :interests

@@ -1,10 +1,10 @@
-require 'mongodoc/bson'
-require 'mongodoc/query'
-require 'mongodoc/attributes'
-require 'mongodoc/criteria'
-require 'mongodoc/finders'
-require 'mongodoc/scope'
-require 'mongodoc/validations/macros'
+require 'mongo_doc/bson'
+require 'mongo_doc/query'
+require 'mongo_doc/attributes'
+require 'mongo_doc/criteria'
+require 'mongo_doc/finders'
+require 'mongo_doc/scope'
+require 'mongo_doc/validations/macros'
 
 module MongoDoc
   class UnsupportedOperation < RuntimeError; end

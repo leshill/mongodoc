@@ -45,7 +45,7 @@ describe "MongoDoc::Connection.Connections" do
       end
 
       it "creates a default database with strict false" do
-        connection.should_receive(:db).with("mongodoc", :strict => false)
+        connection.should_receive(:db).with("mongo_doc", :strict => false)
         MongoDoc::Connection.database
       end
     end
