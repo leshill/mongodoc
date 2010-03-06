@@ -194,5 +194,22 @@ describe "MongoDoc::Contexts::MongoDoc" do
         context.send(:grouped, op, field, reduce)
       end
     end
+
+    context "#empty? or #blank?" do
+      it "delegates to find_one" do
+        collection.should_receive(:find_one).with({}, {})
+        context.empty?
+      end
+
+      it "returns true if find_one returns no result" do
+        collection.stub(:find_one).and_return(nil)
+        context.should be_blank
+      end
+
+      it "returns false if find_one returns any result" do
+        collection.stub(:find_one).and_return(stub('result'))
+        context.should_not be_empty
+      end
+    end
   end
 end

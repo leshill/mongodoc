@@ -39,6 +39,17 @@ module MongoDoc
         @count ||= collection.find(selector, options).count
       end
 
+      # Determine if the context is empty or blank given the criteria. Will
+      # perform a quick has_one asking only for the id.
+      #
+      # Example:
+      #
+      # <tt>context.blank?</tt>
+      def empty?
+        collection.find_one(selector, options).nil?
+      end
+      alias blank? empty?
+
       # Execute the context. This will take the selector and options
       # and pass them on to the Ruby driver's +find()+ method on the collection. The
       # collection itself will be retrieved from the class provided, and once the

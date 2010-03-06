@@ -52,3 +52,6 @@ Then /^the query result is the document '(.*)'$/ do |name|
   end
 end
 
+Then /^the query (is|is not) (empty|blank)$/ do |is, empty|
+  query.send("#{empty}?").should == (is == 'is')
+end

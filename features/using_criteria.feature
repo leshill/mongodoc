@@ -126,3 +126,11 @@ Feature: MongoDoc::Base
   Scenario: Using skip on results
     When I query contacts with criteria all('interests' => ['ruby', 'rails']).skip(1)
     Then the size of the query result is 2
+
+  Scenario: Is a criteria blank?
+    When I query contacts with criteria all('interests' => ['wii'])
+    Then the query is blank
+
+  Scenario: Is a criteria empty?
+    When I query contacts with criteria all('interests' => ['ruby'])
+    Then the query is not empty
