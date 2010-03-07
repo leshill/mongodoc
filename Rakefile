@@ -9,6 +9,7 @@ begin
     gem.email = "leshill@gmail.com"
     gem.homepage = "http://github.com/leshill/mongodoc"
     gem.authors = ["Les Hill"]
+    gem.add_dependency "activesupport", ">= 2.3.4"
     gem.add_dependency "mongo", "= 0.19"
     gem.add_dependency "mongo_ext", "= 0.19"
     gem.add_dependency "durran-validatable", "= 2.0.1"
