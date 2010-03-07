@@ -4,7 +4,7 @@ require 'validatable'
 require 'will_paginate/collection'
 
 module MongoDoc
-  VERSION = '0.3.0'
+  VERSION = '0.3.1'
 end
 
 require 'mongo_doc/connection'
