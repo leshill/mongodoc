@@ -17,6 +17,14 @@ describe "MongoDoc::Collection" do
       MongoDoc::Collection.new('collection_name')
     end
 
+    it "has Criteria mixed in" do
+      MongoDoc::Criteria.should === collection
+    end
+
+    it "#collection references self for Mongo context" do
+      collection.send(:collection).should == collection
+    end
+
     %w([] clear count create_index db distinct drop drop_index drop_indexes group hint index_information map_reduce mapreduce name options pk_factory remove rename size).each do |delegated_method|
       it "delegates #{delegated_method} to the Mongo::Collection" do
         mongo_collection.should_receive(delegated_method)

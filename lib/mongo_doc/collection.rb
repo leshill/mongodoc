@@ -1,8 +1,11 @@
 require 'mongo_doc/cursor'
+require 'mongo_doc/criteria'
 
 module MongoDoc
   class Collection
     attr_accessor :_collection
+
+    include MongoDoc::Criteria
 
     delegate \
       :[],
@@ -59,6 +62,10 @@ module MongoDoc
     end
 
     protected
+
+    def collection
+      self
+    end
 
     def last_error
       MongoDoc::Connection.database.command({'getlasterror' => 1})

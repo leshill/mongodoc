@@ -44,7 +44,7 @@ module MongoDoc
       :where, :to => :criteria
 
     class CriteriaWrapper < Mongoid::Criteria
-      %w(all and any_in cache enslave excludes extras fuse in limit not_in offset only order_by page paginate per_page skip where).each do |method|
+      %w(all and any_in cache enslave excludes extras fuse in limit not_in offset only order_by skip where).each do |method|
         class_eval(<<-RUBY, __FILE__, __LINE__ + 1)
           def #{method}_with_wrapping(*args, &block)                # def and(*args, &block)
             new_criteria = CriteriaWrapper.new(klass)               #   new_criteria = CriteriaWrapper.new(klass)

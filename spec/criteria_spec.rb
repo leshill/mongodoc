@@ -4,6 +4,8 @@ describe MongoDoc::Criteria do
 
   class CriteriaTest
     extend MongoDoc::Criteria
+
+    def self.collection; end
   end
 
   context ".criteria" do
@@ -23,7 +25,7 @@ describe MongoDoc::Criteria do
       wrapper.klass.should == CriteriaTest
     end
 
-    %w(all and any_in cache enslave excludes fuse in limit offset only order_by page paginate per_page skip where).each do |wrapping_method|
+    %w(all and any_in cache enslave excludes fuse in limit offset only order_by skip where).each do |wrapping_method|
       it "#{wrapping_method} returns a new CriteriaWrapper" do
         wrapper.send(wrapping_method).object_id.should_not == wrapper.object_id
       end
