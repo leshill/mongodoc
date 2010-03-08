@@ -138,7 +138,7 @@ module MongoDoc
 
       def create!(attrs = {})
         instance = new(attrs)
-        instance.save!(true)
+        instance.save!
         instance
       end
     end
