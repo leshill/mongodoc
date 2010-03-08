@@ -6,6 +6,10 @@ def query(klass_name = nil)
   @query ||= klass(klass_name).criteria
 end
 
+When "I also want a $number query with criteria $criteria" do |number, criteria|
+  instance_variable_set("@#{number}", eval("query.#{criteria}"))
+end
+
 Then /^the query result is equal to the document '(.*)'$/ do |name|
   doc = instance_variable_get("@#{name}")
   query.should == doc
@@ -55,3 +59,8 @@ end
 Then /^the query (is|is not) (empty|blank)$/ do |is, empty|
   query.send("#{empty}?").should == (is == 'is')
 end
+
+Then /^the (.+) query (is|is not) (empty|blank)$/ do |number, is, empty|
+  instance_variable_get("@#{number}").send("#{empty}?").should == (is == 'is')
+end
+

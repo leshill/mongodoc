@@ -33,3 +33,9 @@ hashrocket_address = hashrocket.addresses.first
 hashrocket_address.update_attributes(:street => '320 First Street North, #712')
 
 puts Contact.where(:name => 'Hashrocket').first.addresses.first.street
+
+# Criteria behave like new AR3 AREL queries
+hr = Contact.where(:name => 'Hashrocket')
+hr_in = hr.where('addresses.state' => 'IN')
+puts hr.count
+puts hr_in.count

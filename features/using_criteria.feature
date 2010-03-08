@@ -134,3 +134,9 @@ Feature: MongoDoc::Base
   Scenario: Is a criteria empty?
     When I query contacts with criteria all('interests' => ['ruby'])
     Then the query is not empty
+
+  Scenario: Criteria return a new criteria
+    When I query contacts with criteria all('interests' => ['ruby'])
+    And I also want a second query with criteria where('addresses.state' => 'HI')
+    Then the query is not empty
+    And the second query is empty

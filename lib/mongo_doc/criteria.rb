@@ -10,27 +10,59 @@ module MongoDoc
     #
     # <tt>Person.criteria</tt>
     def criteria
-      Mongoid::Criteria.new(self)
+      CriteriaWrapper.new(self)
     end
 
     delegate \
+      :aggregate,
+      :all,
       :and,
       :any_in,
-      :cache,
-      :enslave,
+      :blank?,
+      :count,
+      :empty?,
       :excludes,
       :extras,
+      :first,
+      :group,
       :id,
       :in,
+      :last,
       :limit,
+      :max,
+      :min,
       :not_in,
       :offset,
+      :one,
       :only,
       :order_by,
       :page,
+      :paginate,
       :per_page,
       :skip,
+      :sum,
       :where, :to => :criteria
+
+    class CriteriaWrapper < Mongoid::Criteria
+      %w(all and any_in cache enslave excludes extras fuse in limit not_in offset only order_by page paginate per_page skip where).each do |method|
+        class_eval(<<-RUBY, __FILE__, __LINE__ + 1)
+          def #{method}_with_wrapping(*args, &block)                # def and(*args, &block)
+            new_criteria = CriteriaWrapper.new(klass)               #   new_criteria = CriteriaWrapper.new(klass)
+            new_criteria.merge(self)                                #   new_criteria.merge(criteria)
+            new_criteria.#{method}_without_wrapping(*args, &block)  #   new_criteria.and_without_wrapping(*args, &block)
+            new_criteria                                            #   new_criteria
+          end                                                       # end
+
+          alias_method_chain :#{method}, :wrapping
+          protected :#{method}_without_wrapping
+        RUBY
+      end
+
+      protected
+
+      attr_accessor :criteria
+
+    end
   end
 end
 
