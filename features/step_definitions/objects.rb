@@ -7,18 +7,18 @@ end
 
 class Movie
   include ValueEquals
-  
+
   attr_accessor :title, :director, :writers
 end
 
 class Director
   include ValueEquals
-  
+
   attr_accessor :name, :awards
 end
 
 class AcademyAward
   include ValueEquals
-  
+
   attr_accessor :year, :category
 end
