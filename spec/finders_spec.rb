@@ -58,16 +58,4 @@ describe MongoDoc::Finders do
     end
   end
 
-  context "all other finders" do
-    before do
-      FindersTest.stub(:criteria).and_return(criteria)
-    end
-
-    %w(count first last).each do |which|
-      it "calls #{which} on the new criteria" do
-        criteria.should_receive(which)
-        FindersTest.send(which)
-      end
-    end
-  end
 end

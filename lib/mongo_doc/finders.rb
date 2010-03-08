@@ -6,17 +6,6 @@ module MongoDoc
       base.extend(Criteria) unless base === Criteria
     end
 
-    %w(count first last).each do |name|
-      module_eval <<-RUBY
-        # #{name.humanize} for this +Document+ class
-        #
-        # <tt>Person.#{name}</tt>
-        def #{name}
-          criteria.#{name}
-        end
-      RUBY
-    end
-
     # Find a +Document+ based on id (+String+ or +Mongo::ObjectID+)
     #
     # <tt>Person.find('1')</tt>
