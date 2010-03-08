@@ -4,7 +4,27 @@ module MongoDoc
   class Collection
     attr_accessor :_collection
 
-    delegate :[], :clear, :count, :create_index, :db, :distinct, :drop, :drop_index, :drop_indexes, :group, :hint, :index_information, :map_reduce, :mapreduce, :name, :options, :pk_factory, :remove, :rename, :size, :to => :_collection
+    delegate \
+      :[],
+      :clear,
+      :count,
+      :create_index,
+      :db,
+      :distinct,
+      :drop,
+      :drop_index,
+      :drop_indexes,
+      :group,
+      :hint,
+      :index_information,
+      :map_reduce,
+      :mapreduce,
+      :name,
+      :options,
+      :pk_factory,
+      :remove,
+      :rename,
+      :size, :to => :_collection
 
     def initialize(name)
       self._collection = self.class.mongo_collection(name)
