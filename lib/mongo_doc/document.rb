@@ -132,7 +132,7 @@ module MongoDoc
 
       def create(attrs = {})
         instance = new(attrs)
-        instance.save(false)
+        instance.save(true)
         instance
       end
 

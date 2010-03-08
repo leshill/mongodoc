@@ -238,8 +238,8 @@ describe "MongoDoc::Document" do
           CreateTest.stub(:new).and_return(instance)
         end
 
-        it "calls save on the instance with safe => false" do
-          instance.should_receive(:save).with(false)
+        it "calls save on the instance with validate => true" do
+          instance.should_receive(:save).with(true)
           CreateTest.create(:data => data)
         end
 
