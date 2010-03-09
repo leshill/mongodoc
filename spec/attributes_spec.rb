@@ -1,4 +1,4 @@
-require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
+require 'spec_helper'
 
 describe "MongoDoc::Attributes" do
   class AttributesTest
@@ -28,6 +28,7 @@ describe "MongoDoc::Attributes" do
       subject do
         TestKeys.new
       end
+
       it "has an attr1 reader" do
         should respond_to(:attr1)
       end
