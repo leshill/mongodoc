@@ -25,7 +25,12 @@ Contact.collection.drop
 contact = Contact.new(:name => 'Hashrocket', :interests => ['ruby', 'rails', 'agile'])
 contact.addresses << Address.new(:street => '320 1st Street North, #712', :city => 'Jacksonville Beach', :state => 'FL', :zip_code => '32250', :phone_number => '877 885 8846')
 contact.save
+
+# Finders
+Contact.find_all.each {|c| puts c.name}
+puts contact.to_param
 puts Contact.find_one(contact.to_param).addresses.first.street
+Contact.find(contact.to_param).each {|c| puts c.name}
 
 hashrocket = Contact.in_state('FL').find {|contact| contact.name == 'Hashrocket'}
 

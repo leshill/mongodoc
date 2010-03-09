@@ -25,6 +25,10 @@ contact.addresses = [address]
 
 collection.save(contact)
 
-results = collection.find('addresses.state' => 'FL')
-hashrocket = results.to_a.find {|contact| contact.name == 'Hashrocket'}
-puts hashrocket.addresses.first.phone_number
+in_florida = collection.where('addresses.state' => 'FL')
+puts in_florida.first.addresses.first.phone_number
+rocket_oid_names = collection.where('name' => /rocket/)
+puts rocket_oid_names.first.addresses.first.phone_number
+interested_in_ruby = collection.in('interests' => ['ruby'])
+puts interested_in_ruby.first.addresses.first.phone_number
+
