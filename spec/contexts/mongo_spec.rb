@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "MongoDoc::Contexts::MongoDoc" do
+describe "MongoDoc::Contexts::Mongo" do
 
   class Address
     include MongoDoc::Document

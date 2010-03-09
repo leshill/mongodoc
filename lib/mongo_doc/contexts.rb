@@ -6,6 +6,9 @@ require "mongo_doc/contexts/mongo"
 
 module Mongoid
   module Contexts
+
+    class UnknownContext < RuntimeError; end
+
     # Determines the context to be used for this criteria. If the class is an
     # embedded document, then the context will be the array in the has_many
     # association it is in. If the class is a root, then the database itself
@@ -15,10 +18,13 @@ module Mongoid
     #
     # <tt>Contexts.context_for(criteria)</tt>
     def self.context_for(criteria)
-      if criteria.klass.respond_to?(:collection)
+      if criteria.klass.respond_to?(:_append)
+        return MongoDoc::Contexts::Enumerable.new(criteria)
+      elsif criteria.klass.respond_to?(:collection)
         return MongoDoc::Contexts::Mongo.new(criteria)
+      else
+        raise UnknownContext.new("Context not found for: #{criteria.klass}")
       end
-      return MongoDoc::Contexts::Enumerable.new(criteria)
     end
 
   end
