@@ -8,7 +8,12 @@ Pull associations out of attributes and refactor
 Criteria
 --------
 
-Make critieria module; include into Collection, Document, CriteriaProxy, Association?
+Make critieria module; include into CriteriaProxy, Association?
+
+Contexts
+--------
+
+Extract Mongo context as module, Document#collection => klass.collection Collection#collection => klass
 
 Documentation
 -------------
@@ -28,3 +33,7 @@ Validations
 
 validates_hash_keys :has_hash_name, :in => [array of names]
 
+
+Q
+-
+What is Criteria#ids
