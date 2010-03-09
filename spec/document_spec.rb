@@ -261,7 +261,7 @@ describe "MongoDoc::Document" do
         end
 
         it "calls save! on the instance" do
-          instance.should_receive(:save!)
+          instance.should_receive(:save!).with(no_args)
           CreateTest.create!(:data => data)
         end
 
