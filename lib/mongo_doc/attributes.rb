@@ -42,9 +42,28 @@ module MongoDoc
       end
 
       def key(*args)
+        opts = args.extract_options!
+        default = opts.delete(:default)
         args.each do |name|
           _keys << name unless _keys.include?(name)
-          attr_accessor name
+          if default
+            attr_writer name
+
+            define_method("_default_#{name}", default.kind_of?(Proc) ? default : Proc.new { default })
+            private "_default_#{name}"
+
+            module_eval(<<-RUBY, __FILE__, __LINE__)
+              def #{name}
+                unless defined? @#{name}
+                  @#{name} = _default_#{name}
+                end
+                class << self; attr_reader :#{name} end
+                @#{name}
+              end
+            RUBY
+          else
+            attr_accessor name
+          end
         end
       end
 

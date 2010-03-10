@@ -38,6 +38,34 @@ describe "MongoDoc::Attributes" do
       end
     end
 
+    context "default values" do
+
+      let(:object) { TestKeys.new }
+
+      before do
+        TestKeys.key :attr2, :default => 'value'
+      end
+
+      it "uses the default value" do
+        object.attr2.should == 'value'
+      end
+
+      it "only uses the default value once" do
+        object.attr2.should == 'value'
+        class << object
+          def _default_attr2
+            'other value'
+          end
+        end
+        object.attr2.should == 'value'
+      end
+
+      it "does not set the default value if the setter is invoked first" do
+        object.attr2 = nil
+        object.attr2.should be_nil
+      end
+    end
+
     describe "used with inheritance" do
       class TestParent
         include MongoDoc::Document
