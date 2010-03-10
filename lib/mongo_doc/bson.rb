@@ -1,18 +1,4 @@
-require 'mongo_doc/ext/array'
-require 'mongo_doc/ext/binary'
-require 'mongo_doc/ext/boolean_class'
-require 'mongo_doc/ext/date'
-require 'mongo_doc/ext/date_time'
-require 'mongo_doc/ext/dbref'
-require 'mongo_doc/ext/hash'
-require 'mongo_doc/ext/nil_class'
-require 'mongo_doc/ext/numeric'
-require 'mongo_doc/ext/object'
-require 'mongo_doc/ext/object_id'
-require 'mongo_doc/ext/regexp'
-require 'mongo_doc/ext/string'
-require 'mongo_doc/ext/symbol'
-require 'mongo_doc/ext/time'
+require 'mongo_doc/ext'
 
 module MongoDoc
   module BSON
@@ -29,7 +15,7 @@ module MongoDoc
         bson
       end
     end
-    
+
     def self.bson_create(bson_hash, options = {})
       return bson_hash if options[:raw_json]
       klass = bson_hash.delete(CLASS_KEY)

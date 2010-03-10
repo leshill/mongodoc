@@ -13,4 +13,7 @@ class Date
     Date.parse(*bson_hash.values_at('dt', 'sg'))
   end
 
+  def self.cast_from_string(value)
+    Date.parse(value) unless value.blank?
+  end
 end
