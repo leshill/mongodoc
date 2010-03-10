@@ -19,6 +19,20 @@ module MongoDoc
       end
     end
 
+    def attributes
+      hash = {}
+      self.class._attributes.each do |attr|
+        hash[attr] = send(attr)
+      end
+      hash
+    end
+
+    def attributes=(attrs)
+      attrs.each do |key, value|
+        send("#{key}=", value)
+      end
+    end
+
     def _root
       @_root
     end

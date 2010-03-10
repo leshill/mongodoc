@@ -36,20 +36,6 @@ module MongoDoc
       self.class._attributes.all? {|var| self.send(var) == other.send(var)}
     end
 
-    def attributes
-      hash = {}
-      self.class._attributes.each do |attr|
-        hash[attr] = send(attr)
-      end
-      hash
-    end
-
-    def attributes=(attrs)
-      attrs.each do |key, value|
-        send("#{key}=", value)
-      end
-    end
-
     def new_record?
       _id.nil?
     end

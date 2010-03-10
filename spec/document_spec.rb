@@ -33,24 +33,9 @@ describe "MongoDoc::Document" do
       end
     end
 
-    context "attributes" do
-      it "has an initialize method that takes a hash" do
-        data = 'data'
-        FormForTest.new(:data => data).data.should == data
-      end
-
-      it "can set attributes from a hash" do
-        test = FormForTest.new
-        data = 'data'
-        test.attributes = {:data => data}
-        test.data.should == data
-      end
-
-      it "returns all its attributes" do
-        data = 'data'
-        test = FormForTest.new(:data => data)
-        test.attributes.should == {:data => data}
-      end
+    it "#initialize takes a hash" do
+      data = 'data'
+      FormForTest.new(:data => data).data.should == data
     end
   end
 
