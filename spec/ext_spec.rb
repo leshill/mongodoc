@@ -34,7 +34,7 @@ describe "Ruby Object Extensions" do
 
       it "converts from a string to a DateTime" do
         datetime = DateTime.now
-        DateTime.cast_from_string(datetime.to_s).to_s.should == datetime.to_s
+        DateTime.cast_from_string(datetime.to_s).should === datetime
       end
     end
 

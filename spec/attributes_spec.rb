@@ -12,19 +12,15 @@ describe "MongoDoc::Attributes" do
 
   context ".key" do
     class TestKeys
-      include MongoDoc::Document
+      include MongoDoc::Attributes
+      key :attr1, :attr2
     end
 
     it "adds its arguments to _keys" do
-      TestKeys.key :attr1, :attr2
       TestKeys._keys.should == [:attr1, :attr2]
     end
 
     describe "accessors" do
-      before do
-        TestKeys.key :attr1
-      end
-
       subject do
         TestKeys.new
       end
@@ -39,36 +35,36 @@ describe "MongoDoc::Attributes" do
     end
 
     context "default values" do
-
-      let(:object) { TestKeys.new }
-
-      before do
-        TestKeys.key :attr2, :default => 'value'
+      class TestDefault
+        include MongoDoc::Attributes
+        key :with_default, :default => 'value'
       end
 
+      let(:object) { TestDefault.new }
+
       it "uses the default value" do
-        object.attr2.should == 'value'
+        object.with_default.should == 'value'
       end
 
       it "only uses the default value once" do
-        object.attr2.should == 'value'
+        object.with_default.should == 'value'
         class << object
-          def _default_attr2
+          def _default_with_default
             'other value'
           end
         end
-        object.attr2.should == 'value'
+        object.with_default.should == 'value'
       end
 
       it "does not set the default value if the setter is invoked first" do
-        object.attr2 = nil
-        object.attr2.should be_nil
+        object.with_default = nil
+        object.with_default.should be_nil
       end
     end
 
     describe "used with inheritance" do
       class TestParent
-        include MongoDoc::Document
+        include MongoDoc::Attributes
 
         key :parent_attr
       end
