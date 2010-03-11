@@ -9,6 +9,7 @@ Criteria
 --------
 
 Make critieria module; include into CriteriaProxy, Association?
+page, per_page, paginate shuould be wrapped or not?
 
 Contexts
 --------
