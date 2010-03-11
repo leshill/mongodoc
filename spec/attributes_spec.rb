@@ -13,6 +13,7 @@ describe "MongoDoc::Attributes" do
   context ".key" do
     class TestKeys
       include MongoDoc::Attributes
+
       key :attr1, :attr2
     end
 
@@ -37,6 +38,7 @@ describe "MongoDoc::Attributes" do
     context "default values" do
       class TestDefault
         include MongoDoc::Attributes
+
         key :with_default, :default => 'value'
       end
 
@@ -59,6 +61,35 @@ describe "MongoDoc::Attributes" do
       it "does not set the default value if the setter is invoked first" do
         object.with_default = nil
         object.with_default.should be_nil
+      end
+    end
+
+    context "specified type" do
+      class TestType
+        include MongoDoc::Attributes
+
+        key :birthdate, :type => Date
+      end
+
+      let(:object) { TestType.new }
+
+      it "does not call Type.cast_from_string when the set value is not a string" do
+        Date.should_not_receive :cast_from_string
+        object.birthdate = Date.today
+      end
+
+      context "when the accessor is set with a string" do
+        let(:date) { Date.today }
+
+        it "delegates to Type.cast_from_string to set the value" do
+          Date.should_receive(:cast_from_string).with(date.to_s)
+          object.birthdate = date.to_s
+        end
+
+        it "sets the value to the result of the case" do
+          object.birthdate = date.to_s
+          object.birthdate.should == date
+        end
       end
     end
 

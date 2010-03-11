@@ -28,3 +28,11 @@ class Contact
   scope :contract_work, any_in(:interests => ['contract work'])
   scope :in_state, lambda {|state| where('addresses.state' => state)}
 end
+
+class Event
+  include MongoDoc::Document
+
+  key :name
+  key :venue
+  key :date, :type => Date
+end

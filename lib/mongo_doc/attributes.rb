@@ -58,6 +58,7 @@ module MongoDoc
       def key(*args)
         opts = args.extract_options!
         default = opts.delete(:default)
+        type = opts.delete(:type)
         args.each do |name|
           _keys << name unless _keys.include?(name)
           if default
@@ -77,6 +78,18 @@ module MongoDoc
             RUBY
           else
             attr_accessor name
+          end
+
+          if type and type.respond_to?(:cast_from_string)
+            module_eval(<<-RUBY, __FILE__, __LINE__)
+              def #{name}_with_type=(value)               # def birth_date_with_type=(value)
+                if value.kind_of?(String)                 #   if value.kind_of?(String)
+                  value = #{type}.cast_from_string(value) #     value = Date.cast_from_string(value)
+                end                                       #   end
+                self.#{name}_without_type = value         #   self.birth_date_without_type = value
+              end                                         # end
+            RUBY
+            alias_method_chain "#{name}=", :type
           end
         end
       end
