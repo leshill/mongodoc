@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{mongo_doc}
-  s.version = "0.3.1"
+  s.version = "0.3.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Les Hill"]
-  s.date = %q{2010-03-08}
+  s.date = %q{2010-03-11}
   s.description = %q{ODM for MongoDB}
   s.email = %q{leshill@gmail.com}
   s.extra_rdoc_files = [
@@ -28,6 +28,7 @@ Gem::Specification.new do |s|
      "data/.gitignore",
      "examples/simple_document.rb",
      "examples/simple_object.rb",
+     "features/collections.feature",
      "features/finders.feature",
      "features/mongodb.yml",
      "features/mongodoc_base.feature",
@@ -47,7 +48,9 @@ Gem::Specification.new do |s|
      "features/step_definitions/query_steps.rb",
      "features/step_definitions/removing_documents_steps.rb",
      "features/step_definitions/scope_steps.rb",
+     "features/step_definitions/string_casting_steps.rb",
      "features/step_definitions/util_steps.rb",
+     "features/string_casting.feature",
      "features/support/support.rb",
      "features/using_criteria.feature",
      "lib/mongo_doc.rb",
@@ -66,6 +69,7 @@ Gem::Specification.new do |s|
      "lib/mongo_doc/criteria.rb",
      "lib/mongo_doc/cursor.rb",
      "lib/mongo_doc/document.rb",
+     "lib/mongo_doc/ext.rb",
      "lib/mongo_doc/ext/array.rb",
      "lib/mongo_doc/ext/binary.rb",
      "lib/mongo_doc/ext/boolean_class.rb",
@@ -115,6 +119,7 @@ Gem::Specification.new do |s|
      "spec/associations/collection_proxy_spec.rb",
      "spec/associations/document_proxy_spec.rb",
      "spec/associations/hash_proxy_spec.rb",
+     "spec/attributes_accessor_spec.rb",
      "spec/attributes_spec.rb",
      "spec/bson_matchers.rb",
      "spec/bson_spec.rb",
@@ -129,6 +134,7 @@ Gem::Specification.new do |s|
      "spec/document_ext.rb",
      "spec/document_spec.rb",
      "spec/embedded_save_spec.rb",
+     "spec/ext_spec.rb",
      "spec/finders_spec.rb",
      "spec/hash_matchers.rb",
      "spec/matchers_spec.rb",
@@ -149,6 +155,7 @@ Gem::Specification.new do |s|
     "spec/associations/collection_proxy_spec.rb",
      "spec/associations/document_proxy_spec.rb",
      "spec/associations/hash_proxy_spec.rb",
+     "spec/attributes_accessor_spec.rb",
      "spec/attributes_spec.rb",
      "spec/bson_matchers.rb",
      "spec/bson_spec.rb",
@@ -163,6 +170,7 @@ Gem::Specification.new do |s|
      "spec/document_ext.rb",
      "spec/document_spec.rb",
      "spec/embedded_save_spec.rb",
+     "spec/ext_spec.rb",
      "spec/finders_spec.rb",
      "spec/hash_matchers.rb",
      "spec/matchers_spec.rb",
