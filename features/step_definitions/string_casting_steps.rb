@@ -17,16 +17,8 @@ end
 Given /^a class Event$/ do
 end
 
-When /^I create an (.+) '(.+)' with:$/ do |klass_name, object_name, table|
-  klass = klass_name.constantize
-  table.hashes.each do |hash|
-    self.last = klass.new
-    hash.each do |attr, value|
-      last.send("#{attr.underscore.gsub(' ', '_')}=", value)
-    end
-    all << last
-  end
-  instance_variable_set("@#{object_name}", last)
+Given /^I create an (.+) '(.+)' with:$/ do |klass_name, object_name, table|
+  Given "an #{klass_name} document named '#{object_name}' :", table
 end
 
 Then /^the object '(.+)' has an attribute '(.+)' of type (.*)$/ do |object_name, attr_name, type_name|
