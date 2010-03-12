@@ -1,6 +1,7 @@
 require 'mongo_doc/bson'
 require 'mongo_doc/query'
 require 'mongo_doc/attributes'
+require 'mongo_doc/associations'
 require 'mongo_doc/criteria'
 require 'mongo_doc/finders'
 require 'mongo_doc/scope'
@@ -16,6 +17,7 @@ module MongoDoc
     def self.included(klass)
       klass.class_eval do
         include Attributes
+        extend Associations
         extend ClassMethods
         extend Criteria
         extend Finders
