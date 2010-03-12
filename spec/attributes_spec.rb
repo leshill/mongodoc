@@ -10,6 +10,18 @@ describe "MongoDoc::Attributes" do
     AttributesTest.new.should respond_to(:_id=)
   end
 
+  context ".attr_accessor" do
+    class AttributeAccessorTest
+      include MongoDoc::Attributes
+
+      attr_accessor :date, :default => Date.today, :type => Date
+    end
+
+    it "is an alias for key" do
+      AttributeAccessorTest._keys.should include(:date)
+    end
+  end
+
   context ".key" do
     class TestKeys
       include MongoDoc::Attributes

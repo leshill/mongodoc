@@ -51,33 +51,40 @@ module MongoDoc
     end
 
     module ClassMethods
+
+      def self.extended(klass)
+        klass.class_eval do
+          metaclass.alias_method_chain :attr_accessor, :mongo
+        end
+      end
+
       def _attributes
         _keys + _associations
       end
 
-      def key(*args)
+      def attr_accessor_with_mongo(*args)
         opts = args.extract_options!
         default = opts.delete(:default)
         type = opts.delete(:type)
         args.each do |name|
           _keys << name unless _keys.include?(name)
-          if default
-            attr_writer name
+          attr_writer name
 
-            define_method("_default_#{name}", default.kind_of?(Proc) ? default : Proc.new { default })
+          if default
+            define_method("_default_#{name}", default.kind_of?(Proc) ? default : proc { default })
             private "_default_#{name}"
 
             module_eval(<<-RUBY, __FILE__, __LINE__)
-              def #{name}
-                unless defined? @#{name}
-                  @#{name} = _default_#{name}
-                end
-                class << self; attr_reader :#{name} end
-                @#{name}
-              end
+              def #{name}                                # def birth_date
+                unless defined? @#{name}                 #   unless defined? @birth_date
+                  @#{name} = _default_#{name}            #     @birth_date = _default_birth_date
+                end                                      #   end
+                class << self; attr_reader :#{name} end  #   class << self; attr_reader :birth_date end
+                @#{name}                                 #   @birth_date
+              end                                        # end
             RUBY
           else
-            attr_accessor name
+            attr_reader name
           end
 
           if type and type.respond_to?(:cast_from_string)
@@ -93,6 +100,7 @@ module MongoDoc
           end
         end
       end
+      alias :key :attr_accessor_with_mongo
 
       def has_one(*args)
         options = args.extract_options!
