@@ -4,7 +4,7 @@ describe MongoDoc::Associations::HashProxy do
   class HashProxyTest
     include MongoDoc::Document
 
-    key :name
+    attr_accessor :name
   end
 
   let(:root) { stub('root', :register_save_observer => nil) }

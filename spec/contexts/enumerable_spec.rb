@@ -6,8 +6,8 @@ describe MongoDoc::Contexts::Enumerable do
     include MongoDoc::Document
     include MongoDoc::Matchers
 
-    key :number
-    key :street
+    attr_accessor :number
+    attr_accessor :street
   end
 
   before do

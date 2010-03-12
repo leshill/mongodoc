@@ -16,7 +16,7 @@ describe "Saving embedded documents" do
   class LeafDoc
     include MongoDoc::Document
 
-    key :data
+    attr_accessor :data
   end
 
   let(:leaf) do

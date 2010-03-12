@@ -4,9 +4,9 @@ describe "MongoDoc::Attributes attributes accessor" do
   class AttributesTest
     include MongoDoc::Attributes
 
-    key :name
-    key :age
-    key :birthdate
+    attr_accessor :name
+    attr_accessor :age
+    attr_accessor :birthdate, :type => Date
   end
 
   context "#attributes" do

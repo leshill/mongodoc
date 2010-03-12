@@ -6,7 +6,7 @@ describe "MongoDoc::Document" do
     class FormForTest
       include MongoDoc::Document
 
-      key :data
+      attr_accessor :data
     end
 
     before do
@@ -43,7 +43,7 @@ describe "MongoDoc::Document" do
     class SimpleValidationTest
       include MongoDoc::Document
 
-      key :data
+      attr_accessor :data
       validates_presence_of :data
     end
 
@@ -68,7 +68,7 @@ describe "MongoDoc::Document" do
     class SaveChild
       include MongoDoc::Document
 
-      key :data
+      attr_accessor :data
     end
 
     before do
@@ -200,7 +200,7 @@ describe "MongoDoc::Document" do
     class CreateTest
       include MongoDoc::Document
 
-      key :data
+      attr_accessor :data
       validates_presence_of :data
     end
 
@@ -267,7 +267,7 @@ describe "MongoDoc::Document" do
     class UpdateAttributesChild
       include MongoDoc::Document
 
-      key :data
+      attr_accessor :data
     end
 
     let(:data) {'data'}
@@ -479,13 +479,13 @@ describe "MongoDoc::Document" do
     class BSONTest
       include MongoDoc::Document
 
-      key :other
+      attr_accessor :other
     end
 
     class BSONDerived < BSONTest
       include MongoDoc::Document
 
-      key :derived
+      attr_accessor :derived
     end
 
     class OtherObject
@@ -540,7 +540,7 @@ describe "MongoDoc::Document" do
         class SubHasOneBsonDoc
           include MongoDoc::Document
 
-          key :attr
+          attr_accessor :attr
         end
 
         it "#to_bson renders a bson representation of the document" do
@@ -565,7 +565,7 @@ describe "MongoDoc::Document" do
         class SubHasManyBsonDoc
           include MongoDoc::Document
 
-          key :attr
+          attr_accessor :attr
         end
 
         class TestHasManyBsonDoc

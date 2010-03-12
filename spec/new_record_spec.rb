@@ -11,7 +11,7 @@ describe "MongoDoc::Document _id and #new_record?" do
     has_one :child
     has_many :children
 
-    key :data
+    attr_accessor :data
 
     validates_presence_of :data
   end

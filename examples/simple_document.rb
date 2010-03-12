@@ -3,18 +3,18 @@ require 'mongo_doc'
 class Address
   include MongoDoc::Document
 
-  key :street
-  key :city
-  key :state
-  key :zip_code
-  key :phone_number
+  attr_accessor :street
+  attr_accessor :city
+  attr_accessor :state
+  attr_accessor :zip_code
+  attr_accessor :phone_number
 end
 
 class Contact
   include MongoDoc::Document
 
-  key :name
-  key :interests
+  attr_accessor :name
+  attr_accessor :interests
   has_many :addresses
 
   scope :in_state, lambda {|state| where('addresses.state' => state)}

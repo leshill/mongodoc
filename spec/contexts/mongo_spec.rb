@@ -6,8 +6,8 @@ describe "MongoDoc::Contexts::Mongo" do
     include MongoDoc::Document
     include MongoDoc::Matchers
 
-    key :number
-    key :street
+    attr_accessor :number
+    attr_accessor :street
   end
 
   let(:criteria) { Mongoid::Criteria.new(Address) }

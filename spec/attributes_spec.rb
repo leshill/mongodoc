@@ -10,23 +10,23 @@ describe "MongoDoc::Attributes" do
     AttributesTest.new.should respond_to(:_id=)
   end
 
-  context ".attr_accessor" do
+  context ".key" do
     class AttributeAccessorTest
       include MongoDoc::Attributes
 
-      attr_accessor :date, :default => Date.today, :type => Date
+      key :date, :default => Date.today, :type => Date
     end
 
-    it "is an alias for key" do
+    it "is an alias for attr_accessor" do
       AttributeAccessorTest._keys.should include(:date)
     end
   end
 
-  context ".key" do
+  context ".attr_accessor" do
     class TestKeys
       include MongoDoc::Attributes
 
-      key :attr1, :attr2
+      attr_accessor :attr1, :attr2
     end
 
     it "adds its arguments to _keys" do
@@ -51,7 +51,7 @@ describe "MongoDoc::Attributes" do
       class TestDefault
         include MongoDoc::Attributes
 
-        key :with_default, :default => 'value'
+        attr_accessor :with_default, :default => 'value'
       end
 
       let(:object) { TestDefault.new }
@@ -80,7 +80,7 @@ describe "MongoDoc::Attributes" do
       class TestType
         include MongoDoc::Attributes
 
-        key :birthdate, :type => Date
+        attr_accessor :birthdate, :type => Date
       end
 
       let(:object) { TestType.new }
@@ -109,11 +109,11 @@ describe "MongoDoc::Attributes" do
       class TestParent
         include MongoDoc::Attributes
 
-        key :parent_attr
+        attr_accessor :parent_attr
       end
 
       class TestChild < TestParent
-        key :child_attr
+        attr_accessor :child_attr
       end
 
       it "has its own keys" do
@@ -140,7 +140,7 @@ describe "MongoDoc::Attributes" do
     class SubDoc
       include MongoDoc::Document
 
-      key :data
+      attr_accessor :data
     end
 
     let(:subdoc) { SubDoc.new }
@@ -162,7 +162,7 @@ describe "MongoDoc::Attributes" do
       class HasOneValidationTest
         include MongoDoc::Document
 
-        key :data
+        attr_accessor :data
         validates_presence_of :data
       end
 
@@ -177,7 +177,7 @@ describe "MongoDoc::Attributes" do
     class TestHasOneDoc
       include MongoDoc::Document
 
-      key :key
+      attr_accessor :key
       has_one :has_one
     end
 
@@ -191,7 +191,7 @@ describe "MongoDoc::Attributes" do
     class SubHasManyDoc
       include MongoDoc::Document
 
-      key :data
+      attr_accessor :data
     end
 
     class TestHasManyDoc
@@ -243,7 +243,7 @@ describe "MongoDoc::Attributes" do
       class HasManyValidationChild
         include MongoDoc::Document
 
-        key :data
+        attr_accessor :data
         validates_presence_of :data
       end
 
@@ -274,7 +274,7 @@ describe "MongoDoc::Attributes" do
     class SubHasHashDoc
       include MongoDoc::Document
 
-      key :data
+      attr_accessor :data
     end
 
     class TestHasHashDoc
@@ -312,7 +312,7 @@ describe "MongoDoc::Attributes" do
       class HasHashValidationChild
         include MongoDoc::Document
 
-        key :data
+        attr_accessor :data
         validates_presence_of :data
       end
 

@@ -4,7 +4,7 @@ describe MongoDoc::Finders do
   class FindersTest
     include MongoDoc::Document
 
-    key :data
+    attr_accessor :data
   end
 
   let(:criteria) { stub('criteria').as_null_object }

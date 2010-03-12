@@ -11,8 +11,8 @@ describe MongoDoc::Scope do
   class ScopeTest
     include MongoDoc::Document
 
-    key :active
-    key :count
+    attr_accessor :active
+    attr_accessor :count
 
     scope :active, where(:active => true)
     scope :count_lte_one, where(:count.lte => 1) do
