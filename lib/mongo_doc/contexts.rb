@@ -10,7 +10,7 @@ module Mongoid
     class UnknownContext < RuntimeError; end
 
     # Determines the context to be used for this criteria. If the class is an
-    # embedded document, then the context will be the array in the has_many
+    # embedded document, then the context will be the array in the embed_many
     # association it is in. If the class is a root, then the database itself
     # will be the context.
     #

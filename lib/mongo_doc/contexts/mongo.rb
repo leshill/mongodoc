@@ -40,7 +40,7 @@ module MongoDoc
       end
 
       # Determine if the context is empty or blank given the criteria. Will
-      # perform a quick has_one asking only for the id.
+      # perform a quick find_one asking only for the id.
       #
       # Example:
       #
