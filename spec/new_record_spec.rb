@@ -8,8 +8,8 @@ describe "MongoDoc::Document _id and #new_record?" do
   class Parent
     include MongoDoc::Document
 
-    has_one :child
-    has_many :children
+    embed :child
+    embed_many :children
 
     attr_accessor :data
 
@@ -20,7 +20,7 @@ describe "MongoDoc::Document _id and #new_record?" do
   let(:collection) { stub('collection', :save => id) }
   let(:child) { Child.new }
 
-  context "as a has_one child" do
+  context "as a embed child" do
     it "when added to the parent is a new record" do
       Parent.new(:data => 'data', :child => child)
       child.should be_new_record
@@ -70,7 +70,7 @@ describe "MongoDoc::Document _id and #new_record?" do
     end
   end
 
-  context "as a has_many child" do
+  context "as a embed_many child" do
     it "when added to the parent is a new record" do
       parent = Parent.new(:data => 'data')
       parent.children << child

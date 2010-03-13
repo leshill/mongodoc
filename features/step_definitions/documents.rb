@@ -12,7 +12,7 @@ class Place
 
   attr_accessor :name
   attr_accessor :type
-  has_one :address
+  embed :address
 end
 
 class Contact
@@ -22,7 +22,7 @@ class Contact
   attr_accessor :type
   attr_accessor :note
   attr_accessor :interests
-  has_many :addresses
+  embed_many :addresses
 
   scope :rubyists, any_in(:interests => ['ruby'])
   scope :contract_work, any_in(:interests => ['contract work'])

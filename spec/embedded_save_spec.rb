@@ -4,13 +4,13 @@ describe "Saving embedded documents" do
   class NestedDocsRoot
     include MongoDoc::Document
 
-    has_many :nested_children
+    embed_many :nested_children
   end
 
   class NestedChild
     include MongoDoc::Document
 
-    has_one :leaf
+    embed :leaf
   end
 
   class LeafDoc
@@ -42,7 +42,7 @@ describe "Saving embedded documents" do
   end
 
   context "update_attributes naive" do
-    context "with no has_many, update_attributes" do
+    context "with no embed_many, update_attributes" do
       let(:root) { NestedChild.new(:leaf => leaf) }
 
       it "calls the root document's _naive_update_attributes with a full attribute path and not safe" do
@@ -56,7 +56,7 @@ describe "Saving embedded documents" do
       end
     end
 
-    context "with has_many, update_attributes" do
+    context "with embed_many, update_attributes" do
       let(:root) { NestedDocsRoot.new(:nested_children => [NestedChild.new(:leaf => leaf)]) }
 
       it "calls the root document's _naive_update_attributes with a full attribute path and not safe" do
@@ -78,7 +78,7 @@ describe "Saving embedded documents" do
       leaf.stub(:_id).and_return(leaf_id)
     end
 
-    context "with no has_many, update_attributes" do
+    context "with no embed_many, update_attributes" do
       let(:root) { NestedChild.new(:leaf => leaf) }
 
       it "calls the root document's _strict_update_attributes with a full attribute path and not safe" do
@@ -92,7 +92,7 @@ describe "Saving embedded documents" do
       end
     end
 
-    context "with has_many, update_attributes" do
+    context "with embed_many, update_attributes" do
       let(:root) { NestedDocsRoot.new(:nested_children => [NestedChild.new(:leaf => leaf)]) }
 
       it "calls the root document's _naive_update_attributes with a full attribute path and not safe" do

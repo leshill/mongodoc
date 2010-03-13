@@ -8,7 +8,7 @@ describe MongoDoc::Associations::HashProxy do
   end
 
   let(:root) { stub('root', :register_save_observer => nil) }
-  let(:proxy) { MongoDoc::Associations::HashProxy.new(:assoc_name => 'has_many_name', :assoc_class => HashProxyTest, :root => root, :parent => root) }
+  let(:proxy) { MongoDoc::Associations::HashProxy.new(:assoc_name => 'embed_hash_name', :assoc_class => HashProxyTest, :root => root, :parent => root) }
   let(:item) { HashProxyTest.new }
   let(:other_item) {[1,2]}
 

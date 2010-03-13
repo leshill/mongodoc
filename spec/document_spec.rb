@@ -62,7 +62,7 @@ describe "MongoDoc::Document" do
     class SaveRoot
       include MongoDoc::Document
 
-      has_many :save_children
+      embed_many :save_children
     end
 
     class SaveChild
@@ -261,7 +261,7 @@ describe "MongoDoc::Document" do
     class UpdateAttributesRoot
       include MongoDoc::Document
 
-      has_one :update_attributes_child
+      embed :update_attributes_child
     end
 
     class UpdateAttributesChild
@@ -530,22 +530,22 @@ describe "MongoDoc::Document" do
     end
 
     context "associations" do
-      context "has_one" do
-        class TestHasOneBsonDoc
+      context "embed" do
+        class TestEmbedBsonDoc
           include MongoDoc::Document
 
-          has_one :subdoc
+          embed :subdoc
         end
 
-        class SubHasOneBsonDoc
+        class SubEmbedBsonDoc
           include MongoDoc::Document
 
           attr_accessor :attr
         end
 
         it "#to_bson renders a bson representation of the document" do
-          doc = TestHasOneBsonDoc.new
-          subdoc = SubHasOneBsonDoc.new(:attr => "value")
+          doc = TestEmbedBsonDoc.new
+          subdoc = SubEmbedBsonDoc.new(:attr => "value")
           bson = doc.to_bson
           bson["subdoc"] = subdoc.to_bson
           doc.subdoc = subdoc
@@ -553,29 +553,29 @@ describe "MongoDoc::Document" do
         end
 
         it "roundtrips" do
-          doc = TestHasOneBsonDoc.new
-          subdoc = SubHasOneBsonDoc.new(:attr => "value")
+          doc = TestEmbedBsonDoc.new
+          subdoc = SubEmbedBsonDoc.new(:attr => "value")
           doc.subdoc = subdoc
           MongoDoc::BSON.decode(doc.to_bson).should == doc
         end
       end
 
-      context "has_many" do
+      context "embed_many" do
 
-        class SubHasManyBsonDoc
+        class SubEmbedManyBsonDoc
           include MongoDoc::Document
 
           attr_accessor :attr
         end
 
-        class TestHasManyBsonDoc
+        class TestEmbedManyBsonDoc
           include MongoDoc::Document
-          has_many :subdoc, :class_name => 'SubHasManyBsonDoc'
+          embed_many :subdoc, :class_name => 'SubEmbedManyBsonDoc'
         end
 
         it "#to_bson renders a bson representation of the document" do
-          doc = TestHasManyBsonDoc.new
-          subdoc = SubHasManyBsonDoc.new(:attr => "value")
+          doc = TestEmbedManyBsonDoc.new
+          subdoc = SubEmbedManyBsonDoc.new(:attr => "value")
           bson = doc.to_bson
           bson["subdoc"] = [subdoc].to_bson
           doc.subdoc = subdoc
@@ -583,14 +583,14 @@ describe "MongoDoc::Document" do
         end
 
         it "roundtrips" do
-          doc = TestHasManyBsonDoc.new
-          subdoc = SubHasManyBsonDoc.new(:attr => "value")
+          doc = TestEmbedManyBsonDoc.new
+          subdoc = SubEmbedManyBsonDoc.new(:attr => "value")
           doc.subdoc = subdoc
           MongoDoc::BSON.decode(doc.to_bson).should == doc
         end
 
         it "roundtrips the proxy" do
-          doc = TestHasManyBsonDoc.new(:subdoc => SubHasManyBsonDoc.new(:attr => "value"))
+          doc = TestEmbedManyBsonDoc.new(:subdoc => SubEmbedManyBsonDoc.new(:attr => "value"))
           MongoDoc::Associations::CollectionProxy.should === MongoDoc::BSON.decode(doc.to_bson).subdoc
         end
       end

@@ -208,7 +208,7 @@ describe "MongoDoc::Associations" do
       class EmbedHashValidationTest
         include MongoDoc::Document
 
-        has_hash :subdocs, :class_name => 'EmbedHashValidationChild'
+        embed_hash :subdocs, :class_name => 'EmbedHashValidationChild'
       end
 
       let(:invalid_child) { EmbedHashValidationChild.new }

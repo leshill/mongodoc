@@ -5,7 +5,7 @@ describe MongoDoc::Contexts do
   class ContextTest
     include MongoDoc::Document
 
-    has_many :children
+    embed_many :children
   end
 
   context ".context_for" do

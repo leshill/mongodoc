@@ -135,7 +135,7 @@ describe "MongoDoc::Attributes" do
       include MongoDoc::Document
 
       attr_accessor :key
-      has_one :has_one
+      embed :embed
     end
 
     it "is _keys + _associations" do
