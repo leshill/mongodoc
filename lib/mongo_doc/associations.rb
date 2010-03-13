@@ -6,7 +6,7 @@ require 'mongo_doc/associations/hash_proxy'
 module MongoDoc
   module Associations
 
-    def has_one(*args)
+    def embed(*args)
       options = args.extract_options!
       assoc_class = if class_name = options.delete(:class_name)
         self.class_from_name(class_name)
@@ -29,8 +29,9 @@ module MongoDoc
         validates_embedded name, :if => Proc.new { !send(name).nil? }
       end
     end
+    alias :has_one :embed
 
-    def has_many(*args)
+    def embed_many(*args)
       options = args.extract_options!
       assoc_class = if class_name = options.delete(:class_name)
         self.class_from_name(class_name)
@@ -59,8 +60,9 @@ module MongoDoc
         end
       end
     end
+    alias :has_many :embed_many
 
-    def has_hash(*args)
+    def embed_hash(*args)
       options = args.extract_options!
       assoc_class = if class_name = options.delete(:class_name)
         self.class_from_name(class_name)
@@ -85,6 +87,7 @@ module MongoDoc
         end
       end
     end
+    alias :has_hash :embed_hash
 
     def class_from_name(name)
       type_name_with_module(name.to_s.classify).constantize rescue nil

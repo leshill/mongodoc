@@ -2,11 +2,11 @@ require 'spec_helper'
 
 describe "MongoDoc::Associations" do
 
-  context ".has_one" do
+  context ".embed" do
     class TestDoc
       include MongoDoc::Document
 
-      has_one :sub_doc
+      embed :sub_doc
     end
 
     class SubDoc
@@ -15,11 +15,21 @@ describe "MongoDoc::Associations" do
       attr_accessor :data
     end
 
+    class TestHasOne
+      include MongoDoc::Document
+
+      has_one :sub_doc
+    end
+
     let(:subdoc) { SubDoc.new }
     let(:doc) { TestDoc.new(:sub_doc => subdoc) }
 
     it "uses a proxy" do
       MongoDoc::Associations::DocumentProxy.should === doc.sub_doc
+    end
+
+    it ".has_one is an alias for embed" do
+      MongoDoc::Associations::DocumentProxy.should === TestHasOne.new(:sub_doc => SubDoc.new).sub_doc
     end
 
     it "sets the subdocuments parent to the proxy" do
@@ -31,7 +41,7 @@ describe "MongoDoc::Associations" do
     end
 
     context "validations" do
-      class HasOneValidationTest
+      class EmbedValidationTest
         include MongoDoc::Document
 
         attr_accessor :data
@@ -39,42 +49,52 @@ describe "MongoDoc::Associations" do
       end
 
       it "cascades validations down" do
-        invalid = HasOneValidationTest.new
+        invalid = EmbedValidationTest.new
         TestDoc.new(:sub_doc => invalid).should have(1).error_on(:sub_doc)
       end
     end
   end
 
-  context ".has_many" do
+  context ".embed_many" do
 
-    class SubHasManyDoc
+    class SubEmbedManyDoc
       include MongoDoc::Document
 
       attr_accessor :data
     end
 
+    class TestEmbedManyDoc
+      include MongoDoc::Document
+
+      embed_many :sub_docs, :class_name => 'SubEmbedManyDoc'
+    end
+
+    class TestEmbedManyDoc2
+      include MongoDoc::Document
+
+      embed_many :sub_docs, :class_name => :sub_embed_many_doc
+    end
+
+    class TestImplicitEmbedManyDoc
+      include MongoDoc::Document
+
+      embed_many :sub_embed_many_docs
+    end
+
     class TestHasManyDoc
       include MongoDoc::Document
 
-      has_many :sub_docs, :class_name => 'SubHasManyDoc'
+      has_many :sub_docs, :class_name => 'SubEmbedManyDoc'
     end
 
-    class TestHasManyDoc2
-      include MongoDoc::Document
-
-      has_many :sub_docs, :class_name => :sub_has_many_doc
-    end
-
-    class TestImplicitHasManyDoc
-      include MongoDoc::Document
-
-      has_many :sub_has_many_docs
-    end
-
-    let(:subdoc) { SubHasManyDoc.new }
-    let(:doc) { TestHasManyDoc.new(:sub_docs => [subdoc]) }
+    let(:subdoc) { SubEmbedManyDoc.new }
+    let(:doc) { TestEmbedManyDoc.new(:sub_docs => [subdoc]) }
 
     it "uses a proxy" do
+      MongoDoc::Associations::CollectionProxy.should === TestEmbedManyDoc.new.sub_docs
+    end
+
+    it ".has_many is an alias for .embed_many" do
       MongoDoc::Associations::CollectionProxy.should === TestHasManyDoc.new.sub_docs
     end
 
@@ -87,33 +107,33 @@ describe "MongoDoc::Associations" do
     end
 
     it "uses the association name to find the children's class name" do
-      TestImplicitHasManyDoc.new.sub_has_many_docs.assoc_class.should == SubHasManyDoc
+      TestImplicitEmbedManyDoc.new.sub_embed_many_docs.assoc_class.should == SubEmbedManyDoc
     end
 
     it "uses class_name attribute for the children's class name" do
-      TestHasManyDoc.new.sub_docs.assoc_class.should == SubHasManyDoc
+      TestEmbedManyDoc.new.sub_docs.assoc_class.should == SubEmbedManyDoc
     end
 
     it "uses class_name attribute for the children's class name" do
-      TestHasManyDoc2.new.sub_docs.assoc_class.should == SubHasManyDoc
+      TestEmbedManyDoc2.new.sub_docs.assoc_class.should == SubEmbedManyDoc
     end
 
     context "validations" do
-      class HasManyValidationChild
+      class EmbedManyValidationChild
         include MongoDoc::Document
 
         attr_accessor :data
         validates_presence_of :data
       end
 
-      class HasManyValidationTest
+      class EmbedManyValidationTest
         include MongoDoc::Document
 
-        has_many :subdocs, :class_name => 'HasManyValidationChild'
+        embed_many :subdocs, :class_name => 'HasManyValidationChild'
       end
 
-      let(:invalid_child) { HasManyValidationChild.new }
-      let(:doc) { HasManyValidationTest.new(:subdocs => [invalid_child]) }
+      let(:invalid_child) { EmbedManyValidationChild.new }
+      let(:doc) { EmbedManyValidationTest.new(:subdocs => [invalid_child]) }
 
       it "cascades validations and marks it in the parent" do
         doc.should have(1).error_on(:subdocs)
@@ -124,35 +144,45 @@ describe "MongoDoc::Associations" do
       end
 
       it "ignores non-document children" do
-        HasManyValidationTest.new(:subdocs => ['not a doc']).should be_valid
+        EmbedManyValidationTest.new(:subdocs => ['not a doc']).should be_valid
       end
     end
   end
 
-  context ".has_hash" do
-    class SubHasHashDoc
+  context ".embed_hash" do
+    class SubEmbedHashDoc
       include MongoDoc::Document
 
       attr_accessor :data
     end
 
+    class TestEmbedHashDoc
+      include MongoDoc::Document
+
+      embed_hash :sub_docs, :class_name => 'SubEmbedHashDoc'
+    end
+
+    class TestImplicitEmbedHashDoc
+      include MongoDoc::Document
+
+      embed_hash :sub_embed_hash_docs
+    end
+
     class TestHasHashDoc
       include MongoDoc::Document
 
-      has_hash :sub_docs, :class_name => 'SubHasHashDoc'
+      has_hash :sub_embed_hash_docs
     end
 
-    class TestImplicitHasHashDoc
-      include MongoDoc::Document
-
-      has_hash :sub_has_hash_docs
-    end
-
-    let(:subdoc) { SubHasHashDoc.new }
-    let(:doc) { TestHasHashDoc.new(:sub_docs => {:key => subdoc}) }
+    let(:subdoc) { SubEmbedHashDoc.new }
+    let(:doc) { TestEmbedHashDoc.new(:sub_docs => {:key => subdoc}) }
 
     it "uses a proxy" do
-      MongoDoc::Associations::HashProxy.should === TestHasHashDoc.new.sub_docs
+      MongoDoc::Associations::HashProxy.should === TestEmbedHashDoc.new.sub_docs
+    end
+
+    it ".has_hash is an alias for embed_hash" do
+      MongoDoc::Associations::HashProxy.should === TestEmbedHashDoc.new.sub_docs
     end
 
     it "sets the subdocuments parent to the proxy" do
@@ -164,25 +194,25 @@ describe "MongoDoc::Associations" do
     end
 
     it "uses the association name to find the children's class name" do
-      TestImplicitHasHashDoc.new.sub_has_hash_docs.assoc_class.should == SubHasHashDoc
+      TestImplicitEmbedHashDoc.new.sub_embed_hash_docs.assoc_class.should == SubEmbedHashDoc
     end
 
     context "validations" do
-      class HasHashValidationChild
+      class EmbedHashValidationChild
         include MongoDoc::Document
 
         attr_accessor :data
         validates_presence_of :data
       end
 
-      class HasHashValidationTest
+      class EmbedHashValidationTest
         include MongoDoc::Document
 
-        has_hash :subdocs, :class_name => 'HasHashValidationChild'
+        has_hash :subdocs, :class_name => 'EmbedHashValidationChild'
       end
 
-      let(:invalid_child) { HasHashValidationChild.new }
-      let(:doc) { HasHashValidationTest.new(:subdocs => {:key => invalid_child}) }
+      let(:invalid_child) { EmbedHashValidationChild.new }
+      let(:doc) { EmbedHashValidationTest.new(:subdocs => {:key => invalid_child}) }
 
       it "cascades validations and marks it in the parent" do
         doc.should have(1).error_on(:subdocs)
@@ -193,7 +223,7 @@ describe "MongoDoc::Associations" do
       end
 
       it "ignores non-document children" do
-        HasHashValidationTest.new(:subdocs => {:key => 'data'}).should be_valid
+        EmbedHashValidationTest.new(:subdocs => {:key => 'data'}).should be_valid
       end
     end
   end
