@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{mongo_doc}
-  s.version = "0.3.2"
+  s.version = "0.4.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Les Hill"]
-  s.date = %q{2010-03-11}
+  s.date = %q{2010-03-12}
   s.description = %q{ODM for MongoDB}
   s.email = %q{leshill@gmail.com}
   s.extra_rdoc_files = [
@@ -54,6 +54,7 @@ Gem::Specification.new do |s|
      "features/support/support.rb",
      "features/using_criteria.feature",
      "lib/mongo_doc.rb",
+     "lib/mongo_doc/associations.rb",
      "lib/mongo_doc/associations/collection_proxy.rb",
      "lib/mongo_doc/associations/document_proxy.rb",
      "lib/mongo_doc/associations/hash_proxy.rb",
@@ -119,6 +120,7 @@ Gem::Specification.new do |s|
      "spec/associations/collection_proxy_spec.rb",
      "spec/associations/document_proxy_spec.rb",
      "spec/associations/hash_proxy_spec.rb",
+     "spec/associations_spec.rb",
      "spec/attributes_accessor_spec.rb",
      "spec/attributes_spec.rb",
      "spec/bson_matchers.rb",
@@ -155,6 +157,7 @@ Gem::Specification.new do |s|
     "spec/associations/collection_proxy_spec.rb",
      "spec/associations/document_proxy_spec.rb",
      "spec/associations/hash_proxy_spec.rb",
+     "spec/associations_spec.rb",
      "spec/attributes_accessor_spec.rb",
      "spec/attributes_spec.rb",
      "spec/bson_matchers.rb",
