@@ -1,7 +1,22 @@
 h1. MongoDoc
 
-Version: 0.3.2 2010/03/11
+Version: Turbulence (0.4.0) 2010/03/12
 
+h2. What's New in Turbulence (0.4.0)
+
+API changes (@key@ and @has_*@ still supported, will be deprectated soon)
+
+* @MongoDoc::Document.attr_accessor@ works like the old @key@ macro, and allows two parameters:
+** @:default => 'some default value'@
+** @:type => Date@ used when dealing with values from the web which will be coming in as @String@ values
+* Association macros have been renamed
+** @embed@ was @has_one@
+** @embed_many@ was @has_many@
+** @embed_hash@ was @has_hash@
+
+h2. Notes
+
+* 2010-03-12 Thanks to weather in ATL, cleaned up attr_accessor and switched to embed association macros
 * 2010-03-10 Slides are out of date, use key instead of attr_accessor with MongoDoc::Document (implementation was way too hackish)
 * 2010-02-23 API is *changing* significantly
 * 2010-01-23 Tracking MongoDoc with @git@? *READ THIS NOTE*[1]
@@ -55,9 +70,9 @@ collection.save(contact)
 
 p. We can query using the powerful mongoDB query syntax, and have it return Ruby objects:
 
-bc.. results = collection.find('addresses.state' => 'FL')
-hashrocket = results.to_a.find {|contact| contact.name == 'Hashrocket'}
-puts hashrocket.addresses.first.phone_number
+bc.. in_fl = collection.where('addresses.state' => 'FL')
+in_fl_hashrocket = in_fl.where('name' => /rocket/)
+puts in_fl_hashrocket.first.addresses.first.phone_number
 
 p. Take a look in the examples directory for more code.
 
@@ -72,24 +87,24 @@ Lets define a @Contact@ document with an @Address@ embedded document:
 bc.. class Address
   include MongoDoc::Document
 
-  key :street
-  key :city
-  key :state
-  key :zip_code
-  key :phone_number
+  attr_accessor :street
+  attr_accessor :city
+  attr_accessor :state
+  attr_accessor :zip_code
+  attr_accessor :phone_number
 end
 
 class Contact
   include MongoDoc::Document
 
-  key :name
-  key :interests
-  has_many :addresses
+  attr_accessor :name
+  attr_accessor :interests
+  embed_many :addresses
 
-  named_scope :in_state, lambda {|state| {:where => {'addresses.state' => state}}}
+  scope :in_state, lambda {|state| where('addresses.state' => state)}
 end
 
-p. Since a mongoDB document has no fixed schema, we define the composition of a document directly in our classes. Please note we do not specify types! We can also specify @has_one@ or @has_many@ associations.
+p. Since a mongoDB document has no fixed schema, we define the composition of a document directly in our classes. We can also specify associations using @embed@, @embed_many@, and @embed_hash@ (similar to ActiveRecord's @has_one@ and @has_many@.
 
 Building and saving a document is easy:
 
@@ -103,11 +118,12 @@ contact.save
 
 p. Now that we have some data, we can query using our named scope:
 
-bc. hashrocket = Contact.in_state('FL').find {|contact| contact.name == 'Hashrocket'}
+bc.. hashrocket_in_fl = Contact.in_state('FL').where(:name => /rocket/)
+hashrocket_address = hashrocket_in_fl.first.addresses.first
 
 p. And we can even perform partial updates:
 
-bc. hashrocket.addresses.first.update_attributes(:street => '320 First Street North, #712')
+bc. hashrocket_address.update_attributes(:street => '320 First Street North, #712')
 
 h2. Installation
 
