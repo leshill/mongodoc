@@ -15,7 +15,7 @@ class Contact
 
   attr_accessor :name
   attr_accessor :interests
-  has_many :addresses
+  embed_many :addresses
 
   scope :in_state, lambda {|state| where('addresses.state' => state)}
 end
@@ -32,9 +32,9 @@ puts contact.to_param
 puts Contact.find_one(contact.to_param).addresses.first.street
 Contact.find(contact.to_param).each {|c| puts c.name}
 
-hashrocket = Contact.in_state('FL').find {|contact| contact.name == 'Hashrocket'}
+hashrocket_in_fl = Contact.in_state('FL').where(:name => /rocket/)
 
-hashrocket_address = hashrocket.addresses.first
+hashrocket_address = hashrocket_in_fl.first.addresses.first
 hashrocket_address.update_attributes(:street => '320 First Street North, #712')
 
 puts Contact.where(:name => 'Hashrocket').first.addresses.first.street
