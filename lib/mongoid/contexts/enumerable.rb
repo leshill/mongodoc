@@ -1,13 +1,11 @@
 # encoding: utf-8
-module MongoDoc #:nodoc:
+module Mongoid #:nodoc:
   module Contexts #:nodoc:
     class Enumerable
-      include Mongoid::Contexts::Paging
-      include MongoDoc::Contexts::Ids
-
+      include Ids, Paging
       attr_reader :criteria
 
-      delegate :first, :last, :to => :execute
+      delegate :blank?, :empty?, :first, :last, :to => :execute
       delegate :documents, :options, :selector, :to => :criteria
 
       # Return aggregation counts of the grouped documents. This will count by
@@ -22,19 +20,33 @@ module MongoDoc #:nodoc:
         counts
       end
 
+      # Get the average value for the supplied field.
+      #
+      # Example:
+      #
+      # <tt>context.avg(:age)</tt>
+      #
+      # Returns:
+      #
+      # A numeric value that is the average.
+      def avg(field)
+        total = sum(field)
+        total ? (total.to_f / count) : nil
+      end
+
       # Gets the number of documents in the array. Delegates to size.
       def count
         @count ||= documents.size
       end
 
-      # Groups the documents by the first field supplied in the field options.
+      # Gets an array of distinct values for the supplied field across the
+      # entire array or the susbset given the criteria.
       #
-      # Returns:
+      # Example:
       #
-      # A +Hash+ with field values as keys, arrays of documents as values.
-      def group
-        field = options[:fields].first
-        documents.group_by { |doc| doc.send(field) }
+      # <tt>context.distinct(:title)</tt>
+      def distinct(field)
+        execute.collect { |doc| doc.send(field) }.uniq
       end
 
       # Enumerable implementation of execute. Returns matching documents for
@@ -47,13 +59,23 @@ module MongoDoc #:nodoc:
         limit(documents.select { |document| document.matches?(selector) })
       end
 
+      # Groups the documents by the first field supplied in the field options.
+      #
+      # Returns:
+      #
+      # A +Hash+ with field values as keys, arrays of documents as values.
+      def group
+        field = options[:fields].first
+        documents.group_by { |doc| doc.send(field) }
+      end
+
       # Create the new enumerable context. This will need the selector and
       # options from a +Criteria+ and a documents array that is the underlying
       # array of embedded documents from a has many association.
       #
       # Example:
       #
-      # <tt>MongoDoc::Contexts::Enumerable.new(criteria)</tt>
+      # <tt>Mongoid::Contexts::Enumerable.new(criteria)</tt>
       def initialize(criteria)
         @criteria = criteria
       end
@@ -119,10 +141,11 @@ module MongoDoc #:nodoc:
         skip, limit = options[:skip], options[:limit]
         if skip && limit
           return documents.slice(skip, limit)
+        elsif limit
+          return documents.first(limit)
         end
         documents
       end
     end
   end
 end
-

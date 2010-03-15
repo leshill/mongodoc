@@ -89,7 +89,7 @@ namespace :mongoid do
     src_dir = Pathname.new('../durran-mongoid/lib/mongoid')
     dest_dir = Pathname.new('lib/mongoid')
     dest_dir.mkpath
-    %w(criteria.rb contexts/paging.rb criterion extensions/symbol/inflections.rb extensions/hash/criteria_helpers.rb matchers).each do |f|
+    %w(criteria.rb contexts/paging.rb contexts/enumerable.rb criterion extensions/symbol/inflections.rb extensions/hash/criteria_helpers.rb matchers).each do |f|
       src = src_dir + f
       if src.directory?
         FileUtils.cp_r(src, dest_dir)

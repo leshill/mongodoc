@@ -24,7 +24,7 @@ describe MongoDoc::Contexts do
       let(:klass) { ContextTest.new.children }
 
       it "creates an Enumerable context" do
-        MongoDoc::Contexts::Enumerable.should_receive(:new).with(criteria)
+        Mongoid::Contexts::Enumerable.should_receive(:new).with(criteria)
         Mongoid::Contexts.context_for(criteria)
       end
     end

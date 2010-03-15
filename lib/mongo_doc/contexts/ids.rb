@@ -1,4 +1,4 @@
-module MongoDoc
+module Mongoid
   module Contexts
     module Ids
       # Return documents based on an id search. Will handle if a single id has

@@ -2,7 +2,7 @@ module MongoDoc
   module Contexts
     class Mongo
       include Mongoid::Contexts::Paging
-      include MongoDoc::Contexts::Ids
+      include Mongoid::Contexts::Ids
 
       attr_reader :criteria, :cache
 
