@@ -39,12 +39,32 @@ describe "MongoDoc::Contexts::Mongo" do
       end
     end
 
+    context "#avg" do
+      it "is the sum/count" do
+        context.should_receive(:count).and_return(1)
+        context.should_receive(:sum).with(:field_name).and_return(1)
+        context.avg(:field_name)
+      end
+
+      it "returns nil if there is no sum" do
+        context.stub(:sum).and_return(nil)
+        context.avg(:field_name).should be_nil
+      end
+    end
+
     context "#count" do
       it "uses find and count" do
         result = stub('result')
         result.should_receive(:count)
         collection.should_receive(:find).and_return(result)
         context.count
+      end
+    end
+
+    context "#distinct" do
+      it "uses distinct" do
+        collection.should_receive(:distinct).with(:field_name, {})
+        context.distinct(:field_name)
       end
     end
 

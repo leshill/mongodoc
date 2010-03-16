@@ -26,6 +26,25 @@ module MongoDoc
         collection.group(options[:fields], selector, { :count => 0 }, AGGREGATE_REDUCE, true)
       end
 
+      # Get the average value for the supplied field.
+      #
+      # This will take the internally built selector and options
+      # and pass them on to the Ruby driver's +group()+ method on the collection. The
+      # collection itself will be retrieved from the class provided, and once the
+      # query has returned it will provided a grouping of keys with averages.
+      #
+      # Example:
+      #
+      # <tt>context.avg(:age)</tt>
+      #
+      # Returns:
+      #
+      # A numeric value that is the average.
+      def avg(field)
+        total = sum(field)
+        total ? (total / count) : nil
+      end
+
       # Get the count of matching documents in the database for the context.
       #
       # Example:
@@ -37,6 +56,16 @@ module MongoDoc
       # An +Integer+ count of documents.
       def count
         @count ||= collection.find(selector, options).count
+      end
+
+      # Gets an array of distinct values for the supplied field across the
+      # entire collection or the susbset given the criteria.
+      #
+      # Example:
+      #
+      # <tt>context.distinct(:title)</tt>
+      def distinct(field)
+        collection.distinct(field, selector)
       end
 
       # Determine if the context is empty or blank given the criteria. Will
