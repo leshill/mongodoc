@@ -8,8 +8,8 @@ Gem::Specification.new do |s|
   s.version = "0.4.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
-  s.authors = ["Les Hill"]
-  s.date = %q{2010-03-12}
+  s.authors = ["Les Hill", "Jim Remsik"]
+  s.date = %q{2010-03-17}
   s.description = %q{ODM for MongoDB}
   s.email = %q{leshill@gmail.com}
   s.extra_rdoc_files = [
@@ -64,7 +64,6 @@ Gem::Specification.new do |s|
      "lib/mongo_doc/collection.rb",
      "lib/mongo_doc/connection.rb",
      "lib/mongo_doc/contexts.rb",
-     "lib/mongo_doc/contexts/enumerable.rb",
      "lib/mongo_doc/contexts/ids.rb",
      "lib/mongo_doc/contexts/mongo.rb",
      "lib/mongo_doc/criteria.rb",
@@ -92,6 +91,7 @@ Gem::Specification.new do |s|
      "lib/mongo_doc/scope.rb",
      "lib/mongo_doc/validations/macros.rb",
      "lib/mongo_doc/validations/validates_embedded.rb",
+     "lib/mongoid/contexts/enumerable.rb",
      "lib/mongoid/contexts/paging.rb",
      "lib/mongoid/criteria.rb",
      "lib/mongoid/criterion/complex.rb",
@@ -127,7 +127,6 @@ Gem::Specification.new do |s|
      "spec/bson_spec.rb",
      "spec/collection_spec.rb",
      "spec/connection_spec.rb",
-     "spec/contexts/enumerable_spec.rb",
      "spec/contexts/ids_spec.rb",
      "spec/contexts/mongo_spec.rb",
      "spec/contexts_spec.rb",
@@ -164,7 +163,6 @@ Gem::Specification.new do |s|
      "spec/bson_spec.rb",
      "spec/collection_spec.rb",
      "spec/connection_spec.rb",
-     "spec/contexts/enumerable_spec.rb",
      "spec/contexts/ids_spec.rb",
      "spec/contexts/mongo_spec.rb",
      "spec/contexts_spec.rb",
@@ -176,6 +174,7 @@ Gem::Specification.new do |s|
      "spec/ext_spec.rb",
      "spec/finders_spec.rb",
      "spec/hash_matchers.rb",
+     "spec/index_spec.rb",
      "spec/matchers_spec.rb",
      "spec/new_record_spec.rb",
      "spec/query_spec.rb",

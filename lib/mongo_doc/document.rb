@@ -4,6 +4,7 @@ require 'mongo_doc/attributes'
 require 'mongo_doc/associations'
 require 'mongo_doc/criteria'
 require 'mongo_doc/finders'
+require 'mongo_doc/index'
 require 'mongo_doc/scope'
 require 'mongo_doc/validations/macros'
 
@@ -21,6 +22,7 @@ module MongoDoc
         extend ClassMethods
         extend Criteria
         extend Finders
+        extend Index
         extend Scope
         include ::Validatable
         extend Validations::Macros
