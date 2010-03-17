@@ -1,8 +1,8 @@
 h1. MongoDoc
 
-Version: Turbulence (0.4.0) 2010/03/12
+Version: Turbulence (0.4.1) 2010/03/17
 
-h2. What's New in Turbulence (0.4.0)
+h2. What's New in Turbulence (0.4.1)
 
 API changes (@key@ and @has_*@ still supported, will be deprectated soon)
 
@@ -13,6 +13,10 @@ API changes (@key@ and @has_*@ still supported, will be deprectated soon)
 ** @embed@ was @has_one@
 ** @embed_many@ was @has_many@
 ** @embed_hash@ was @has_hash@
+
+Indexing suppport
+
+* @MongoDoc::Document.index@
 
 h2. Notes
 
