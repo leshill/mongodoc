@@ -5,10 +5,10 @@
 
 Gem::Specification.new do |s|
   s.name = %q{mongo_doc}
-  s.version = "0.4.0"
+  s.version = "0.4.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
-  s.authors = ["Les Hill", "Jim Remsik"]
+  s.authors = ["Les Hill"]
   s.date = %q{2010-03-17}
   s.description = %q{ODM for MongoDB}
   s.email = %q{leshill@gmail.com}
@@ -30,6 +30,7 @@ Gem::Specification.new do |s|
      "examples/simple_object.rb",
      "features/collections.feature",
      "features/finders.feature",
+     "features/indexes.feature",
      "features/mongodb.yml",
      "features/mongodoc_base.feature",
      "features/new_record.feature",
@@ -41,6 +42,7 @@ Gem::Specification.new do |s|
      "features/step_definitions/document_steps.rb",
      "features/step_definitions/documents.rb",
      "features/step_definitions/finder_steps.rb",
+     "features/step_definitions/index_steps.rb",
      "features/step_definitions/json_steps.rb",
      "features/step_definitions/object_steps.rb",
      "features/step_definitions/objects.rb",
@@ -86,6 +88,7 @@ Gem::Specification.new do |s|
      "lib/mongo_doc/ext/symbol.rb",
      "lib/mongo_doc/ext/time.rb",
      "lib/mongo_doc/finders.rb",
+     "lib/mongo_doc/index.rb",
      "lib/mongo_doc/matchers.rb",
      "lib/mongo_doc/query.rb",
      "lib/mongo_doc/scope.rb",
@@ -138,6 +141,7 @@ Gem::Specification.new do |s|
      "spec/ext_spec.rb",
      "spec/finders_spec.rb",
      "spec/hash_matchers.rb",
+     "spec/index_spec.rb",
      "spec/matchers_spec.rb",
      "spec/mongodb.yml",
      "spec/mongodb_pairs.yml",
