@@ -80,15 +80,10 @@ module MongoDoc
     end
 
     def update_attributes(attrs)
-      strict = attrs.delete(:__strict__)
       self.attributes = attrs
       return save if new_record?
       return false unless valid?
-      if strict
-        _strict_update_attributes(_path_to_root(self, attrs), false)
-      else
-        _naive_update_attributes(_path_to_root(self, attrs), false)
-      end
+      _update({}, attrs, false)
     end
 
     def update_attributes!(attrs)
@@ -96,11 +91,7 @@ module MongoDoc
       self.attributes = attrs
       return save! if new_record?
       raise DocumentInvalidError unless valid?
-      if strict
-        _strict_update_attributes(_path_to_root(self, attrs), true)
-      else
-        _naive_update_attributes(_path_to_root(self, attrs), true)
-      end
+      _update({}, attrs, true)
     end
 
     module ClassMethods
@@ -139,21 +130,12 @@ module MongoDoc
       self.class.collection
     end
 
-    def _naive_update_attributes(attrs, safe)
-      return _root.send(:_naive_update_attributes, attrs, safe) if _root
-      _update({}, attrs, safe)
-    end
-
     def _remove
       _collection.remove({'_id' => _id})
     end
 
-    def _strict_update_attributes(attrs, safe, selector = {})
-      return _root.send(:_strict_update_attributes, attrs, safe, _path_to_root(self, '_id' => _id)) if _root
-      _update(selector, attrs, safe)
-    end
-
     def _update(selector, data, safe)
+      return _root.send(:_update, _path_to_root(self, '_id' => _id), _path_to_root(self, data), safe) if _root
       _collection.update({'_id' => _id}.merge(selector), MongoDoc::Query.set_modifier(data), :safe => safe)
     end
 

@@ -59,47 +59,37 @@ Feature: Partial Updates
       | 1 Main St.             | Jacksonville       | FL    | 32218    |
     And I save the document 'hashrocket_hq'
 
-  Scenario: Naive Update
+  Scenario: Update
     When I update the 'note' for 'contractor' to 'Knows MongoDB and MongoDoc'
-    Then the document 'contractor' roundtrips
+    Then the last return value is true
+    And the document 'contractor' roundtrips
 
-  Scenario: Naive Update on a has one
+  Scenario: Update on a has one
     When I update the 'street' for 'hq_address' to '320 1st Street North'
-    Then the document 'hashrocket_hq' roundtrips
+    Then the last return value is true
+    And the document 'hashrocket_hq' roundtrips
 
-  Scenario: Naive Update on a has many
+  Scenario: Update on a has many
     When 'hq_address' is the first address of 'hashrocket'
     And I update the 'street' for 'hq_address' to '320 1st Street North'
-    Then the document 'hashrocket' roundtrips
+    Then the last return value is true
+    And the document 'hashrocket' roundtrips
 
-  Scenario: Strict Update
-    When I strict update the 'note' for 'contractor' to 'Knows MongoDB and MongoDoc'
-    Then the document 'contractor' roundtrips
-
-  Scenario: Strict Update on a has one
-    When I strict update the 'street' for 'hq_address' to '320 1st Street North'
-    Then the document 'hashrocket_hq' roundtrips
-
-  Scenario: Strict Update on a has many
-    When 'hq_address' is the first address of 'hashrocket'
-    And I strict update the 'street' for 'hq_address' to '320 1st Street North'
-    Then the document 'hashrocket' roundtrips
-
-  Scenario: Failing Strict Update on a has one
+  Scenario: Failing Update on a has one
     When someone else changes the Address 'address' of 'hashrocket_hq' to 
       | Street                 | City               | State | Zip Code |
       | 1 Ocean Blvd.          | Jacksonville       | FL    | 32218    |
-    And I strict update the 'street' for 'hq_address' to '320 1st Street North'
+    And I update the 'street' for 'hq_address' to '320 1st Street North'
     Then the last return value is false
     And the document 'hashrocket_hq' does not roundtrip
 
-  Scenario: Failing Strict Update on a has many
+  Scenario: Failing Update on a has many
     When 'hq_address' is the first address of 'hashrocket'
     And someone else changes the addresses of 'hashrocket':
       | Street                 | City               | State | Zip Code |
       | 320 1st N, #712        | Jacksonville Beach | FL    | 32250    |
       | 1001 Mulligan Street   | Chicago            | IL    | 60611    |
       | 345 Avenida Grande     | Santiago           | Chile |          |
-    And I strict update the 'street' for 'hq_address' to '320 1st Street North'
+    And I update the 'street' for 'hq_address' to '320 1st Street North'
     Then the last return value is false
     And the document 'hashrocket' does not roundtrip

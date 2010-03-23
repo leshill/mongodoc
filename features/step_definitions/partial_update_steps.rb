@@ -1,7 +1,6 @@
-When /^I(\sstrict\s|\s)update the '(.+)' for '(.+)' to '(.+)'$/ do |strict, attr, doc_name, value|
+When /^I update the '(.+)' for '(.+)' to '(.+)'$/ do |attr, doc_name, value|
   doc = instance_variable_get("@#{doc_name}")
   attrs = {attr => value}
-  attrs.merge!(:__strict__ => true) unless strict.blank?
   @last_return = doc.update_attributes(attrs)
 end
 
