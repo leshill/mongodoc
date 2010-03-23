@@ -5,6 +5,7 @@ require 'spec'
 require 'spec/autorun'
 require 'bson_matchers'
 require 'hash_matchers'
+require 'array_including_argument_matcher'
 require 'document_ext'
 
 Spec::Runner.configure do |config|

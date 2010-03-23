@@ -51,12 +51,12 @@ describe MongoDoc::Index do
   context "Compound index" do
 
     it "creates a compound index" do
-      collection.should_receive(:create_index).with([[:first_name, Mongo::ASCENDING], [:last_name, Mongo::ASCENDING]], false)
+      collection.should_receive(:create_index).with(array_including([:first_name, Mongo::ASCENDING], [:last_name, Mongo::ASCENDING]), false)
       IndexTest.index(:first_name => :asc, :last_name => :asc)
     end
 
     it "creates a unique compound index" do
-      collection.should_receive(:create_index).with([[:first_name, Mongo::ASCENDING], [:last_name, Mongo::ASCENDING]], true)
+      collection.should_receive(:create_index).with(array_including([:first_name, Mongo::ASCENDING], [:last_name, Mongo::ASCENDING]), true)
       IndexTest.index(:first_name => :asc, :last_name => :asc, :unique => true)
     end
   end
