@@ -82,7 +82,7 @@ module MongoDoc
     end
 
     def verify_server_version(connection)
-      raise UnsupportedServerVersionError.new('MongoDoc requires at least mongoDB version 1.3.2') unless connection.server_version >= "1.3.2"
+      raise UnsupportedServerVersionError.new('MongoDoc requires at least mongoDB version 1.3.2') unless connection.server_version >= "1.3.4"
     end
   end
 end

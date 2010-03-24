@@ -7,9 +7,19 @@ describe MongoDoc::Associations::CollectionProxy do
     attr_accessor :name
   end
 
-  let(:root) { stub('root', :register_save_observer => nil) }
+  let(:root) { CollectionProxyTest.new }
   let(:proxy) { MongoDoc::Associations::CollectionProxy.new(:assoc_name => 'embed_many_name', :assoc_class => CollectionProxyTest, :root => root, :parent => root) }
   let(:item) { CollectionProxyTest.new }
+
+  describe "#_path_to_root" do
+    it "inserts the association name and '$' when not a selector" do
+      proxy._path_to_root(CollectionProxyTest.new, 'name' => 'value').should == {"embed_many_name.$.name" => 'value'}
+    end
+
+    it "inserts the association name when a selector" do
+      proxy._path_to_root(CollectionProxyTest.new, {'name' => 'value'}, true).should == {"embed_many_name.name" => 'value'}
+    end
+  end
 
   context "#<<" do
     it "appends the item to the collection" do

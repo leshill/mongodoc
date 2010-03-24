@@ -81,7 +81,7 @@ module MongoDoc
 
       protected
 
-      def annotated_keys(src, attrs)
+      def annotated_keys(src, attrs, selector = false)
         assoc_path = "#{assoc_name}.#{index(src)}"
         annotated = {}
         attrs.each do |(key, value)|

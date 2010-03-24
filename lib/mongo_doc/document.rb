@@ -135,7 +135,7 @@ module MongoDoc
     end
 
     def _update(selector, data, safe)
-      return _root.send(:_update, _path_to_root(self, '_id' => _id), _path_to_root(self, data), safe) if _root
+      return _root.send(:_update, _path_to_root(self, {'_id' => _id}, true), _path_to_root(self, data), safe) if _root
       _collection.update({'_id' => _id}.merge(selector), MongoDoc::Query.set_modifier(data), :safe => safe)
     end
 

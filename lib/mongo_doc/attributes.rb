@@ -40,9 +40,9 @@ module MongoDoc
       end
     end
 
-    def _path_to_root(src, attrs)
+    def _path_to_root(src, attrs, selector = false)
       return attrs unless _parent
-      _parent._path_to_root(self, attrs)
+      _parent._path_to_root(self, attrs, selector)
     end
 
     module ClassMethods

@@ -7,10 +7,15 @@ describe MongoDoc::Associations::HashProxy do
     attr_accessor :name
   end
 
-  let(:root) { stub('root', :register_save_observer => nil) }
+  let(:root) { HashProxyTest.new }
   let(:proxy) { MongoDoc::Associations::HashProxy.new(:assoc_name => 'embed_hash_name', :assoc_class => HashProxyTest, :root => root, :parent => root) }
   let(:item) { HashProxyTest.new }
   let(:other_item) {[1,2]}
+
+  it "inserts the association name and key into the _path_to_root" do
+    proxy.stub(:index).and_return('key')
+    proxy._path_to_root(HashProxyTest.new, 'name' => 'value').should == {"embed_hash_name.key.name" => 'value'}
+  end
 
   context "#[]=" do
     it "adds the item to the hash" do
