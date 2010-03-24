@@ -1,6 +1,10 @@
 h1. MongoDoc
 
-Version: Turbulence (0.4.1) 2010/03/17
+Version: Turbulence (0.4.2) 2010/03/23
+
+h2. What's New in Turbulence (0.4.2)
+
+Support for the $ positional operator for in-place array updates. This requires MongoDB version 1.3.4 or higher.
 
 h2. What's New in Turbulence (0.4.1)
 
