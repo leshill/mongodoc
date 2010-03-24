@@ -31,7 +31,7 @@ h2. Notes
 
 h2. Quick Start
 
-* install MongoDB (at least 1.3.2)
+* install MongoDB (at least 1.3.4)
 * install the Ruby driver @gem install mongo@
 * install MongoDoc @gem install mongo_doc@
 * run an example from this directory @ruby -Ilib examples/simple_object.rb@
@@ -135,7 +135,7 @@ bc. hashrocket_address.update_attributes(:street => '320 First Street North, #71
 
 h2. Installation
 
-MongoDoc *requires* mongoDB v1.3.2 or later.
+MongoDoc *requires* mongoDB v1.3.4 or later.
 
 bc. sudo gem install mongo_doc
 
