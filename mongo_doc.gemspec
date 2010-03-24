@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{mongo_doc}
-  s.version = "0.4.1"
+  s.version = "0.4.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Les Hill"]
-  s.date = %q{2010-03-17}
+  s.date = %q{2010-03-23}
   s.description = %q{ODM for MongoDB}
   s.email = %q{leshill@gmail.com}
   s.extra_rdoc_files = [
@@ -20,6 +20,7 @@ Gem::Specification.new do |s|
   s.files = [
     ".document",
      ".gitignore",
+     "HISTORY.md",
      "LICENSE",
      "README.textile",
      "Rakefile",
@@ -120,6 +121,7 @@ Gem::Specification.new do |s|
      "perf/mongo_doc_runner.rb",
      "perf/ruby_driver_runner.rb",
      "script/console",
+     "spec/array_including_argument_matcher.rb",
      "spec/associations/collection_proxy_spec.rb",
      "spec/associations/document_proxy_spec.rb",
      "spec/associations/hash_proxy_spec.rb",
@@ -157,7 +159,8 @@ Gem::Specification.new do |s|
   s.rubygems_version = %q{1.3.6}
   s.summary = %q{ODM for MongoDB}
   s.test_files = [
-    "spec/associations/collection_proxy_spec.rb",
+    "spec/array_including_argument_matcher.rb",
+     "spec/associations/collection_proxy_spec.rb",
      "spec/associations/document_proxy_spec.rb",
      "spec/associations/hash_proxy_spec.rb",
      "spec/associations_spec.rb",
@@ -194,16 +197,16 @@ Gem::Specification.new do |s|
 
     if Gem::Version.new(Gem::RubyGemsVersion) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<activesupport>, [">= 2.3.4"])
-      s.add_runtime_dependency(%q<mongo>, ["= 0.19"])
-      s.add_runtime_dependency(%q<mongo_ext>, ["= 0.19"])
+      s.add_runtime_dependency(%q<mongo>, ["= 0.19.1"])
+      s.add_runtime_dependency(%q<mongo_ext>, ["= 0.19.1"])
       s.add_runtime_dependency(%q<durran-validatable>, ["= 2.0.1"])
       s.add_runtime_dependency(%q<leshill-will_paginate>, ["= 2.3.11"])
       s.add_development_dependency(%q<rspec>, ["= 1.3.0"])
       s.add_development_dependency(%q<cucumber>, ["= 0.6.2"])
     else
       s.add_dependency(%q<activesupport>, [">= 2.3.4"])
-      s.add_dependency(%q<mongo>, ["= 0.19"])
-      s.add_dependency(%q<mongo_ext>, ["= 0.19"])
+      s.add_dependency(%q<mongo>, ["= 0.19.1"])
+      s.add_dependency(%q<mongo_ext>, ["= 0.19.1"])
       s.add_dependency(%q<durran-validatable>, ["= 2.0.1"])
       s.add_dependency(%q<leshill-will_paginate>, ["= 2.3.11"])
       s.add_dependency(%q<rspec>, ["= 1.3.0"])
@@ -211,8 +214,8 @@ Gem::Specification.new do |s|
     end
   else
     s.add_dependency(%q<activesupport>, [">= 2.3.4"])
-    s.add_dependency(%q<mongo>, ["= 0.19"])
-    s.add_dependency(%q<mongo_ext>, ["= 0.19"])
+    s.add_dependency(%q<mongo>, ["= 0.19.1"])
+    s.add_dependency(%q<mongo_ext>, ["= 0.19.1"])
     s.add_dependency(%q<durran-validatable>, ["= 2.0.1"])
     s.add_dependency(%q<leshill-will_paginate>, ["= 2.3.11"])
     s.add_dependency(%q<rspec>, ["= 1.3.0"])
