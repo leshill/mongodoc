@@ -7,8 +7,9 @@ module MongoDoc
         class_inheritable_array :_associations
         self._associations = []
 
-        attr_accessor :_parent
         attr_accessor :_id
+        attr_accessor :_parent
+        attr_reader :_root
 
         extend ClassMethods
       end
@@ -26,10 +27,6 @@ module MongoDoc
       attrs.each do |key, value|
         send("#{key}=", value)
       end
-    end
-
-    def _root
-      @_root
     end
 
     def _root=(root)
