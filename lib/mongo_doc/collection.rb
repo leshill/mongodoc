@@ -50,7 +50,7 @@ module MongoDoc
     def insert(doc_or_docs, options = {})
       _collection.insert(doc_or_docs.to_bson, options)
     end
-    alias :<< :insert
+    alias << insert
 
     def save(doc, options = {})
       _collection.save(doc.to_bson, options)

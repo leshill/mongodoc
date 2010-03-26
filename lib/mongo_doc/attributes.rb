@@ -92,7 +92,7 @@ module MongoDoc
           end
         end
       end
-      alias :key :attr_accessor_with_mongo
+      alias key attr_accessor_with_mongo
 
     end
   end

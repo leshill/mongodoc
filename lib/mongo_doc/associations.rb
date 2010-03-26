@@ -29,7 +29,7 @@ module MongoDoc
         validates_embedded name, :if => Proc.new { !send(name).nil? }
       end
     end
-    alias :has_one :embed
+    alias has_one embed
 
     def embed_many(*args)
       options = args.extract_options!
@@ -60,7 +60,7 @@ module MongoDoc
         end
       end
     end
-    alias :has_many :embed_many
+    alias has_many embed_many
 
     def embed_hash(*args)
       options = args.extract_options!
@@ -87,7 +87,7 @@ module MongoDoc
         end
       end
     end
-    alias :has_hash :embed_hash
+    alias has_hash embed_hash
 
     def class_from_name(name)
       type_name_with_module(name.to_s.classify).constantize rescue nil

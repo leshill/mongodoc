@@ -27,7 +27,7 @@ module MongoDoc
         include ::Validatable
         extend Validations::Macros
 
-        alias :id :_id
+        alias id _id
       end
     end
 

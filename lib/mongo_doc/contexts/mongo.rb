@@ -219,7 +219,7 @@ module MongoDoc
         collection.find_one(selector, options)
       end
 
-      alias :first :one
+      alias first one
 
       SUM_REDUCE = "function(obj, prev) { if (prev.sum == 'start') { prev.sum = 0; } prev.sum += obj.[field]; }"
       # Sum the context.
