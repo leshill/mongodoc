@@ -33,6 +33,10 @@ module MongoDoc
       end
     end
 
+    def _collection
+      _root and _root._collection or self.class.collection
+    end
+
     def initialize(attrs = {})
       self.attributes = attrs
     end
@@ -127,10 +131,6 @@ module MongoDoc
     end
 
     protected
-
-    def _collection
-      self.class.collection
-    end
 
     def _full_path_for_keys(hash)
       hash.stringify_keys!

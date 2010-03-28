@@ -2,6 +2,27 @@ require 'spec_helper'
 
 describe "MongoDoc::Document" do
 
+  describe "#_collection" do
+    class DocumentCollectionTest
+      include MongoDoc::Document
+    end
+
+    let(:doc) do
+      doc = DocumentCollectionTest.new
+      doc._root = stub
+      doc
+    end
+
+    before do
+      DocumentCollectionTest.stub(:collection).and_return('collection')
+    end
+
+    it "delegates to the root's collection" do
+      doc._root.should_receive :_collection
+      doc._collection
+    end
+  end
+
   context "satisfies form_for requirements" do
     class FormForTest
       include MongoDoc::Document
