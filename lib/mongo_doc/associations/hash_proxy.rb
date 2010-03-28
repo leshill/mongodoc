@@ -28,6 +28,16 @@ module MongoDoc
         end
       end
 
+      def attach(key, value)
+        if is_document?(value)
+          proxy = DocumentProxy.new(:assoc_name => key, :root => _root, :parent => self)
+          proxy.document = value
+          proxy
+        else
+          value
+        end
+      end
+
       def initialize(options)
         super
         @hash = {}
@@ -36,8 +46,7 @@ module MongoDoc
       alias put []=
       def []=(key, value)
         raise InvalidEmbeddedHashKey.new("Key name [#{key}] must be a valid element name, see http://www.mongodb.org/display/DOCS/BSON#BSON-noteonelementname") unless valid_key?(key)
-        attach(value)
-        put(key, value)
+        put(key, attach(key, value))
       end
       alias store []=
 

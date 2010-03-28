@@ -185,8 +185,13 @@ describe "MongoDoc::Associations" do
       MongoDoc::Associations::HashProxy.should === TestEmbedHashDoc.new.sub_docs
     end
 
-    it "sets the subdocuments parent to the proxy" do
-      doc.sub_docs.should == subdoc._parent
+    it "sets the subdocuments parent to the document proxy" do
+      doc
+      MongoDoc::Associations::DocumentProxy.should === subdoc._parent
+    end
+
+    it "sets the subdocuments document proxy parent to the association proxy" do
+      doc.sub_docs.should == subdoc._parent._parent
     end
 
     it "set the subdocuments root to the root" do

@@ -64,6 +64,11 @@ describe MongoDoc::Associations::HashProxy do
         proxy['new'] = item
         item._root.should == root
       end
+
+      it "adds the item through a document proxy" do
+        proxy['new'] = item
+        MongoDoc::Associations::DocumentProxy.should === proxy['new']
+      end
     end
   end
 
