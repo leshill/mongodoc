@@ -1,6 +1,7 @@
 require 'mongo_doc/bson'
 require 'mongo_doc/query'
 require 'mongo_doc/attributes'
+require 'mongo_doc/document_tree'
 require 'mongo_doc/associations'
 require 'mongo_doc/criteria'
 require 'mongo_doc/finders'
@@ -18,6 +19,7 @@ module MongoDoc
     def self.included(klass)
       klass.class_eval do
         include Attributes
+        include DocumentTree
         extend Associations
         extend ClassMethods
         extend Criteria
@@ -130,12 +132,23 @@ module MongoDoc
       self.class.collection
     end
 
+    def _full_path_for_keys(hash)
+      hash.stringify_keys!
+      path = _update_path_to_root
+      return hash if path.empty?
+      {}.tap do |dup|
+        hash.each do |key, value|
+          dup[path + '.' + key] = value
+        end
+      end
+    end
+
     def _remove
       _collection.remove({'_id' => _id})
     end
 
     def _update(selector, data, safe)
-      return _root.send(:_update, _path_to_root(self, {'_id' => _id}, true), _path_to_root(self, data), safe) if _root
+      return _root.send(:_update, {_path_to_root + '._id' => _id}, _full_path_for_keys(data), safe) if _root
       _collection.update({'_id' => _id}.merge(selector), MongoDoc::Query.set_modifier(data), :safe => safe)
     end
 

@@ -368,6 +368,17 @@ describe "MongoDoc::Document" do
         end
       end
     end
+
+    describe "#_full_path_for_keys" do
+      it "returns a stringified hash for when there is no path" do
+        new_doc.send(:_full_path_for_keys, :name => 1).should == {'name' => 1}
+      end
+
+      it "returns a hash with the keys having a full path to the root" do
+        new_doc.stub(:_update_path_to_root).and_return('path.to.root')
+        new_doc.send(:_full_path_for_keys, :name => 1).should == {'path.to.root.name' => 1}
+      end
+    end
   end
 
   describe "bson" do

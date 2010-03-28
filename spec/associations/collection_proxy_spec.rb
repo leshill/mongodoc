@@ -11,13 +11,10 @@ describe MongoDoc::Associations::CollectionProxy do
   let(:proxy) { MongoDoc::Associations::CollectionProxy.new(:assoc_name => 'embed_many_name', :assoc_class => CollectionProxyTest, :root => root, :parent => root) }
   let(:item) { CollectionProxyTest.new }
 
-  describe "#_path_to_root" do
-    it "inserts the association name and '$' when not a selector" do
-      proxy._path_to_root(CollectionProxyTest.new, 'name' => 'value').should == {"embed_many_name.$.name" => 'value'}
-    end
-
-    it "inserts the association name when a selector" do
-      proxy._path_to_root(CollectionProxyTest.new, {'name' => 'value'}, true).should == {"embed_many_name.name" => 'value'}
+  describe "#_update_path_to_root" do
+    it "returns the parents path and our name and '$'" do
+      root.stub(:_update_path_to_root).and_return('parent')
+      proxy._update_path_to_root.should == "parent.embed_many_name.$"
     end
   end
 

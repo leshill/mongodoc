@@ -31,6 +31,11 @@ module MongoDoc
         end
       end
 
+      def _update_path_to_root
+        path = _parent._update_path_to_root
+        (path.empty? ? assoc_name.to_s : path + '.' + assoc_name.to_s) + '.$'
+      end
+
       def initialize(options)
         super
         @collection = []
@@ -88,17 +93,6 @@ module MongoDoc
             true
           end
         end
-      end
-
-      protected
-
-      def annotated_keys(src, attrs, selector = false)
-        assoc_path = "#{assoc_name}" + (selector ? "" : ".$")
-        annotated = {}
-        attrs.each do |(key, value)|
-          annotated["#{assoc_path}.#{key}"] = value
-        end
-        annotated
       end
     end
   end

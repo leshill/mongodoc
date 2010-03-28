@@ -90,15 +90,6 @@ module MongoDoc
 
       protected
 
-      def annotated_keys(src, attrs, selector = false)
-        assoc_path = "#{assoc_name}.#{index(src)}"
-        annotated = {}
-        attrs.each do |(key, value)|
-          annotated["#{assoc_path}.#{key}"] = value
-        end
-        annotated
-      end
-
       def valid_key?(key)
         (String === key or Symbol === key) and key.to_s !~ /(_id|query|\$.*|.*\..*)/
       end

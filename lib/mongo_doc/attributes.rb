@@ -8,8 +8,6 @@ module MongoDoc
         self._associations = []
 
         attr_accessor :_id
-        attr_accessor :_parent
-        attr_reader :_root
 
         extend ClassMethods
       end
@@ -27,19 +25,6 @@ module MongoDoc
       attrs.each do |key, value|
         send("#{key}=", value)
       end
-    end
-
-    def _root=(root)
-      @_root = root
-      _associations.each do|a|
-        association = send(a)
-        association._root = root if association
-      end
-    end
-
-    def _path_to_root(src, attrs, selector = false)
-      return attrs unless _parent
-      _parent._path_to_root(self, attrs, selector)
     end
 
     module ClassMethods

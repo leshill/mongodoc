@@ -32,11 +32,21 @@ describe "MongoDoc::Associations::DocumentProxy" do
     subject.assoc_class.should == Child
   end
 
-  it "inserts the association name the _path_to_root" do
-    subject._path_to_root(Child.new, :name1 => 'value1', :name2 => 'value2').should == {"#{name}.name1" => 'value1', "#{name}.name2" => "value2"}
-  end
-
   it "#build builds a new object" do
     Child.should === subject.build({})
+  end
+
+  describe "#_path_to_root" do
+    it "returns the parents path and our name" do
+      parent.stub(:_path_to_root).and_return('parent')
+      subject._path_to_root.should == "parent.association"
+    end
+  end
+
+  describe "#_update_path_to_root" do
+    it "returns the parents path and our name" do
+      parent.stub(:_update_path_to_root).and_return('parent')
+      subject._update_path_to_root.should == "parent.association"
+    end
   end
 end

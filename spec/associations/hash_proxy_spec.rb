@@ -12,9 +12,10 @@ describe MongoDoc::Associations::HashProxy do
   let(:item) { HashProxyTest.new }
   let(:other_item) {[1,2]}
 
-  it "inserts the association name and key into the _path_to_root" do
-    proxy.stub(:index).and_return('key')
-    proxy._path_to_root(HashProxyTest.new, 'name' => 'value').should == {"embed_hash_name.key.name" => 'value'}
+  describe "#_path_to_root" do
+    it "inserts the association name into the _path_to_root" do
+      proxy._path_to_root.should == "embed_hash_name"
+    end
   end
 
   context "#[]=" do
