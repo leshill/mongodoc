@@ -22,15 +22,6 @@ module MongoDoc
         @_parent = options[:parent]
       end
 
-      def attach(item)
-        if is_document?(item)
-          item._parent = self
-          item._root = _root
-          _root.send(:register_save_observer, item)
-        end
-        item
-      end
-
       def _path_to_root
         path = _parent._path_to_root
         path.empty? ? assoc_name.to_s : path + '.' + assoc_name.to_s
@@ -42,6 +33,15 @@ module MongoDoc
       end
 
       protected
+
+      def attach(item)
+        if is_document?(item)
+          item._parent = self
+          item._root = _root
+          _root.send(:register_save_observer, item)
+        end
+        item
+      end
 
       def is_document?(object)
         object.respond_to?(:_parent)

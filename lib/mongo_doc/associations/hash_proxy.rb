@@ -28,16 +28,6 @@ module MongoDoc
         end
       end
 
-      def attach(key, value)
-        if is_document?(value)
-          proxy = DocumentProxy.new(:assoc_name => key, :root => _root, :parent => self)
-          proxy.document = value
-          proxy
-        else
-          value
-        end
-      end
-
       def initialize(options)
         super
         @hash = {}
@@ -89,6 +79,16 @@ module MongoDoc
       end
 
       protected
+
+      def attach(key, value)
+        if is_document?(value)
+          proxy = DocumentProxy.new(:assoc_name => key, :root => _root, :parent => self)
+          proxy.document = value
+          proxy
+        else
+          value
+        end
+      end
 
       def valid_key?(key)
         (String === key or Symbol === key) and key.to_s !~ /(_id|query|\$.*|.*\..*)/
