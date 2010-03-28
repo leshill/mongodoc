@@ -14,7 +14,8 @@ def all=(value)
   @all = value
 end
 
-Given /^a class Event$/ do
+Given /^a class (.+)$/ do |type_name|
+  type_name.constantize.should be_kind_of(Class)
 end
 
 Given /^I create an (.+) '(.+)' with:$/ do |klass_name, object_name, table|
