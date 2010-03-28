@@ -35,4 +35,6 @@ class Event
   attr_accessor :name
   attr_accessor :venue
   attr_accessor :date, :type => Date
+
+  embed_hash :addresses
 end
