@@ -10,7 +10,7 @@ module MongoDoc
       %w(_modifier_path _selector_path).each do |setter|
         module_eval(<<-RUBY, __FILE__, __LINE__)
           def #{setter}=(path)
-            @#{setter} = (path.blank? ? '' : path + '.') + _assoc_name
+            @#{setter} = (path.blank? ? '' : path + '.') + _assoc_name.to_s
           end
         RUBY
       end
