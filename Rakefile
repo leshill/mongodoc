@@ -106,15 +106,22 @@ namespace :bench do
   desc 'Run benchmark for MongoDoc'
   task 'mongo_doc' do
     $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), 'lib'))
-    require 'perf/mongo_doc_runner'
-    MongoDocRunner.benchmark
+    require 'perf/mongo_document'
+    benchmark("MongoDoc saving documents", MongoDocument.new)
+  end
+
+  desc 'Run benchmark for MongoDoc Object'
+  task 'mongo_object' do
+    $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), 'lib'))
+    require 'perf/mongo_doc_object'
+    benchmark("MongoDoc saving objects", MongoDocObject.new)
   end
 
   desc 'Run profiler for driver'
   task 'driver' do
     $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), 'lib'))
-    require 'perf/ruby_driver_runner'
-    RubyDriverRunner.benchmark
+    require 'perf/ruby_driver'
+    benchmark("Ruby driver saving hashes", RubyDriver.new)
   end
 end
 
@@ -122,14 +129,44 @@ namespace :prof do
   desc 'Run profiler for MongoDoc'
   task 'mongo_doc' do
     $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), 'lib'))
-    require 'perf/mongo_doc_runner'
-    MongoDocRunner.profile
+    require 'perf/mongo_document'
+    profile("MongoDoc saving documents", MongoDocument.new)
+  end
+
+  desc 'Run profiler for MongoDoc Object'
+  task 'mongo_object' do
+    $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), 'lib'))
+    require 'perf/mongo_doc_object'
+    profile("MongoDoc saving objects", MongoDocObject.new)
   end
 
   desc 'Run profiler for driver'
   task 'driver' do
     $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), 'lib'))
-    require 'perf/ruby_driver_runner'
-    RubyDriverRunner.profile
+    require 'perf/ruby_driver'
+    profile("Ruby driver saving hashes", RubyDriver.new)
+  end
+
+  def benchmark(what, runner)
+    puts "Benchmark: " + what
+    print "Warm up..."
+    10.times {|n| runner.perform }
+    puts "Done."
+
+    Benchmark.bm do |bm|
+      bm.report(what) do
+        10000.times {|n| runner.perform }
+      end
+    end
+  end
+
+  def profile(what, runner)
+    puts "Profiling: " + what
+    RubyProf.start
+    1000.times {|n| runner.perform }
+    result = RubyProf.stop
+    printer = RubyProf::FlatPrinter.new(result)
+    printer.print(STDOUT, 0)
   end
 end
+
