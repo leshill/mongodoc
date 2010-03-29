@@ -1,5 +1,4 @@
 require 'mongo_doc/bson'
-require 'mongo_doc/query'
 require 'mongo_doc/attributes'
 require 'mongo_doc/root'
 require 'mongo_doc/associations'
@@ -138,7 +137,7 @@ module MongoDoc
 
     def _update(selector, data, safe)
       return _root.send(:_update, {_selector_path + '._id' => _id}, hash_with_modifier_path_keys(data), safe) if _root
-      _collection.update({'_id' => _id}.merge(selector), MongoDoc::Query.set_modifier(data), :safe => safe)
+      _collection.update({'_id' => _id}.merge(selector), {'$set' => data}, :safe => safe)
     end
 
     def _save(safe)
