@@ -7,9 +7,18 @@ module MongoDoc
 
       delegate :to_bson, :id, :to => :document
 
-      def _root=(root)
-        @_root = root
-        document._root = root if is_document?(document)
+      %w(_modifier_path _selector_path).each do |setter|
+        class_eval(<<-RUBY, __FILE__, __LINE__)
+          def #{setter}=(path)
+            super
+            document.#{setter} = #{setter} if ProxyBase.is_document?(document)
+          end
+        RUBY
+      end
+
+      def _root=(value)
+        @_root = value
+        document._root = value if ProxyBase.is_document?(document)
       end
 
       def ==(other)
@@ -21,7 +30,7 @@ module MongoDoc
       end
 
       def build(attrs)
-        item = assoc_class.new(attrs)
+        item = _assoc_class.new(attrs)
         self.document = item
       end
 
@@ -31,7 +40,7 @@ module MongoDoc
       end
 
       def valid?
-        if is_document?(document)
+        if ProxyBase.is_document?(document)
           document.valid?
         else
           true

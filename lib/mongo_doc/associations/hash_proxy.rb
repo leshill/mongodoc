@@ -21,16 +21,20 @@ module MongoDoc
 
       attr_reader :hash
 
-      def _root=(root)
-        @_root = root
-        hash.each do |key, value|
-          value._root = root if is_document?(value)
-        end
+      %w(_modifier_path _selector_path).each do |setter|
+        class_eval <<-RUBY, __FILE__, __LINE__ + 1
+          def #{setter}=(path)
+            super
+            hash.each do |key, doc|
+              doc.#{setter} = #{setter} + '.' + key.to_s if ProxyBase.is_document?(doc)
+            end
+          end
+        RUBY
       end
 
       def initialize(options)
-        super
         @hash = {}
+        super
       end
 
       alias put []=
@@ -41,7 +45,7 @@ module MongoDoc
       alias store []=
 
       def build(key, attrs)
-        item = assoc_class.new(attrs)
+        item = _assoc_class.new(attrs)
         store(key, item)
       end
 
@@ -70,7 +74,7 @@ module MongoDoc
 
       def valid?
         values.all? do |child|
-          if is_document?(child)
+          if ProxyBase.is_document?(child)
             child.valid?
           else
             true
@@ -81,8 +85,8 @@ module MongoDoc
       protected
 
       def attach(key, value)
-        if is_document?(value)
-          proxy = DocumentProxy.new(:assoc_name => key, :root => _root, :parent => self)
+        if ProxyBase.is_document?(value)
+          proxy = DocumentProxy.new(:path => _selector_path, :assoc_name => key, :root => _root, :parent => self)
           proxy.document = value
           proxy
         else

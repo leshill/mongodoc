@@ -132,23 +132,12 @@ module MongoDoc
 
     protected
 
-    def _full_path_for_keys(hash)
-      hash.stringify_keys!
-      path = _update_path_to_root
-      return hash if path.empty?
-      {}.tap do |dup|
-        hash.each do |key, value|
-          dup[path + '.' + key] = value
-        end
-      end
-    end
-
     def _remove
       _collection.remove({'_id' => _id})
     end
 
     def _update(selector, data, safe)
-      return _root.send(:_update, {_path_to_root + '._id' => _id}, _full_path_for_keys(data), safe) if _root
+      return _root.send(:_update, {_selector_path + '._id' => _id}, hash_with_modifier_path_keys(data), safe) if _root
       _collection.update({'_id' => _id}.merge(selector), MongoDoc::Query.set_modifier(data), :safe => safe)
     end
 
@@ -160,6 +149,23 @@ module MongoDoc
     rescue Mongo::MongoDBError => e
       notify_save_failed_observers
       raise e
+    end
+
+    def hash_with_modifier_path_keys(hash)
+      hash.stringify_keys!
+      {}.tap do |dup|
+        hash.each do |key, value|
+          dup[_modifier_path + '.' + key] = value
+        end
+      end
+    end
+
+    def path(parent_path, child_path)
+      if parent_path.blank?
+        child_path
+      else
+        parent_path + '.' + child_path
+      end
     end
 
     def before_save_callback(root)

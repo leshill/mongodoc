@@ -32,10 +32,6 @@ describe "MongoDoc::Associations" do
       MongoDoc::Associations::DocumentProxy.should === TestHasOne.new(:sub_doc => SubDoc.new).sub_doc
     end
 
-    it "sets the subdocuments parent to the proxy" do
-      doc.sub_doc.should == subdoc._parent
-    end
-
     it "set the subdocuments root" do
       doc.should == subdoc._root
     end
@@ -98,24 +94,20 @@ describe "MongoDoc::Associations" do
       MongoDoc::Associations::CollectionProxy.should === TestHasManyDoc.new.sub_docs
     end
 
-    it "sets the subdocuments parent to the proxy" do
-      doc.sub_docs.should == subdoc._parent
-    end
-
     it "set the subdocuments root to the root" do
       doc.should == subdoc._root
     end
 
     it "uses the association name to find the children's class name" do
-      TestImplicitEmbedManyDoc.new.sub_embed_many_docs.assoc_class.should == SubEmbedManyDoc
+      TestImplicitEmbedManyDoc.new.sub_embed_many_docs._assoc_class.should == SubEmbedManyDoc
     end
 
     it "uses class_name attribute for the children's class name" do
-      TestEmbedManyDoc.new.sub_docs.assoc_class.should == SubEmbedManyDoc
+      TestEmbedManyDoc.new.sub_docs._assoc_class.should == SubEmbedManyDoc
     end
 
     it "uses class_name attribute for the children's class name" do
-      TestEmbedManyDoc2.new.sub_docs.assoc_class.should == SubEmbedManyDoc
+      TestEmbedManyDoc2.new.sub_docs._assoc_class.should == SubEmbedManyDoc
     end
 
     context "validations" do
@@ -185,21 +177,12 @@ describe "MongoDoc::Associations" do
       MongoDoc::Associations::HashProxy.should === TestEmbedHashDoc.new.sub_docs
     end
 
-    it "sets the subdocuments parent to the document proxy" do
-      doc
-      MongoDoc::Associations::DocumentProxy.should === subdoc._parent
-    end
-
-    it "sets the subdocuments document proxy parent to the association proxy" do
-      doc.sub_docs.should == subdoc._parent._parent
-    end
-
     it "set the subdocuments root to the root" do
       doc.should == subdoc._root
     end
 
     it "uses the association name to find the children's class name" do
-      TestImplicitEmbedHashDoc.new.sub_embed_hash_docs.assoc_class.should == SubEmbedHashDoc
+      TestImplicitEmbedHashDoc.new.sub_embed_hash_docs._assoc_class.should == SubEmbedHashDoc
     end
 
     context "validations" do

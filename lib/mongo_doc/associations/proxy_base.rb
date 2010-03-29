@@ -3,12 +3,16 @@ module MongoDoc
     module ProxyBase
       def self.included(klass)
         klass.class_eval do
-          attr_reader :assoc_name, :assoc_class, :_parent, :_root
+          attr_reader :_assoc_class, :_assoc_name, :_modifier_path, :_root, :_selector_path
         end
       end
 
-      def _parent=(parent)
-        @_parent = parent
+      %w(_modifier_path _selector_path).each do |setter|
+        module_eval(<<-RUBY, __FILE__, __LINE__)
+          def #{setter}=(path)
+            @#{setter} = (path.blank? ? '' : path + '.') + _assoc_name
+          end
+        RUBY
       end
 
       def _root=(root)
@@ -16,35 +20,28 @@ module MongoDoc
       end
 
       def initialize(options)
-        @assoc_name = options[:assoc_name]
-        @assoc_class = options[:assoc_class]
-        @_root = options[:root]
-        @_parent = options[:parent]
+        @_assoc_name = options[:assoc_name]
+        @_assoc_class = options[:assoc_class]
+        self._root = options[:root]
+        self._selector_path = self._modifier_path = options[:path]
       end
 
-      def _path_to_root
-        path = _parent._path_to_root
-        path.empty? ? assoc_name.to_s : path + '.' + assoc_name.to_s
-      end
-
-      def _update_path_to_root
-        path = _parent._update_path_to_root
-        path.empty? ? assoc_name.to_s : path + '.' + assoc_name.to_s
+      def self.is_document?(object)
+        object.respond_to?(:_root)
       end
 
       protected
 
-      def attach(item)
-        if is_document?(item)
-          item._parent = self
-          item._root = _root
-          _root.send(:register_save_observer, item)
-        end
-        item
+      def attach(obj)
+        attach_document(obj) if ProxyBase.is_document?(obj)
+        obj
       end
 
-      def is_document?(object)
-        object.respond_to?(:_parent)
+      def attach_document(doc)
+        doc._modifier_path = _modifier_path
+        doc._selector_path = _selector_path
+        doc._root = _root
+        _root.send(:register_save_observer, doc)
       end
     end
   end

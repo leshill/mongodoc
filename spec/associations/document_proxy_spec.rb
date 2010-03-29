@@ -10,43 +10,36 @@ describe "MongoDoc::Associations::DocumentProxy" do
   end
 
   let(:parent) { Parent.new }
-  let(:name) {'association'}
+  let(:name) {'association_name'}
 
   subject do
     MongoDoc::Associations::DocumentProxy.new(:assoc_name => name, :root => parent, :parent => parent, :assoc_class => Child)
   end
 
-  it "has the association name" do
-    subject.assoc_name.should == name
-  end
-
-  it "has the parent" do
-    subject._parent.should == parent
-  end
-
-  it "has the root" do
-    subject._root.should == parent
-  end
-
-  it "has the association class" do
-    subject.assoc_class.should == Child
-  end
-
-  it "#build builds a new object" do
-    Child.should === subject.build({})
-  end
-
-  describe "#_path_to_root" do
-    it "returns the parents path and our name" do
-      parent.stub(:_path_to_root).and_return('parent')
-      subject._path_to_root.should == "parent.association"
+  describe "#build" do
+    it "#build builds a new object" do
+      Child.should === subject.build({})
     end
   end
 
-  describe "#_update_path_to_root" do
-    it "returns the parents path and our name" do
-      parent.stub(:_update_path_to_root).and_return('parent')
-      subject._update_path_to_root.should == "parent.association"
+  context "delegated to the document" do
+    %w(id to_bson).each do |method|
+      it "delegates #{method} to the document" do
+        subject.stub(:document => stub)
+        subject.document.should_receive(method)
+        subject.send(method)
+      end
+    end
+  end
+
+  %w(_modifier_path= _selector_path=).each do |setter|
+    describe "##{setter}" do
+      it "delegates to the document with our assoc name" do
+        subject.stub(:document => stub)
+        subject.document.should_receive(setter).with("new.path.#{name}")
+        MongoDoc::Associations::ProxyBase.stub(:is_document?).and_return(true)
+        subject.send("#{setter}", 'new.path')
+      end
     end
   end
 end

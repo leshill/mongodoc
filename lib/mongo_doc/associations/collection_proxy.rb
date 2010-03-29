@@ -24,21 +24,34 @@ module MongoDoc
 
       attr_reader :collection
 
-      def _root=(root)
-        @_root = root
+      def _modifier_path=(path)
+        super
         collection.each do |item|
-          item._root = root if is_document?(item)
+          item._modifier_path = _modifier_path + '.$' if ProxyBase.is_document?(item)
         end
       end
 
-      def _update_path_to_root
-        path = _parent._update_path_to_root
-        (path.empty? ? assoc_name.to_s : path + '.' + assoc_name.to_s) + '.$'
+      def _root=(value)
+        @_root = value
+        collection.each do |item|
+          item._root = value if ProxyBase.is_document?(item)
+        end
+      end
+
+      %w(_root _selector_path).each do |setter|
+        class_eval <<-RUBY, __FILE__, __LINE__ + 1
+          def #{setter}=(val)
+            super
+            collection.each do |item|
+              item.#{setter} = #{setter} if ProxyBase.is_document?(item)
+            end
+          end
+        RUBY
       end
 
       def initialize(options)
-        super
         @collection = []
+        super
       end
 
       alias _append <<
@@ -57,7 +70,7 @@ module MongoDoc
       alias insert []=
 
       def build(attrs)
-        item = assoc_class.new(attrs)
+        item = _assoc_class.new(attrs)
         push(item)
       end
 
@@ -87,12 +100,21 @@ module MongoDoc
 
       def valid?
         all? do |child|
-          if is_document?(child)
+          if ProxyBase.is_document?(child)
             child.valid?
           else
             true
           end
         end
+      end
+
+      protected
+
+      def attach_document(doc)
+        doc._modifier_path = _modifier_path + '.$'
+        doc._selector_path = _selector_path
+        doc._root = _root
+        _root.send(:register_save_observer, doc)
       end
     end
   end

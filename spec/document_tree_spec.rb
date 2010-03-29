@@ -9,47 +9,33 @@ describe "MongoDoc::DocumentTree" do
 
   let(:doc) { DocumentTreeTest.new }
 
-  describe "#_root=" do
-    let(:root) { stub }
+  context "cascade properties" do
+    let(:prop_val) { stub }
 
-    it "sets the root" do
-      doc._root = root
-      doc._root.should == root
-    end
+    %w(_modifier_path _root _selector_path).each do |prop|
+      it "sets the #{prop}" do
+        doc.send("#{prop}=", prop_val)
+        doc.send(prop).should == prop_val
+      end
 
-    it "sets the root on any associations" do
-      doc.association = stub
-      doc.association.should_receive(:_root=)
-      doc._associations = ['association']
-      doc._root = root
+      it "sets the prop on any associations" do
+        doc.association = stub
+        doc.association.should_receive("#{prop}=").with(prop_val)
+        doc._associations = ['association']
+        doc.send("#{prop}=", prop_val)
+      end
     end
   end
 
-  context "paths" do
-    context "when there is no parent" do
-      it "#_path_to_root returns ''" do
-        doc._path_to_root.should == ''
-      end
-
-      it "_update_path_to_root returns ''" do
-        doc._update_path_to_root.should == ''
-      end
+  describe "#_selector_path" do
+    it "defaults to ''" do
+      doc._selector_path.should == ''
     end
+  end
 
-    context "when there is a parent" do
-      before do
-        doc._parent = stub
-      end
-
-      it "#_path_to_root delegates to the parent" do
-        doc._parent.should_receive(:_path_to_root)
-        doc._path_to_root
-      end
-
-      it "#_update_path_to_root delegates to the parent" do
-        doc._parent.should_receive(:_update_path_to_root)
-        doc._update_path_to_root
-      end
+  describe "#_modifier_path" do
+    it "defaults to ''" do
+      doc._modifier_path.should == ''
     end
   end
 end

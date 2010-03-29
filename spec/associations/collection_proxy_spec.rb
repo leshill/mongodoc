@@ -7,14 +7,40 @@ describe MongoDoc::Associations::CollectionProxy do
     attr_accessor :name
   end
 
+  let(:name) { 'embed_many_name' }
   let(:root) { CollectionProxyTest.new }
-  let(:proxy) { MongoDoc::Associations::CollectionProxy.new(:assoc_name => 'embed_many_name', :assoc_class => CollectionProxyTest, :root => root, :parent => root) }
+  let(:proxy) { MongoDoc::Associations::CollectionProxy.new(:assoc_name => name, :assoc_class => CollectionProxyTest, :root => root, :parent => root) }
   let(:item) { CollectionProxyTest.new }
 
-  describe "#_update_path_to_root" do
-    it "returns the parents path and our name and '$'" do
-      root.stub(:_update_path_to_root).and_return('parent')
-      proxy._update_path_to_root.should == "parent.embed_many_name.$"
+  describe "#_modifier_path" do
+    it "cascades to child documents with our assoc name and $" do
+      document = stub
+      proxy.stub(:collection => [document])
+      document.should_receive(:_modifier_path=).with("new.path.#{name}.$")
+      MongoDoc::Associations::ProxyBase.stub(:is_document?).and_return(true)
+      proxy._modifier_path = 'new.path'
+    end
+  end
+
+  describe "#_selector_path=" do
+    it "cascades to child documents" do
+      document = stub
+      proxy.stub(:collection => [document])
+      document.should_receive("_selector_path=").with("new.path.#{name}")
+      MongoDoc::Associations::ProxyBase.stub(:is_document?).and_return(true)
+      proxy._selector_path = 'new.path'
+    end
+  end
+
+  context "#attach_document" do
+    it "sets the Document's modifier path to our modifier path" do
+      item.should_receive(:_modifier_path=).with('embed_many_name.$')
+      proxy.send(:attach_document, item)
+    end
+
+    it "sets the Document's selector path to our selector path" do
+      item.should_receive(:_selector_path=).with('embed_many_name')
+      proxy.send(:attach_document, item)
     end
   end
 
