@@ -1,5 +1,5 @@
 module MongoDoc
-  module DocumentTree
+  module Root
 
     attr_reader :_root
 

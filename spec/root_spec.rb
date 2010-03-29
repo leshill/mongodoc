@@ -1,13 +1,13 @@
 require 'spec_helper'
 
-describe "MongoDoc::DocumentTree" do
-  class DocumentTreeTest
-    include MongoDoc::DocumentTree
+describe "MongoDoc::Root" do
+  class RootTest
+    include MongoDoc::Root
     attr_accessor_with_default(:_associations) {[]}
     attr_accessor :association
   end
 
-  let(:doc) { DocumentTreeTest.new }
+  let(:doc) { RootTest.new }
 
   context "cascade properties" do
     let(:prop_val) { stub }
