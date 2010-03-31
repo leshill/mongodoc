@@ -101,7 +101,7 @@ module MongoDoc
 
     module ClassMethods
       def bson_create(bson_hash, options = {})
-        new.tap do |obj|
+        allocate.tap do |obj|
           bson_hash.each do |name, value|
             obj.send("#{name}=", MongoDoc::BSON.decode(value, options))
           end
