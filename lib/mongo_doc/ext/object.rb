@@ -6,7 +6,7 @@ class Object
       end
     end
   end
-  
+
   def self.bson_create(bson_hash, options = {})
     new.tap do |obj|
       bson_hash.each do |name, value|
