@@ -40,6 +40,7 @@ end
 
 class MongoDocument
   attr_accessor :collection
+  attr_accessor :documents
 
   def initialize
     MongoDoc::Connection.name = 'mongo_doc_object_test'
@@ -47,14 +48,31 @@ class MongoDocument
     collection.drop
   end
 
-  def perform
-    person = Person.new(:birth_date => Date.new(1970, 1, 1))
-    name = Name.new(:given => "James", :family => "Kirk", :middle => "Tiberius")
-    address = Address.new(:street => "1 Starfleet Command Way", :city => "San Francisco", :state => "CA", :post_code => "94133", :type => "Work")
-    phone = Phone.new(:country_code => 1, :number => "415-555-1212", :type => "Mobile")
-    person.name = name
-    person.address = address
-    person.phones << phone
-    person.save
+  def generate(count)
+    self.documents = []
+    count.times do |i|
+      person = Person.new(:birth_date => Date.new(1970, 1, 1))
+      name = Name.new(:given => "James #{i}", :family => "Kirk", :middle => "Tiberius")
+      address = Address.new(:street => "1 Starfleet Command Way", :city => "San Francisco", :state => "CA", :post_code => "94133", :type => "Work")
+      phone = Phone.new(:country_code => 1, :number => "415-555-1212", :type => "Mobile")
+      person.name = name
+      person.address = address
+      person.phones << phone
+
+      documents << person
+    end
+  end
+
+  def writes(count)
+    count.times do |i|
+      documents[i].save
+    end
+  end
+
+  def reads(count)
+    count.times do |i|
+      doc = collection.find_one(documents[i]._id)
+      raise 'Not found' unless doc.name.given == documents[i].name.given
+    end
   end
 end

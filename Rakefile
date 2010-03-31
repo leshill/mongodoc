@@ -149,13 +149,18 @@ namespace :prof do
 
   def benchmark(what, runner)
     puts "Benchmark: " + what
-    print "Warm up..."
-    10.times {|n| runner.perform }
-    puts "Done."
+
+    runner.generate(10000)
 
     Benchmark.bm do |bm|
-      bm.report(what) do
-        10000.times {|n| runner.perform }
+      bm.report(what + " writes") do
+        runner.writes(10000)
+      end
+    end
+
+    Benchmark.bm do |bm|
+      bm.report(what + " reads") do
+        runner.reads(10000)
       end
     end
   end
@@ -163,7 +168,11 @@ namespace :prof do
   def profile(what, runner)
     puts "Profiling: " + what
     RubyProf.start
-    1000.times {|n| runner.perform }
+
+    runner.generate(1000)
+    runner.writes(1000)
+    runner.reads(1000)
+
     result = RubyProf.stop
     printer = RubyProf::FlatPrinter.new(result)
     printer.print(STDOUT, 0)
