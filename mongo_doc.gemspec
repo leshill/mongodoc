@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{mongo_doc}
-  s.version = "0.4.2"
+  s.version = "0.5.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Les Hill"]
-  s.date = %q{2010-03-23}
+  s.date = %q{2010-04-04}
   s.description = %q{ODM for MongoDB}
   s.email = %q{leshill@gmail.com}
   s.extra_rdoc_files = [
@@ -30,6 +30,7 @@ Gem::Specification.new do |s|
      "examples/simple_document.rb",
      "examples/simple_object.rb",
      "features/collections.feature",
+     "features/embed_hash.feature",
      "features/finders.feature",
      "features/indexes.feature",
      "features/mongodb.yml",
@@ -42,6 +43,7 @@ Gem::Specification.new do |s|
      "features/step_definitions/collection_steps.rb",
      "features/step_definitions/document_steps.rb",
      "features/step_definitions/documents.rb",
+     "features/step_definitions/embed_hash_steps.rb",
      "features/step_definitions/finder_steps.rb",
      "features/step_definitions/index_steps.rb",
      "features/step_definitions/json_steps.rb",
@@ -91,7 +93,7 @@ Gem::Specification.new do |s|
      "lib/mongo_doc/finders.rb",
      "lib/mongo_doc/index.rb",
      "lib/mongo_doc/matchers.rb",
-     "lib/mongo_doc/query.rb",
+     "lib/mongo_doc/root.rb",
      "lib/mongo_doc/scope.rb",
      "lib/mongo_doc/validations/macros.rb",
      "lib/mongo_doc/validations/validates_embedded.rb",
@@ -118,13 +120,15 @@ Gem::Specification.new do |s|
      "mongo_doc.gemspec",
      "mongod.example.yml",
      "mongodb.example.yml",
-     "perf/mongo_doc_runner.rb",
-     "perf/ruby_driver_runner.rb",
+     "perf/mongo_doc_object.rb",
+     "perf/mongo_document.rb",
+     "perf/ruby_driver.rb",
      "script/console",
      "spec/array_including_argument_matcher.rb",
      "spec/associations/collection_proxy_spec.rb",
      "spec/associations/document_proxy_spec.rb",
      "spec/associations/hash_proxy_spec.rb",
+     "spec/associations/proxy_base_spec.rb",
      "spec/associations_spec.rb",
      "spec/attributes_accessor_spec.rb",
      "spec/attributes_spec.rb",
@@ -148,7 +152,7 @@ Gem::Specification.new do |s|
      "spec/mongodb.yml",
      "spec/mongodb_pairs.yml",
      "spec/new_record_spec.rb",
-     "spec/query_spec.rb",
+     "spec/root_spec.rb",
      "spec/scope_spec.rb",
      "spec/spec.opts",
      "spec/spec_helper.rb"
@@ -163,6 +167,7 @@ Gem::Specification.new do |s|
      "spec/associations/collection_proxy_spec.rb",
      "spec/associations/document_proxy_spec.rb",
      "spec/associations/hash_proxy_spec.rb",
+     "spec/associations/proxy_base_spec.rb",
      "spec/associations_spec.rb",
      "spec/attributes_accessor_spec.rb",
      "spec/attributes_spec.rb",
@@ -184,7 +189,7 @@ Gem::Specification.new do |s|
      "spec/index_spec.rb",
      "spec/matchers_spec.rb",
      "spec/new_record_spec.rb",
-     "spec/query_spec.rb",
+     "spec/root_spec.rb",
      "spec/scope_spec.rb",
      "spec/spec_helper.rb",
      "examples/simple_document.rb",
