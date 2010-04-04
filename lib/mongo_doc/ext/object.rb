@@ -1,4 +1,6 @@
 class Object
+  define_method :singleton_class, instance_method(:metaclass) unless respond_to?(:singleton_class)
+
   def to_bson(*args)
     {MongoDoc::BSON::CLASS_KEY => self.class.name}.tap do |bson_hash|
       instance_variables.each do |name|

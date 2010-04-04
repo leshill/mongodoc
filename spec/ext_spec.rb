@@ -1,6 +1,14 @@
 require 'spec_helper.rb'
 
 describe "Ruby Object Extensions" do
+  context "Rails3 support" do
+    describe "#singleton_class" do
+      it "is either defined or aliased" do
+        Object.new.should respond_to(:singleton_class)
+      end
+    end
+  end
+
   context "Conversions" do
     context "Boolean" do
       it "converts from a '1' to true" do

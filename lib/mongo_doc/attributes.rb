@@ -31,7 +31,7 @@ module MongoDoc
 
       def self.extended(klass)
         klass.class_eval do
-          metaclass.alias_method_chain :attr_accessor, :mongo
+          singleton_class.alias_method_chain :attr_accessor, :mongo
         end
       end
 
