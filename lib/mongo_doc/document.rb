@@ -6,7 +6,7 @@ require 'mongo_doc/criteria'
 require 'mongo_doc/finders'
 require 'mongo_doc/index'
 require 'mongo_doc/scope'
-require 'mongo_doc/validations/macros'
+require 'mongo_doc/validations'
 
 module MongoDoc
   class UnsupportedOperation < RuntimeError; end
@@ -25,8 +25,7 @@ module MongoDoc
         extend Finders
         extend Index
         extend Scope
-        include ::Validatable
-        extend Validations::Macros
+        include Validations
 
         alias id _id
       end

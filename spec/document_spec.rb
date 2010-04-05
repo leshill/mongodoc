@@ -60,26 +60,7 @@ describe "MongoDoc::Document" do
     end
   end
 
-  context "validations" do
-    class SimpleValidationTest
-      include MongoDoc::Document
-
-      attr_accessor :data
-      validates_presence_of :data
-    end
-
-    it "are included by MongoDoc::Document" do
-      Validatable.should === SimpleValidationTest.new
-    end
-
-    it "valid? fails when a document is invalid" do
-      doc = SimpleValidationTest.new
-      doc.should_not be_valid
-      doc.should have(1).error_on(:data)
-    end
-  end
-
-  context "saving" do
+ context "saving" do
     class SaveRoot
       include MongoDoc::Document
 
