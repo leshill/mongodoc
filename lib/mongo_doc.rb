@@ -1,5 +1,6 @@
 require 'mongo'
 require 'active_support'
+require 'active_support/core_ext'
 require 'validatable'
 require 'will_paginate/collection'
 
