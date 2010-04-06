@@ -10,12 +10,12 @@ begin
     gem.homepage = "http://github.com/leshill/mongodoc"
     gem.authors = ["Les Hill"]
     gem.add_dependency "activesupport", ">= 2.3.4"
-    gem.add_dependency "mongo", "= 0.19.1"
-    gem.add_dependency "mongo_ext", "= 0.19.1"
+    gem.add_dependency "mongo", "= 0.19.3"
+    gem.add_dependency "mongo_ext", "= 0.19.3"
     gem.add_dependency "durran-validatable", "= 2.0.1"
     gem.add_dependency "leshill-will_paginate", "= 2.3.11"
     gem.add_development_dependency "rspec", "= 1.3.0"
-    gem.add_development_dependency "cucumber", "= 0.6.2"
+    gem.add_development_dependency "cucumber", ">= 0.6.2"
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end
   Jeweler::GemcutterTasks.new
