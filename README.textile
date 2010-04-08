@@ -1,37 +1,17 @@
 h1. MongoDoc
 
-Version: Turbulence (0.4.2) 2010/03/23
-
-h2. What's New in Turbulence (0.4.2)
-
-Support for the $ positional operator for in-place array updates. This requires MongoDB version 1.3.4 or higher.
-
-h2. What's New in Turbulence (0.4.1)
-
-API changes (@key@ and @has_*@ still supported, will be deprectated soon)
-
-* @MongoDoc::Document.attr_accessor@ works like the old @key@ macro, and allows two parameters:
-** @:default => 'some default value'@
-** @:type => Date@ used when dealing with values from the web which will be coming in as @String@ values
-* Association macros have been renamed
-** @embed@ was @has_one@
-** @embed_many@ was @has_many@
-** @embed_hash@ was @has_hash@
-
-Indexing suppport
-
-* @MongoDoc::Document.index@
+Version: Maelstrom (0.5.5) 2010/04/08
 
 h2. Notes
 
-* 2010-03-12 Thanks to weather in ATL, cleaned up attr_accessor and switched to embed association macros
+* 2010-03-12 Thanks to weather (in ATL, cleaned up attr_accessor and switched to embed association macros
 * 2010-03-10 Slides are out of date, use key instead of attr_accessor with MongoDoc::Document (implementation was way too hackish)
 * 2010-02-23 API is *changing* significantly
 * 2010-01-23 Tracking MongoDoc with @git@? *READ THIS NOTE*[1]
 
 h2. Quick Start
 
-* install MongoDB (at least 1.3.4)
+* install MongoDB (at least 1.4.0)
 * install the Ruby driver @gem install mongo@
 * install MongoDoc @gem install mongo_doc@
 * run an example from this directory @ruby -Ilib examples/simple_object.rb@
@@ -135,9 +115,15 @@ bc. hashrocket_address.update_attributes(:street => '320 First Street North, #71
 
 h2. Installation
 
-MongoDoc *requires* mongoDB v1.3.4 or later.
+MongoDoc *requires* mongoDB v1.4.0 or later.
 
 bc. sudo gem install mongo_doc
+
+h2. Rails 3
+
+As of version 0.5.0, you can use the mongo_doc-rails gem to add Rails3 support.
+
+bc. sudo gem install mongo_doc-rails
 
 h2. Connecting
 
@@ -185,6 +171,8 @@ Les Hill, leshill on github
 h3. Thanks
 
 Thanks to Sandro and Durran for some great conversations and some lovely code.
+
+Thanks to Elliot for pushing me to get Rails 3 support
 
 h2. Note on Patches/Pull Requests
 
