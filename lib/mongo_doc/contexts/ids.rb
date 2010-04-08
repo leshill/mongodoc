@@ -18,7 +18,7 @@ module Mongoid
 
       protected
 
-      # Convert ids from strings to +Mongo::ObjectID+s
+      # Convert ids from strings to +BSON::ObjectID+s
       def strings_to_object_ids(ids)
         if Array === ids
           ids.map {|id| string_to_object_id(id) }
@@ -28,10 +28,10 @@ module Mongoid
 
       end
 
-      # Convert ids from strings to +Mongo::ObjectID+s
+      # Convert ids from strings to +BSON::ObjectID+s
       def string_to_object_id(id)
         if String === id
-          ::Mongo::ObjectID.from_string(id)
+          ::BSON::ObjectID.from_string(id)
         else
           id
         end

@@ -167,7 +167,7 @@ module MongoDoc
     end
 
     def before_save_callback(root)
-      self._id = Mongo::ObjectID.new if new_record?
+      self._id = ::BSON::ObjectID.new if new_record?
     end
 
     def save_failed_callback(root)

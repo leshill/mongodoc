@@ -16,7 +16,7 @@ describe "MongoDoc::Contexts::Ids" do
   context "#id_criteria" do
     context "single id" do
       let(:id) { 'a' * 24 }
-      let(:obj_id) { Mongo::ObjectID.from_string(id) }
+      let(:obj_id) { BSON::ObjectID.from_string(id) }
 
       it "converts strings to an object id" do
         criteria.should_receive(:id).with(obj_id)
@@ -32,7 +32,7 @@ describe "MongoDoc::Contexts::Ids" do
 
     context "mutliple ids" do
       let(:ids) { ['a' * 24, 'b' * 24] }
-      let(:obj_ids) { [Mongo::ObjectID.from_string(ids.first), Mongo::ObjectID.from_string(ids.last)] }
+      let(:obj_ids) { [BSON::ObjectID.from_string(ids.first), BSON::ObjectID.from_string(ids.last)] }
 
       it "converts strings to an object id" do
         criteria.should_receive(:id).with(obj_ids)
