@@ -40,4 +40,10 @@ class RubyDriver
       raise 'Not found' unless obj and obj['name']['given'] == objects[i][:name][:given]
     end
   end
+
+  def query_all
+    collection.find().each do |obj|
+      given_name = obj['name']['given']
+    end
+  end
 end

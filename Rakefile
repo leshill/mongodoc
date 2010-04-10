@@ -164,6 +164,12 @@ namespace :prof do
         runner.reads(10000)
       end
     end
+
+    Benchmark.bm do |bm|
+      bm.report(what + " query") do
+        runner.query_all
+      end
+    end
   end
 
   def profile(what, runner)
@@ -173,6 +179,7 @@ namespace :prof do
     runner.generate(1000)
     runner.writes(1000)
     runner.reads(1000)
+    runner.query_all
 
     result = RubyProf.stop
     printer = RubyProf::FlatPrinter.new(result)

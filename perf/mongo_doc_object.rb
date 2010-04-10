@@ -75,4 +75,9 @@ class MongoDocObject
     end
   end
 
+  def query_all
+    collection.find.each do |obj|
+      given_name = obj.name.given
+    end
+  end
 end

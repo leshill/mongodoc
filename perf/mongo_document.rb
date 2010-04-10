@@ -75,4 +75,10 @@ class MongoDocument
       raise 'Not found' unless doc.name.given == documents[i].name.given
     end
   end
+
+  def query_all
+    collection.find.each do |doc|
+      given_name = doc.name.given
+    end
+  end
 end
