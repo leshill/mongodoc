@@ -3,9 +3,9 @@ require 'rake'
 begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
-    gem.name = "mongo_doc"
-    gem.summary = %Q{ODM for MongoDB}
-    gem.description = %Q{ODM for MongoDB}
+    gem.name = "mongo_doc_rails2"
+    gem.summary = %Q{ODM for MongoDB - for Rails 2.3.x}
+    gem.description = %Q{ODM for MongoDB - for Rails 2.3.x}
     gem.email = "leshill@gmail.com"
     gem.homepage = "http://github.com/leshill/mongodoc"
     gem.authors = ["Les Hill"]

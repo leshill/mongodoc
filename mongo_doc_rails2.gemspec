@@ -4,13 +4,13 @@
 # -*- encoding: utf-8 -*-
 
 Gem::Specification.new do |s|
-  s.name = %q{mongo_doc}
-  s.version = "0.5.5"
+  s.name = %q{mongo_doc_rails2}
+  s.version = "0.6.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Les Hill"]
-  s.date = %q{2010-04-08}
-  s.description = %q{ODM for MongoDB}
+  s.date = %q{2010-05-10}
+  s.description = %q{ODM for MongoDB - for Rails 2.3.x}
   s.email = %q{leshill@gmail.com}
   s.extra_rdoc_files = [
     "LICENSE",
@@ -164,7 +164,7 @@ Gem::Specification.new do |s|
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.3.6}
-  s.summary = %q{ODM for MongoDB}
+  s.summary = %q{ODM for MongoDB - for Rails 2.3.x}
   s.test_files = [
     "spec/array_including_argument_matcher.rb",
      "spec/associations/collection_proxy_spec.rb",
