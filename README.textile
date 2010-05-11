@@ -21,7 +21,7 @@ MongoDoc is _also_ an extension of the "Mongo Ruby Driver":http://github.com/mon
 
 MongoDoc is *not* ActiveRecord for mongoDB.  We do not have callbacks, nor do we have dynamic finders.  We do have associations, named scopes, and other features.
 
-MongoDoc *is* simple, easy-to-use, and fast. And it works with Rails (2.3.x at the moment, 3 soonish?).
+MongoDoc *is* simple, easy-to-use, and fast. This version works with Rails 2.3.x.
 
 MongoDoc is designed to work with document data, if you are looking to map relational data in mongoDB, you will have to look elsewhere.
 
