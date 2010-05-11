@@ -119,7 +119,7 @@ Gem::Specification.new do |s|
      "lib/mongoid/matchers/ne.rb",
      "lib/mongoid/matchers/nin.rb",
      "lib/mongoid/matchers/size.rb",
-     "mongo_doc.gemspec",
+     "mongo_doc_rails2.gemspec",
      "mongod.example.yml",
      "mongodb.example.yml",
      "perf/mongo_doc_object.rb",
@@ -206,18 +206,18 @@ Gem::Specification.new do |s|
 
     if Gem::Version.new(Gem::RubyGemsVersion) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<activesupport>, [">= 2.3.4"])
-      s.add_runtime_dependency(%q<mongo>, ["= 0.20.1"])
-      s.add_runtime_dependency(%q<bson>, ["= 0.20.1"])
-      s.add_runtime_dependency(%q<bson_ext>, ["= 0.20.1"])
+      s.add_runtime_dependency(%q<mongo>, ["= 1.0.1"])
+      s.add_runtime_dependency(%q<bson>, ["= 1.0.1"])
+      s.add_runtime_dependency(%q<bson_ext>, ["= 1.0.1"])
       s.add_runtime_dependency(%q<durran-validatable>, ["= 2.0.1"])
       s.add_runtime_dependency(%q<leshill-will_paginate>, ["= 2.3.11"])
       s.add_development_dependency(%q<rspec>, ["= 1.3.0"])
       s.add_development_dependency(%q<cucumber>, [">= 0.6.2"])
     else
       s.add_dependency(%q<activesupport>, [">= 2.3.4"])
-      s.add_dependency(%q<mongo>, ["= 0.20.1"])
-      s.add_dependency(%q<bson>, ["= 0.20.1"])
-      s.add_dependency(%q<bson_ext>, ["= 0.20.1"])
+      s.add_dependency(%q<mongo>, ["= 1.0.1"])
+      s.add_dependency(%q<bson>, ["= 1.0.1"])
+      s.add_dependency(%q<bson_ext>, ["= 1.0.1"])
       s.add_dependency(%q<durran-validatable>, ["= 2.0.1"])
       s.add_dependency(%q<leshill-will_paginate>, ["= 2.3.11"])
       s.add_dependency(%q<rspec>, ["= 1.3.0"])
@@ -225,9 +225,9 @@ Gem::Specification.new do |s|
     end
   else
     s.add_dependency(%q<activesupport>, [">= 2.3.4"])
-    s.add_dependency(%q<mongo>, ["= 0.20.1"])
-    s.add_dependency(%q<bson>, ["= 0.20.1"])
-    s.add_dependency(%q<bson_ext>, ["= 0.20.1"])
+    s.add_dependency(%q<mongo>, ["= 1.0.1"])
+    s.add_dependency(%q<bson>, ["= 1.0.1"])
+    s.add_dependency(%q<bson_ext>, ["= 1.0.1"])
     s.add_dependency(%q<durran-validatable>, ["= 2.0.1"])
     s.add_dependency(%q<leshill-will_paginate>, ["= 2.3.11"])
     s.add_dependency(%q<rspec>, ["= 1.3.0"])
