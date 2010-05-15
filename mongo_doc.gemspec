@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{mongo_doc}
-  s.version = "0.5.5"
+  s.version = "0.6.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Les Hill"]
-  s.date = %q{2010-04-08}
+  s.date = %q{2010-05-14}
   s.description = %q{ODM for MongoDB}
   s.email = %q{leshill@gmail.com}
   s.extra_rdoc_files = [
@@ -20,6 +20,8 @@ Gem::Specification.new do |s|
   s.files = [
     ".document",
      ".gitignore",
+     ".rvmrc",
+     "Gemfile",
      "HISTORY.md",
      "LICENSE",
      "README.textile",
@@ -97,7 +99,6 @@ Gem::Specification.new do |s|
      "lib/mongo_doc/root.rb",
      "lib/mongo_doc/scope.rb",
      "lib/mongo_doc/validations.rb",
-     "lib/mongo_doc/validations/macros.rb",
      "lib/mongo_doc/validations/validates_embedded.rb",
      "lib/mongoid/contexts/enumerable.rb",
      "lib/mongoid/contexts/paging.rb",
@@ -205,30 +206,30 @@ Gem::Specification.new do |s|
     s.specification_version = 3
 
     if Gem::Version.new(Gem::RubyGemsVersion) >= Gem::Version.new('1.2.0') then
-      s.add_runtime_dependency(%q<activesupport>, [">= 2.3.4"])
+      s.add_runtime_dependency(%q<activesupport>, [">= 3.0.0.beta"])
+      s.add_runtime_dependency(%q<activemodel>, [">= 3.0.0.beta"])
       s.add_runtime_dependency(%q<mongo>, ["= 0.20.1"])
       s.add_runtime_dependency(%q<bson>, ["= 0.20.1"])
       s.add_runtime_dependency(%q<bson_ext>, ["= 0.20.1"])
-      s.add_runtime_dependency(%q<durran-validatable>, ["= 2.0.1"])
       s.add_runtime_dependency(%q<leshill-will_paginate>, ["= 2.3.11"])
       s.add_development_dependency(%q<rspec>, ["= 1.3.0"])
       s.add_development_dependency(%q<cucumber>, [">= 0.6.2"])
     else
-      s.add_dependency(%q<activesupport>, [">= 2.3.4"])
+      s.add_dependency(%q<activesupport>, [">= 3.0.0.beta"])
+      s.add_dependency(%q<activemodel>, [">= 3.0.0.beta"])
       s.add_dependency(%q<mongo>, ["= 0.20.1"])
       s.add_dependency(%q<bson>, ["= 0.20.1"])
       s.add_dependency(%q<bson_ext>, ["= 0.20.1"])
-      s.add_dependency(%q<durran-validatable>, ["= 2.0.1"])
       s.add_dependency(%q<leshill-will_paginate>, ["= 2.3.11"])
       s.add_dependency(%q<rspec>, ["= 1.3.0"])
       s.add_dependency(%q<cucumber>, [">= 0.6.2"])
     end
   else
-    s.add_dependency(%q<activesupport>, [">= 2.3.4"])
+    s.add_dependency(%q<activesupport>, [">= 3.0.0.beta"])
+    s.add_dependency(%q<activemodel>, [">= 3.0.0.beta"])
     s.add_dependency(%q<mongo>, ["= 0.20.1"])
     s.add_dependency(%q<bson>, ["= 0.20.1"])
     s.add_dependency(%q<bson_ext>, ["= 0.20.1"])
-    s.add_dependency(%q<durran-validatable>, ["= 2.0.1"])
     s.add_dependency(%q<leshill-will_paginate>, ["= 2.3.11"])
     s.add_dependency(%q<rspec>, ["= 1.3.0"])
     s.add_dependency(%q<cucumber>, [">= 0.6.2"])

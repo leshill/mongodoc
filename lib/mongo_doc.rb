@@ -4,7 +4,7 @@ require 'active_support/core_ext'
 require 'will_paginate/collection'
 
 module MongoDoc
-  VERSION = '0.5.4'
+  VERSION = '0.6.0'
 end
 
 require 'mongo_doc/connection'
