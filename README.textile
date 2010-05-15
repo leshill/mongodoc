@@ -181,6 +181,6 @@ h2. Copyright
 
 Copyright (c) 2009 - 2010 Les Hill. See LICENSE for details.
 
-fn1. If you are using Rails 2.3.x you need to be using the @mongo_doc_rails2@ gem from the rails2 branch on 'github':http://github.com/leshill/mongodoc/tree/rails2
+fn1. If you are using Rails 2.3.x you need to be using the @mongo_doc_rails2@ gem from the rails2 branch on "github":http://github.com/leshill/mongodoc/tree/rails2
 
 fn2. The Ruby driver exposes an API that understands JSON.
