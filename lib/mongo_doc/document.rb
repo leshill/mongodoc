@@ -6,6 +6,12 @@ require 'mongo_doc/criteria'
 require 'mongo_doc/finders'
 require 'mongo_doc/index'
 require 'mongo_doc/scope'
+require 'active_model/naming'
+require 'active_model/translation'
+require 'active_model/deprecated_error_methods'
+require 'active_model/errors'
+require 'active_model/validator'
+require 'active_model/validations'
 require 'mongo_doc/validations'
 
 module MongoDoc
@@ -25,7 +31,9 @@ module MongoDoc
         extend Finders
         extend Index
         extend Scope
-        include Validations
+        include ::ActiveModel::Validations
+        extend ::ActiveModel::Naming
+        extend Validations
 
         alias id _id
       end
@@ -42,6 +50,10 @@ module MongoDoc
     def ==(other)
       return false unless self.class === other
       self.class._attributes.all? {|var| self.send(var) == other.send(var)}
+    end
+
+    def destroyed?
+      _id.nil?
     end
 
     def new_record?

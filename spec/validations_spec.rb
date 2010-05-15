@@ -16,7 +16,7 @@ describe MongoDoc::Validations do
     it { should respond_to(:errors) }
 
     it "is included by Document" do
-      MongoDoc::Validations.should === subject
+      ::ActiveModel::Validations.should === subject
     end
   end
 
