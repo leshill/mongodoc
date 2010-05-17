@@ -53,23 +53,30 @@ describe "MongoDoc::Connection.Connections" do
 
   context "Rails environment" do
 
+    class FauxApp
+      def root
+        Pathname.new('faux_app')
+      end
+    end
+
     module FauxRails
       extend self
 
       def env
-        'development'
+        'staging'
       end
+    end
 
-      def root
-        Pathname.new('rails_root')
-      end
+    before(:all) do
+      Object.const_set('Rails', FauxRails)
+      require 'mongo_doc/railties/config'
     end
 
     before do
-      Object.const_set('Rails', FauxRails)
+      MongoDoc::Railties::Config.config(FauxApp.new)
     end
 
-    after do
+    after(:all) do
       Object.send(:remove_const, 'Rails')
     end
 
@@ -78,7 +85,7 @@ describe "MongoDoc::Connection.Connections" do
     end
 
     it "default the configuration location to Rails.root + '/config/mongodb.yml'" do
-      MongoDoc::Connection.config_path.should == FauxRails.root + 'config/mongodb.yml'
+      MongoDoc::Connection.config_path.to_s.should == 'faux_app/config/mongodb.yml'
     end
 
     context "without a configuration" do
@@ -95,7 +102,7 @@ describe "MongoDoc::Connection.Connections" do
       end
 
       it "creates a default database with strict false" do
-        connection.should_receive(:db).with("rails_root_development", :strict => false)
+        connection.should_receive(:db).with("faux_app_staging", :strict => false)
         MongoDoc::Connection.database
       end
     end

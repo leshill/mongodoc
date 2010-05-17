@@ -10,3 +10,5 @@ end
 require 'mongo_doc/connection'
 require 'mongo_doc/collection'
 require 'mongo_doc/document'
+
+require 'mongo_doc/railtie' if defined?(Rails)

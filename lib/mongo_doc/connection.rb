@@ -6,10 +6,10 @@ module MongoDoc
 
     extend self
 
-    attr_writer :config_path, :env, :host, :name, :options, :port, :strict
+    attr_writer :config_path, :default_name, :env, :host, :name, :options, :port, :strict
 
     def config_path
-      @config_path || default_path
+      @config_path || './mongodb.yml'
     end
 
     def configuration
@@ -24,12 +24,12 @@ module MongoDoc
       @database ||= connection.db(name, :strict => strict)
     end
 
+    def default_name
+      @default_name ||= "mongo_doc"
+    end
+
     def env
-      if rails?
-        Rails.env
-      else
-        @env ||= 'development'
-      end
+      @env ||= 'development'
     end
 
     def host
@@ -59,26 +59,6 @@ module MongoDoc
       raise NoConnectionError unless connection
       verify_server_version(connection)
       connection
-    end
-
-    def default_name
-      if rails?
-        "#{Rails.root.basename}_#{Rails.env}"
-      else
-        "mongo_doc"
-      end
-    end
-
-    def default_path
-      if rails?
-        Rails.root + 'config/mongodb.yml'
-      else
-        './mongodb.yml'
-      end
-    end
-
-    def rails?
-      Object.const_defined?("Rails")
     end
 
     def verify_server_version(connection)
