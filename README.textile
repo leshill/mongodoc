@@ -115,7 +115,7 @@ h2. Installation
 
 MongoDoc *requires* mongoDB v1.4.0 or later.
 
-bc. sudo gem install mongo_doc
+bc. % gem install mongo_doc
 
 h2. Connecting
 
