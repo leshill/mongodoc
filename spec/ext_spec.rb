@@ -1,4 +1,4 @@
-require 'spec_helper.rb'
+require 'spec_helper'
 
 describe "Ruby Object Extensions" do
   context "Rails3 support" do
