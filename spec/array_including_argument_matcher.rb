@@ -1,6 +1,6 @@
 # From http://gist.github.com/62943
 # Author http://github.com/trotter
-module Spec
+module RSpec
   module Mocks
     module ArgumentMatchers
 

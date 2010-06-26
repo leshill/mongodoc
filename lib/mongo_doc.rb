@@ -1,7 +1,6 @@
 require 'mongo'
 require 'active_support'
 require 'active_support/core_ext'
-require 'will_paginate/collection'
 
 module MongoDoc
   VERSION = '0.6.1'

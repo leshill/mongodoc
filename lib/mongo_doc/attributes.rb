@@ -40,6 +40,7 @@ module MongoDoc
       end
 
       def attr_accessor_with_mongo(*args)
+        return attr_accessor_without_mongo(*args) if args.first == :validation_context
         opts = args.extract_options!
         default = opts.delete(:default)
         type = opts.delete(:type)

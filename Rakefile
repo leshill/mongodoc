@@ -9,14 +9,13 @@ begin
     gem.email = "leshill@gmail.com"
     gem.homepage = "http://github.com/leshill/mongodoc"
     gem.authors = ["Les Hill"]
-    gem.add_dependency "activesupport", ">= 3.0.0.beta"
-    gem.add_dependency "activemodel", ">=3.0.0.beta"
-    gem.add_dependency "mongo", "= 0.20.1"
-    gem.add_dependency "bson", "= 0.20.1"
-    gem.add_dependency "bson_ext", "= 0.20.1"
-    gem.add_dependency "leshill-will_paginate", "= 2.3.11"
-    gem.add_development_dependency "rspec", "= 1.3.0"
-    gem.add_development_dependency "cucumber", ">= 0.6.2"
+    gem.add_dependency "activesupport", ">= 3.0.0.beta.4"
+    gem.add_dependency "activemodel", ">=3.0.0.beta.4"
+    gem.add_dependency "mongo", ">= 1.0.0"
+    gem.add_dependency "bson", ">= 1.0.0"
+    gem.add_dependency "bson_ext", ">= 1.0.0"
+    gem.add_development_dependency "rspec", ">= 2.0.0.beta.12"
+    gem.add_development_dependency "cucumber", ">= 0.8.3"
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end
   Jeweler::GemcutterTasks.new
@@ -35,16 +34,14 @@ namespace :cucumber do
   end
 end
 
-require 'spec/rake/spectask'
-Spec::Rake::SpecTask.new(:spec) do |spec|
-  spec.spec_opts = ['--options', "#{File.expand_path(File.dirname(__FILE__))}/spec/spec.opts"]
-  spec.libs << 'lib' << 'spec'
-  spec.spec_files = FileList['spec/**/*_spec.rb']
+require 'rspec/core/rake_task'
+RSpec::Core::RakeTask.new(:spec) do |spec|
+  spec.ruby_opts = ['--options', "#{File.expand_path(File.dirname(__FILE__))}/spec/spec.opts"]
+  spec.pattern = 'spec/**/*_spec.rb'
 end
 
-Spec::Rake::SpecTask.new(:rcov) do |spec|
-  spec.spec_opts = ['--options', "#{File.expand_path(File.dirname(__FILE__))}/spec/spec.opts"]
-  spec.libs << 'lib' << 'spec'
+RSpec::Core::RakeTask.new(:rcov) do |spec|
+  spec.ruby_opts = ['--options', "#{File.expand_path(File.dirname(__FILE__))}/spec/spec.opts"]
   spec.pattern = 'spec/**/*_spec.rb'
   spec.rcov = true
 end

@@ -27,10 +27,23 @@ describe "MongoDoc::Attributes" do
       include MongoDoc::Attributes
 
       attr_accessor :attr1, :attr2
+      attr_accessor :validation_context
     end
 
     it "adds its arguments to _keys" do
-      TestKeys._keys.should == [:attr1, :attr2]
+      TestKeys._keys.should include(:attr1, :attr2)
+    end
+
+    context "the :validation_context attribute from ActiveModel" do
+
+      it "is an attribute" do
+        TestKeys.new.should respond_to(:validation_context)
+        TestKeys.new.should respond_to(:validation_context=)
+      end
+
+      it "is not in _keys" do
+        TestKeys._keys.should_not include(:validation_context)
+      end
     end
 
     describe "accessors" do

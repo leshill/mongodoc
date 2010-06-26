@@ -85,9 +85,9 @@ describe "MongoDoc::Collection" do
 
     context "#insert" do
       let(:doc) { {'sample' => 'data'} }
+      let(:options) { {:safe => false} }
 
       it "delegates to the Mongo::Collection" do
-        options = {:safe => false}
         mongo_collection.should_receive(:insert).with(doc, options)
         collection.insert(doc, options)
       end

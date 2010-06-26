@@ -1,6 +1,6 @@
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', '..', 'lib'))
 require 'cucumber'
-require 'spec/expectations'
+require 'rspec/expectations'
 require 'spec/bson_matchers'
 require 'mongo_doc'
 require 'active_support/json'
