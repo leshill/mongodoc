@@ -64,21 +64,6 @@ Rake::RDocTask.new do |rdoc|
   rdoc.rdoc_files.include('lib/**/*.rb')
 end
 
-namespace :mongo do
-  desc 'Start mongod'
-  task :start do
-    default_config = { "dbpath" => "/data/db" }
-    config = begin
-      YAML.load_file(File.join(File.dirname(__FILE__), 'mongod.yml'))
-    rescue Exception => e
-      {}
-    end
-    config = default_config.merge(config)
-    sh("nohup #{config['mongod'] || 'mongod'} --dbpath #{config['dbpath']} &")
-    puts "\n"
-  end
-end
-
 namespace :mongoid do
   desc 'Sync criteria from Mongoid'
   task :sync do
