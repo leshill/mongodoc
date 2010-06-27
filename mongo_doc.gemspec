@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{mongo_doc}
-  s.version = "0.6.2"
+  s.version = "0.6.3"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Les Hill"]
-  s.date = %q{2010-06-25}
+  s.date = %q{2010-06-27}
   s.description = %q{ODM for MongoDB}
   s.email = %q{leshill@gmail.com}
   s.extra_rdoc_files = [
@@ -22,6 +22,7 @@ Gem::Specification.new do |s|
      ".gitignore",
      ".rspec",
      ".rvmrc",
+     ".watchr",
      "Gemfile",
      "HISTORY.md",
      "LICENSE",
@@ -76,6 +77,7 @@ Gem::Specification.new do |s|
      "lib/mongo_doc/contexts/mongo.rb",
      "lib/mongo_doc/criteria.rb",
      "lib/mongo_doc/cursor.rb",
+     "lib/mongo_doc/database_cleaner.rb",
      "lib/mongo_doc/document.rb",
      "lib/mongo_doc/ext.rb",
      "lib/mongo_doc/ext/array.rb",
@@ -147,6 +149,7 @@ Gem::Specification.new do |s|
      "spec/contexts_spec.rb",
      "spec/criteria_spec.rb",
      "spec/cursor_spec.rb",
+     "spec/database_cleaner_spec.rb",
      "spec/document_ext.rb",
      "spec/document_spec.rb",
      "spec/embedded_save_spec.rb",
@@ -186,6 +189,7 @@ Gem::Specification.new do |s|
      "spec/contexts_spec.rb",
      "spec/criteria_spec.rb",
      "spec/cursor_spec.rb",
+     "spec/database_cleaner_spec.rb",
      "spec/document_ext.rb",
      "spec/document_spec.rb",
      "spec/embedded_save_spec.rb",
