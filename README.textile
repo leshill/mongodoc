@@ -156,6 +156,17 @@ Finally, if you do not want to use the database configuration file, you can also
 
 bc. MongoDoc::Connection.name = 'stats'
 
+h2. Cleaning the database during testing
+
+When testing you may need to clean up and return the database to an empty state. @MongoDoc::DatabaseCleaner.clean_database@ is a helper that can be used to do this, for example with @RSpec@ (note the @require@):
+
+bc. require 'mongo_doc/database_cleaner'
+RSpec.configure do |config|
+  config.before(:each) do
+    MongoDoc::DatabaseCleaner.clean_database
+  end
+end
+
 h2. Credits
 
 Les Hill, leshill on github
