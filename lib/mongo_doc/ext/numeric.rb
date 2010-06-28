@@ -4,9 +4,9 @@ class Numeric
   end
 end
 
-class BigDecimal
+class Float
   def self.cast_from_string(string)
-    BigDecimal.new(string) unless string.blank?
+    string.to_f unless string.blank?
   end
 end
 

@@ -46,15 +46,15 @@ describe "Ruby Object Extensions" do
       end
     end
 
-    context "Numeric" do
-      context "BigDecimal" do
+    context "Numbers" do
+      context "Float" do
         it "returns nil for a blank string" do
-          BigDecimal.cast_from_string('').should be_nil
+          Float.cast_from_string('').should be_nil
         end
 
         it "converts from a string to a BigDecimal" do
-          big_decimal = BigDecimal.new("123")
-          BigDecimal.cast_from_string(big_decimal.to_s).should == big_decimal
+          float = "12345.6789".to_f
+          Float.cast_from_string(float.to_s).should == float
         end
       end
 
