@@ -8,7 +8,7 @@ This version of MongoDoc is for Rails v2.3.x[1].
 
 h2. Quick Start
 
-* install MongoDB (at least 1.4.0)
+* install MongoDB (at least 1.4.0)[2]
 * install the Ruby driver @gem install mongo@
 * install MongoDoc @gem install mongo_doc_rails2@
 * run an example from this directory @ruby -Ilib examples/simple_object.rb@
@@ -37,7 +37,7 @@ class Address
   attr_accessor :street, :city, :state, :zip, :phone_number
 end
 
-p. With MongoDoc, instead of saving JSON[2], we can save an object directly:
+p. With MongoDoc, instead of saving JSON[3], we can save an object directly:
 
 bc.. contact = Contact.new
 contact.name = 'Hashrocket'
@@ -182,4 +182,6 @@ Copyright (c) 2009 - 2010 Les Hill. See LICENSE for details.
 
 fn1. If you are using Rails 3.x you need to be using the @mongo_doc@ gem from the master branch on "github":http://github.com/leshill/mongodoc .
 
-fn2. The Ruby driver exposes an API that understands JSON.
+fn2. If you are using @MongoDB@ 1.5, you need to use @mongo >= 1.0.2@.
+
+fn3. The Ruby driver exposes an API that understands JSON.
