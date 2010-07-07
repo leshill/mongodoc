@@ -103,7 +103,6 @@ module MongoDoc
     end
 
     def update_attributes!(attrs)
-      strict = attrs.delete(:__strict__)
       self.attributes = attrs
       return save! if new_record?
       raise DocumentInvalidError unless valid?
