@@ -101,14 +101,25 @@ module MongoDoc
       self.attributes = attrs
       return save if new_record?
       return false unless valid?
-      _update({}, attrs, false)
+      _update_attributes(attrs, false)
     end
 
     def update_attributes!(attrs)
       self.attributes = attrs
       return save! if new_record?
       raise DocumentInvalidError unless valid?
-      _update({}, attrs, true)
+      _update_attributes(attrs, true)
+    end
+
+    # Update without checking validations. The +Document+ will be saved without validations if it is a new record.
+    def update(attrs, safe = false)
+      self.attributes = attrs
+      if new_record?
+        _root.send(:_save, safe) if _root
+        _save(safe)
+      else
+        _update_attributes(attrs, safe)
+      end
     end
 
     module ClassMethods
@@ -143,12 +154,16 @@ module MongoDoc
 
     protected
 
+    def _update_attributes(attrs, safe)
+      return _root.send(:_update, {_selector_path + '._id' => _id}, hash_with_modifier_path_keys(attrs), safe) if _root
+      _update({}, attrs, safe)
+    end
+
     def _remove
       _collection.remove({'_id' => _id})
     end
 
     def _update(selector, data, safe)
-      return _root.send(:_update, {_selector_path + '._id' => _id}, hash_with_modifier_path_keys(data), safe) if _root
       _collection.update({'_id' => _id}.merge(selector), {'$set' => data}, :safe => safe)
     end
 
