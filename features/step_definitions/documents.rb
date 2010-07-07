@@ -38,3 +38,11 @@ class Event
 
   embed_hash :addresses
 end
+
+class Person
+  include MongoDoc::Document
+
+  attr_accessor :name
+
+  timestamps!
+end

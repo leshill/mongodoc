@@ -6,6 +6,7 @@ require 'mongo_doc/criteria'
 require 'mongo_doc/finders'
 require 'mongo_doc/index'
 require 'mongo_doc/scope'
+require 'mongo_doc/timestamps'
 require 'active_model/naming'
 require 'active_model/translation'
 require 'active_model/deprecated_error_methods'
@@ -31,6 +32,7 @@ module MongoDoc
         extend Finders
         extend Index
         extend Scope
+        extend Timestamps
         include ::ActiveModel::Validations
         extend ::ActiveModel::Naming
         extend Validations

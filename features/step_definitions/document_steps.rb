@@ -123,6 +123,12 @@ Then /^the document '(.+)' does not roundtrip$/ do |name|
   from_db.should_not == object
 end
 
+Then /^the document '(\w+)' is reloaded$/ do |name|
+  object = instance_variable_get("@#{name}")
+  from_db = object.class.find_one(object._id)
+  instance_variable_set("@#{name}", from_db)
+end
+
 Then /^the last return value is (.+)$/ do |bool_val|
   @last_return.should send("be_#{bool_val}")
 end
