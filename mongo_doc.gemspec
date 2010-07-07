@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{mongo_doc}
-  s.version = "0.6.3"
+  s.version = "0.6.4"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Les Hill"]
-  s.date = %q{2010-06-27}
+  s.date = %q{2010-07-07}
   s.description = %q{ODM for MongoDB}
   s.email = %q{leshill@gmail.com}
   s.extra_rdoc_files = [
@@ -30,7 +30,6 @@ Gem::Specification.new do |s|
      "Rakefile",
      "TODO",
      "VERSION",
-     "data/.gitignore",
      "examples/simple_document.rb",
      "examples/simple_object.rb",
      "features/collections.feature",
@@ -48,6 +47,7 @@ Gem::Specification.new do |s|
      "features/step_definitions/document_steps.rb",
      "features/step_definitions/documents.rb",
      "features/step_definitions/embed_hash_steps.rb",
+     "features/step_definitions/field_steps.rb",
      "features/step_definitions/finder_steps.rb",
      "features/step_definitions/index_steps.rb",
      "features/step_definitions/json_steps.rb",
@@ -61,6 +61,7 @@ Gem::Specification.new do |s|
      "features/step_definitions/util_steps.rb",
      "features/string_casting.feature",
      "features/support/support.rb",
+     "features/timestamps.feature",
      "features/using_criteria.feature",
      "lib/mongo_doc.rb",
      "lib/mongo_doc/associations.rb",
@@ -103,6 +104,7 @@ Gem::Specification.new do |s|
      "lib/mongo_doc/railties/config.rb",
      "lib/mongo_doc/root.rb",
      "lib/mongo_doc/scope.rb",
+     "lib/mongo_doc/timestamps.rb",
      "lib/mongo_doc/validations.rb",
      "lib/mongo_doc/validations/validates_embedded.rb",
      "lib/mongoid/contexts/enumerable.rb",
@@ -126,7 +128,6 @@ Gem::Specification.new do |s|
      "lib/mongoid/matchers/nin.rb",
      "lib/mongoid/matchers/size.rb",
      "mongo_doc.gemspec",
-     "mongod.example.yml",
      "mongodb.example.yml",
      "perf/mongo_doc_object.rb",
      "perf/mongo_document.rb",
@@ -164,6 +165,7 @@ Gem::Specification.new do |s|
      "spec/root_spec.rb",
      "spec/scope_spec.rb",
      "spec/spec_helper.rb",
+     "spec/timestamps_spec.rb",
      "spec/validations_spec.rb"
   ]
   s.homepage = %q{http://github.com/leshill/mongodoc}
@@ -202,6 +204,7 @@ Gem::Specification.new do |s|
      "spec/root_spec.rb",
      "spec/scope_spec.rb",
      "spec/spec_helper.rb",
+     "spec/timestamps_spec.rb",
      "spec/validations_spec.rb",
      "examples/simple_document.rb",
      "examples/simple_object.rb"
