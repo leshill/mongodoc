@@ -1,0 +1,9 @@
+if not Rake::Task.task_defined?("db:test:prepare")
+  namespace :db do
+    namespace :test do
+      task :prepare do
+        # noop
+      end
+    end
+  end
+end

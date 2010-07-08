@@ -9,6 +9,7 @@ begin
     gem.email = "leshill@gmail.com"
     gem.homepage = "http://github.com/leshill/mongodoc"
     gem.authors = ["Les Hill"]
+    gem.files.include('lib/**/*.task')
     gem.add_dependency "activesupport", ">= 3.0.0.beta.4"
     gem.add_dependency "activemodel", ">=3.0.0.beta.4"
     gem.add_dependency "mongo", ">= 1.0.0"
