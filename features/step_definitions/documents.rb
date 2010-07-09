@@ -43,6 +43,7 @@ class Person
   include MongoDoc::Document
 
   attr_accessor :name
+  references :address
 
   timestamps!
 end
