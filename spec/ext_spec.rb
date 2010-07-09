@@ -75,6 +75,17 @@ describe "Ruby Object Extensions" do
       end
     end
 
+    context "ObjectID" do
+      it "returns nil for a blank string" do
+        BSON::ObjectID.cast_from_string('').should be_nil
+      end
+
+      it "converts from a string to an ObjectID" do
+        obj = BSON::ObjectID.new
+        BSON::ObjectID.cast_from_string(obj.to_s).should == obj
+      end
+    end
+
     context "Time" do
       it "returns nil for a blank string" do
         Time.cast_from_string('').should be_nil
