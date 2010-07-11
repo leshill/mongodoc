@@ -58,6 +58,12 @@ describe "MongoDoc::Document" do
       data = 'data'
       FormForTest.new(:data => data).data.should == data
     end
+
+    it "#initialize accepts a nil" do
+      expect do
+        FormForTest.new(nil)
+      end.should_not raise_error
+    end
   end
 
  context "saving" do

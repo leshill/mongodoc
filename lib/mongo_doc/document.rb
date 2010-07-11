@@ -48,7 +48,7 @@ module MongoDoc
     end
 
     def initialize(attrs = {})
-      self.attributes = attrs
+      self.attributes = attrs if attrs
     end
 
     def ==(other)
