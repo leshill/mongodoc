@@ -1,6 +1,6 @@
 h1. MongoDoc
 
-Version: Hurricane (0.6.7) 2010/07/10
+Version: Hurricane (0.6.8) 2010/07/11
 
 h2. Notes
 
