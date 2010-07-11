@@ -55,7 +55,7 @@ module MongoDoc
       #
       # An +Integer+ count of documents.
       def count
-        @count ||= collection.find(selector, options).count
+        @count ||= collection.find(selector, find_options).count
       end
 
       # Gets an array of distinct values for the supplied field across the
@@ -75,7 +75,7 @@ module MongoDoc
       #
       # <tt>context.blank?</tt>
       def empty?
-        collection.find_one(selector, options).nil?
+        collection.find_one(selector, find_options).nil?
       end
       alias blank? empty?
 
@@ -92,7 +92,7 @@ module MongoDoc
       #
       # An enumerable +Cursor+.
       def execute(paginating = false)
-        cursor = collection.find(selector, options)
+        cursor = collection.find(selector, find_options)
         if cursor
           @count = cursor.count if paginating
           cursor
@@ -163,7 +163,7 @@ module MongoDoc
       def last
         sorting = options[:sort] || [[:_id, :asc]]
         options[:sort] = sorting.collect { |option| [ option[0], option[1].invert ] }
-        collection.find_one(selector, options)
+        collection.find_one(selector, find_options)
       end
 
       MAX_REDUCE = "function(obj, prev) { if (prev.max == 'start') { prev.max = obj.[field]; } " +
@@ -216,7 +216,7 @@ module MongoDoc
       #
       # The first document in the collection.
       def one
-        collection.find_one(selector, options)
+        collection.find_one(selector, find_options)
       end
 
       alias first one
@@ -266,6 +266,10 @@ module MongoDoc
             yield doc if block_given?
           end
         end
+      end
+
+      def find_options
+        options.dup
       end
     end
   end

@@ -123,6 +123,12 @@ Feature: MongoDoc::Base
     Then the first query result is the document 'contractor'
     And the last query result is the document 'rocketeer'
 
+  Scenario: Criteria can be reused
+    Given I query contacts with criteria in('interests' => ['ruby', 'rails']).order_by([[:name, :desc]])
+    And the first query result is the document 'rocketeer'
+    When I requery
+    Then the first query result is the document 'rocketeer'
+
   Scenario: Using skip on results
     When I query contacts with criteria all('interests' => ['ruby', 'rails']).skip(1)
     Then the size of the query result is 2

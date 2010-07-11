@@ -10,6 +10,10 @@ When "I also want a $number query with criteria $criteria" do |number, criteria|
   instance_variable_set("@#{number}", eval("query.#{criteria}"))
 end
 
+When /^I requery$/ do
+  # do nothing
+end
+
 Then /^the query result is equal to the document '(.*)'$/ do |name|
   doc = instance_variable_get("@#{name}")
   query.should == doc
@@ -63,4 +67,3 @@ end
 Then /^the (.+) query (is|is not) (empty|blank)$/ do |number, is, empty|
   instance_variable_get("@#{number}").send("#{empty}?").should == (is == 'is')
 end
-
