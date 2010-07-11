@@ -269,7 +269,7 @@ module MongoDoc
       end
 
       def find_options
-        options.dup
+        options.except(:cache, :enslave)
       end
     end
   end

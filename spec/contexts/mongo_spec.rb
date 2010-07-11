@@ -69,6 +69,12 @@ describe "MongoDoc::Contexts::Mongo" do
     end
 
     context "#execute" do
+      it "uses filtered options" do
+        collection.should_receive(:find).with({},{})
+        criteria.cache
+        context.execute
+      end
+
       it "uses find" do
         collection.should_receive(:find)
         context.execute
