@@ -69,7 +69,7 @@ describe "MongoDoc::Document" do
 
   end
 
- context "saving" do
+  context "saving" do
     class SaveRoot
       include MongoDoc::Document
 
