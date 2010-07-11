@@ -64,6 +64,10 @@ module MongoDoc
       _id.nil?
     end
 
+    def persisted?
+      _id.present?
+    end
+
     def remove
       raise UnsupportedOperation.new('Document#remove is not supported for embedded documents') if _root
       remove_document
@@ -95,9 +99,14 @@ module MongoDoc
       end
     end
 
-    def to_param
-      _id.to_s
+    def to_model
+      self
     end
+
+    def to_param
+      _id ? _id.to_s : nil
+    end
+    alias to_key to_param
 
     def update_attributes(attrs)
       self.attributes = attrs

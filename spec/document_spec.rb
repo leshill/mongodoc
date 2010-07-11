@@ -23,35 +23,37 @@ describe "MongoDoc::Document" do
     end
   end
 
-  context "satisfies form_for requirements" do
+  context "ActiveModel" do
     class FormForTest
       include MongoDoc::Document
 
       attr_accessor :data
     end
 
-    before do
-      @doc = FormForTest.new
-      @doc._id = '1'
+    describe FormForTest do
+      it_should_behave_like AnActiveModel
     end
 
-    it "#id returns the _id" do
-      @doc.id.should == @doc._id
+    let(:doc) { FormForTest.new }
+
+    context "persisted record" do
+      subject { doc._id = '1'; doc }
+
+      it { should_not be_new_record }
+      it { should be_persisted }
+      its(:id) { should == doc._id }
+      its(:to_param) { should == doc._id.to_s }
+      its(:to_key) { should == doc._id.to_s }
     end
 
-    it "#to_param returns the string of the _id" do
-      @doc.to_param.should == @doc._id.to_s
-    end
+    context "record has not been persisted" do
+      subject { doc }
 
-    context "#new_record?" do
-      it "is true when the object does not have an _id" do
-        @doc._id = nil
-        @doc.should be_new_record
-      end
-
-      it "is false when the object has an id" do
-        @doc.should_not be_new_record
-      end
+      it { should be_new_record }
+      it { should_not be_persisted }
+      its(:id) { should be_nil }
+      its(:to_param) { should be_nil }
+      its(:to_key) { should be_nil }
     end
 
     it "#initialize takes a hash" do
@@ -64,6 +66,7 @@ describe "MongoDoc::Document" do
         FormForTest.new(nil)
       end.should_not raise_error
     end
+
   end
 
  context "saving" do
