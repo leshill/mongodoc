@@ -66,14 +66,12 @@ module MongoDoc
           end
 
           if type and type.respond_to?(:cast_from_string)
-            module_eval(<<-RUBY, __FILE__, __LINE__)
-              def #{name}_with_type=(value)               # def birth_date_with_type=(value)
-                if value.kind_of?(String)                 #   if value.kind_of?(String)
-                  value = #{type}.cast_from_string(value) #     value = Date.cast_from_string(value)
-                end                                       #   end
-                self.#{name}_without_type = value         #   self.birth_date_without_type = value
-              end                                         # end
-            RUBY
+            define_method "#{name}_with_type=" do |value|
+              if value.kind_of?(String)
+                value = type.cast_from_string(value)
+              end
+              self.send("#{name}_without_type=", value)
+            end
             alias_method_chain "#{name}=", :type
           end
         end

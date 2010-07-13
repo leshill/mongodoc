@@ -111,9 +111,21 @@ describe "MongoDoc::Attributes" do
           object.birthdate = date.to_s
         end
 
-        it "sets the value to the result of the case" do
+        it "sets the value to the result of the cast" do
           object.birthdate = date.to_s
           object.birthdate.should == date
+        end
+      end
+
+      context "when a namespace collision exists" do
+        class TestType
+          attr_accessor :bson_id, :type => ::BSON::ObjectID
+        end
+
+        let(:bson_id) { ::BSON::ObjectID.new }
+        it "sets the value to the result of the cast" do
+          object.bson_id = bson_id.to_s
+          object.bson_id.should == bson_id
         end
       end
     end
