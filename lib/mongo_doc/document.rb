@@ -8,6 +8,7 @@ require 'mongo_doc/index'
 require 'mongo_doc/scope'
 require 'mongo_doc/timestamps'
 require 'mongo_doc/references'
+require 'mongo_doc/references_many'
 require 'active_model/naming'
 require 'active_model/translation'
 require 'active_model/deprecated_error_methods'
@@ -35,6 +36,7 @@ module MongoDoc
         extend Scope
         extend Timestamps
         extend References
+        extend ReferencesMany
         include ::ActiveModel::Validations
         extend ::ActiveModel::Naming
         extend Validations

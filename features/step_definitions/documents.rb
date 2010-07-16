@@ -44,6 +44,7 @@ class Person
 
   attr_accessor :name
   references :address
+  references_many :addresses, :as => :previous_addresses
 
   timestamps!
 end
