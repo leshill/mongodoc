@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{mongo_doc}
-  s.version = "0.6.9"
+  s.version = "0.6.10"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Les Hill"]
-  s.date = %q{2010-07-12}
+  s.date = %q{2010-07-16}
   s.description = %q{ODM for MongoDB}
   s.email = %q{leshill@gmail.com}
   s.extra_rdoc_files = [
@@ -54,7 +54,6 @@ Gem::Specification.new do |s|
      "features/step_definitions/objects.rb",
      "features/step_definitions/partial_update_steps.rb",
      "features/step_definitions/query_steps.rb",
-     "features/step_definitions/reference_steps.rb",
      "features/step_definitions/removing_documents_steps.rb",
      "features/step_definitions/scope_steps.rb",
      "features/step_definitions/string_casting_steps.rb",
@@ -104,6 +103,7 @@ Gem::Specification.new do |s|
      "lib/mongo_doc/railties/config.rb",
      "lib/mongo_doc/railties/db_prepare.task",
      "lib/mongo_doc/references.rb",
+     "lib/mongo_doc/references_many.rb",
      "lib/mongo_doc/root.rb",
      "lib/mongo_doc/scope.rb",
      "lib/mongo_doc/timestamps.rb",
@@ -165,6 +165,7 @@ Gem::Specification.new do |s|
      "spec/mongodb.yml",
      "spec/mongodb_pairs.yml",
      "spec/new_record_spec.rb",
+     "spec/references_many_spec.rb",
      "spec/references_spec.rb",
      "spec/root_spec.rb",
      "spec/scope_spec.rb",
@@ -207,6 +208,7 @@ Gem::Specification.new do |s|
      "spec/index_spec.rb",
      "spec/matchers_spec.rb",
      "spec/new_record_spec.rb",
+     "spec/references_many_spec.rb",
      "spec/references_spec.rb",
      "spec/root_spec.rb",
      "spec/scope_spec.rb",
