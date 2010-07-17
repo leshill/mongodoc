@@ -101,14 +101,17 @@ module MongoDoc
       end
     end
 
+    def to_key
+      persisted? ? [_id] : nil
+    end
+
     def to_model
       self
     end
 
     def to_param
-      _id ? _id.to_s : nil
+      persisted? ? _id.to_s : nil
     end
-    alias to_key to_param
 
     def update_attributes(attrs)
       self.attributes = attrs

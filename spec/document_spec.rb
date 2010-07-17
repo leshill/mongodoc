@@ -43,7 +43,7 @@ describe "MongoDoc::Document" do
       it { should be_persisted }
       its(:id) { should == doc._id }
       its(:to_param) { should == doc._id.to_s }
-      its(:to_key) { should == doc._id.to_s }
+      its(:to_key) { should == [doc._id] }
     end
 
     context "record has not been persisted" do
