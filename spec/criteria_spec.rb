@@ -63,7 +63,4 @@ describe MongoDoc::Criteria do
       original.should_not == chained
     end
   end
-
-
-
 end
