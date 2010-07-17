@@ -1,7 +1,12 @@
 # encoding: utf-8
+
+require 'mongoid/contexts/id_conversion'
+
 module Mongoid #:nodoc:
   module Criterion #:nodoc:
     module Optional
+      include Mongoid::Contexts::IdConversion
+
       # Tells the criteria that the cursor that gets returned needs to be
       # cached. This is so multiple iterations don't hit the database multiple
       # times, however this is not advisable when working with large data sets
@@ -70,7 +75,8 @@ module Mongoid #:nodoc:
       #
       # Returns: <tt>self</tt>
       def id(*args)
-        (args.flatten.size > 1) ? self.in(:_id => args.flatten) : (@selector[:_id] = args.first)
+        ids = strings_to_object_ids(args.flatten)
+        (ids.size > 1) ? self.in(:_id => ids) : (@selector[:_id] = ids.first)
         self
       end
 
