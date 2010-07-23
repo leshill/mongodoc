@@ -182,12 +182,10 @@ h2. Hacking on MongoDoc
 
 * Clone the project locally.
 * Use RVM, you will be happier.
-* Run @gem install bundler --pre@
-* Run @bundle install@
-* Make sure MongoDB is running
-* Run the specs and features:
-
-bc. rake spec && rake features
+* Run: @gem install bundler --pre@
+* Run: @bundle install@
+* Make sure MongoDB is running.
+* Run the specs and features (they should all pass!): @rake spec && rake features@
 
 h2. Note on Patches/Pull Requests
 
