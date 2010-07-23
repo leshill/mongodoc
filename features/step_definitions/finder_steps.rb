@@ -10,6 +10,6 @@ When /^I query (.+) to find_one with the (.+) of the '(.+)' document$/ do |colle
   self.finder_query = klass(collection).find_one(instance_variable_get("@#{doc_name}").send(id))
 end
 
-Then /^the query result was (\d+) documents$/ do |count|
+Then /^the query result (?:is|was) (\d+) documents$/ do |count|
   query.should == count.to_i
 end

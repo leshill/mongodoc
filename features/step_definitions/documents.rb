@@ -48,3 +48,7 @@ class Person
 
   timestamps!
 end
+
+class VIP < Person
+  attr_accessor :title
+end

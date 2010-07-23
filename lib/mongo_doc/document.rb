@@ -1,4 +1,5 @@
 require 'mongo_doc/bson'
+require 'mongo_doc/polymorphic_collection'
 require 'mongo_doc/attributes'
 require 'mongo_doc/root'
 require 'mongo_doc/associations'
@@ -28,6 +29,7 @@ module MongoDoc
       klass.class_eval do
         include Attributes
         include Root
+        extend PolymorphicCollection
         extend Associations
         extend ClassMethods
         extend Criteria
@@ -149,10 +151,6 @@ module MongoDoc
 
       def collection
         @collection ||= MongoDoc::Collection.new(collection_name)
-      end
-
-      def collection_name
-        self.to_s.tableize.gsub('/', '.')
       end
 
       def create(attrs = {})
