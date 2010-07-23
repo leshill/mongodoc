@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{mongo_doc}
-  s.version = "0.6.11"
+  s.version = "0.6.12"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Les Hill"]
-  s.date = %q{2010-07-22}
+  s.date = %q{2010-07-23}
   s.description = %q{ODM for MongoDB}
   s.email = %q{leshill@gmail.com}
   s.extra_rdoc_files = [
@@ -23,6 +23,7 @@ Gem::Specification.new do |s|
      ".rvmrc",
      ".watchr",
      "Gemfile",
+     "Gemfile.lock",
      "HISTORY.md",
      "LICENSE",
      "README.textile",
@@ -38,6 +39,7 @@ Gem::Specification.new do |s|
      "features/mongodoc_base.feature",
      "features/new_record.feature",
      "features/partial_updates.feature",
+     "features/polymorphic_collections.feature",
      "features/references.feature",
      "features/removing_documents.feature",
      "features/saving_an_object.feature",
@@ -99,6 +101,7 @@ Gem::Specification.new do |s|
      "lib/mongo_doc/finders.rb",
      "lib/mongo_doc/index.rb",
      "lib/mongo_doc/matchers.rb",
+     "lib/mongo_doc/polymorphic_collection.rb",
      "lib/mongo_doc/railtie.rb",
      "lib/mongo_doc/railties/config.rb",
      "lib/mongo_doc/railties/db_prepare.task",
@@ -167,6 +170,7 @@ Gem::Specification.new do |s|
      "spec/mongodb.yml",
      "spec/mongodb_pairs.yml",
      "spec/new_record_spec.rb",
+     "spec/polymorphic_collection_spec.rb",
      "spec/references_many_spec.rb",
      "spec/references_spec.rb",
      "spec/root_spec.rb",
@@ -211,6 +215,7 @@ Gem::Specification.new do |s|
      "spec/index_spec.rb",
      "spec/matchers_spec.rb",
      "spec/new_record_spec.rb",
+     "spec/polymorphic_collection_spec.rb",
      "spec/references_many_spec.rb",
      "spec/references_spec.rb",
      "spec/root_spec.rb",
