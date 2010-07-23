@@ -177,6 +177,18 @@ Thanks to Sandro and Durran for some great conversations and some lovely code.
 
 Thanks to Elliot for pushing me to get Rails 3 support
 
+
+h2. Hacking on MongoDoc
+
+* Clone the project locally.
+* Use RVM, you will be happier.
+* Run @gem install bundler --pre@
+* Run @bundle install@
+* Make sure MongoDB is running
+* Run the specs and features:
+
+bc. rake spec && rake features
+
 h2. Note on Patches/Pull Requests
 
 * Fork the project.
