@@ -76,8 +76,12 @@ module Mongoid #:nodoc:
       # Returns: <tt>self</tt>
       def id(*args)
         ids = strings_to_object_ids(args.flatten)
-        (ids.size > 1) ? self.in(:_id => ids) : (@selector[:_id] = ids.first)
-        self
+        if ids.size > 1
+          self.in(:_id => ids)
+        else
+          @selector[:_id] = ids.first
+          self
+        end
       end
 
       # Adds a criterion to the +Criteria+ that specifies the maximum number of

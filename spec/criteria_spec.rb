@@ -25,7 +25,7 @@ describe MongoDoc::Criteria do
       wrapper.klass.should == CriteriaTest
     end
 
-    %w(all and any_in cache enslave excludes fuse in limit offset only order_by skip where).each do |wrapping_method|
+    %w(all and any_in cache enslave excludes fuse id in limit offset only order_by skip where).each do |wrapping_method|
       it "#{wrapping_method} returns a new CriteriaWrapper" do
         wrapper.send(wrapping_method).object_id.should_not == wrapper.object_id
       end
@@ -39,6 +39,13 @@ describe MongoDoc::Criteria do
       wrapper.not_in({}).object_id.should_not == wrapper.object_id
     end
 
+    it "id with mutliple ids returns a new CriteriaWrapper with the id selector set" do
+      id1 = BSON::ObjectID.new
+      id2 = BSON::ObjectID.new
+      returned = wrapper.id(id1, id2)
+      returned.object_id.should_not == wrapper.object_id
+      returned.selector[:_id].should == {'$in' => [id1, id2]}
+    end
   end
 
   context "criteria delegates" do
