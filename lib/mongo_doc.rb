@@ -3,7 +3,7 @@ require 'active_support'
 require 'active_support/core_ext'
 
 module MongoDoc
-  VERSION = '0.6.13'
+  VERSION = '0.6.14'
 end
 
 require 'mongo_doc/connection'
