@@ -10,12 +10,7 @@ require 'mongo_doc/scope'
 require 'mongo_doc/timestamps'
 require 'mongo_doc/references'
 require 'mongo_doc/references_many'
-require 'active_model/naming'
-require 'active_model/translation'
-require 'active_model/deprecated_error_methods'
-require 'active_model/errors'
-require 'active_model/validator'
-require 'active_model/validations'
+require 'active_model'
 require 'mongo_doc/validations'
 
 module MongoDoc
