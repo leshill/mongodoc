@@ -29,5 +29,11 @@ describe "MongoDoc::Attributes attributes accessor" do
       object.attributes = {:name => name}
       object.name.should == name
     end
+
+    it "ignores a nil" do
+      expect do
+        object.attributes = nil
+      end.should_not raise_error
+    end
   end
 end

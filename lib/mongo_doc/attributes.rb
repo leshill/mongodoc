@@ -22,7 +22,7 @@ module MongoDoc
     end
 
     def attributes=(attrs)
-      attrs.each do |key, value|
+      (attrs || {}).each do |key, value|
         send("#{key}=", value)
       end
     end
