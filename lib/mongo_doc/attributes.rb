@@ -48,7 +48,7 @@ module MongoDoc
           _keys << name unless _keys.include?(name)
           attr_writer name
 
-          if default
+          unless default.nil?
             define_method("_default_#{name}", default.kind_of?(Proc) ? default : proc { default })
             private "_default_#{name}"
 
@@ -63,6 +63,12 @@ module MongoDoc
             RUBY
           else
             attr_reader name
+          end
+
+          if type == Boolean
+            module_eval(<<-RUBY, __FILE__, __LINE__)
+              alias #{name}? #{name}  # alias active? active
+            RUBY
           end
 
           if type and type.respond_to?(:cast_from_string)

@@ -28,6 +28,7 @@ describe "MongoDoc::Attributes" do
 
       attr_accessor :attr1, :attr2
       attr_accessor :validation_context
+      attr_accessor :boolean, :type => Boolean
     end
 
     it "adds its arguments to _keys" do
@@ -58,6 +59,14 @@ describe "MongoDoc::Attributes" do
       it "has an attr1 writer" do
         should respond_to(:attr1=)
       end
+
+      it "has a reader for a boolean" do
+        should respond_to(:boolean)
+      end
+
+      it "has a ? reader for a boolean" do
+        should respond_to(:boolean?)
+      end
     end
 
     context "default values" do
@@ -65,6 +74,7 @@ describe "MongoDoc::Attributes" do
         include MongoDoc::Attributes
 
         attr_accessor :with_default, :default => 'value'
+        attr_accessor :boolean_default, :type => Boolean, :default => false
       end
 
       let(:object) { TestDefault.new }
@@ -86,6 +96,10 @@ describe "MongoDoc::Attributes" do
       it "does not set the default value if the setter is invoked first" do
         object.with_default = nil
         object.with_default.should be_nil
+      end
+
+      it "allows a false default for booleans" do
+        object.boolean_default.should == false
       end
     end
 
