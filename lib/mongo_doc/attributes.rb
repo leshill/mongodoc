@@ -71,7 +71,7 @@ module MongoDoc
             RUBY
           end
 
-          if type and type.respond_to?(:cast_from_string)
+          if type.try(:respond_to?, :cast_from_string)
             define_method "#{name}_with_type=" do |value|
               if value.kind_of?(String)
                 value = type.cast_from_string(value)
