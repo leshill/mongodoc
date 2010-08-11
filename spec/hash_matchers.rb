@@ -24,4 +24,6 @@ module HashMatchers
     HasEntry.new(expected)
   end
   alias :has_entries :has_entry
+  alias :have_entries :has_entry
+  alias :have_entry :has_entry
 end
