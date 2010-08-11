@@ -72,7 +72,16 @@ describe MongoDoc::Scope do
     end
 
     it "merges the criteria" do
-      ScopeTest.active.count_gt_one.selector.should has_entry(:count => {'$gt' => 1}, :active => true)
+      ScopeTest.active.count_gt_one.selector.should have_entries(:count => {'$gt' => 1}, :active => true)
+    end
+
+    it "chains with other criteria" do
+      ScopeTest.active.where(:count => 1).selector.should have_entries(:count => 1, :active => true)
+    end
+
+    let(:id) { BSON::ObjectID.new }
+    it "chains with id" do
+      ScopeTest.active.id(id).selector.should have_entries(:active => true, :_id => id)
     end
   end
 end

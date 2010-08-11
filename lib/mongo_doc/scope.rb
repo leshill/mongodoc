@@ -21,6 +21,8 @@ module MongoDoc
     end
 
     class CriteriaProxy
+      undef id
+
       attr_accessor :criteria, :klass, :parent_scope
 
       delegate :scopes, :to => :parent_scope
