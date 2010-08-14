@@ -33,6 +33,23 @@ describe MongoDoc::References do
         Person._keys.should include(:address_id)
       end
     end
+
+    context "setting the id" do
+      class Person
+        include MongoDoc::Document
+
+        references :address
+      end
+
+      let(:address) { Address.new(:_id => BSON::ObjectID.new) }
+      let(:person) { Person.new }
+
+      it "resets the object to nil" do
+        person.address = address
+        person.address_id = nil
+        person.address.should be_nil
+      end
+    end
   end
 
   context "Named Reference" do
@@ -63,20 +80,4 @@ describe MongoDoc::References do
     end
   end
 
-  describe "setting the id" do
-    class Person
-      include MongoDoc::Document
-
-      references :address
-    end
-
-    let(:address) { Address.new(:_id => BSON::ObjectID.new) }
-    let(:person) { Person.new }
-
-    it "resets the object to nil" do
-      person.address = address
-      person.address_id = nil
-      person.address.should be_nil
-    end
-  end
 end
