@@ -52,3 +52,10 @@ end
 class VIP < Person
   attr_accessor :title
 end
+
+class Character
+  include MongoDoc::Document
+
+  attr_accessor :name
+  db_references :address
+end

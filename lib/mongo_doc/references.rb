@@ -1,6 +1,7 @@
 module MongoDoc
   module References
-    # Declare a reference to another +Document+.
+    # Declare a reference to another +Document+. Use this when you have a
+    # simple reference or a single polymorphic collection.
     #
     # * classname:: name of +Document+ type as an +underscore+ symbol or string
     # * options:: +:as+ specifies the name of the attribute
@@ -31,6 +32,47 @@ module MongoDoc
       RUBY
 
       alias_method_chain "#{attr_name}_id=", :reference
+    end
+
+
+    # Declare a +DBRef+ to another +Document+. A +DBRef+ can be in any
+    # collection and can point to an instance of any class.
+    #
+    # * name:: name of the attribute
+    def db_references(name)
+
+      attr_accessor "#{name}_ref".to_sym, :type => ::BSON::DBRef
+
+      module_eval(<<-RUBY, __FILE__, __LINE__)
+        def #{name}_ref_with_reference=(value)       # def address_ref_with_reference=(value)
+          @#{name} = nil                             #   @address = nil
+          self.#{name}_ref_without_reference = value #   self.address_ref_without_reference = value
+        end                                          # end
+
+        def #{name}
+          @#{name} ||= if #{name}_ref.nil?        # @address ||= if address_name_ref.nil?
+              nil                                 #     nil
+            else                                  #   else
+              self.class.dereference(#{name}_ref) #     self.class.dereference(address_name_ref)
+            end                                   #   end
+        end
+
+        def #{name}=(value)                                  # def address=(value)
+          @#{name} = value                                   # @address = value
+          self.#{name}_ref = if value.nil?                   # self.address_ref = if value.nil?
+              nil                                            #     nil
+            else                                             #   else
+              ::BSON::DBRef.new(value.class.collection_name, #     ::BSON::DBRef.new(value.collection_name,
+                value._id)                                   #       value._id)
+            end                                              #   end
+        end                                                  # end
+      RUBY
+
+      alias_method_chain "#{name}_ref=", :reference
+    end
+
+    def dereference(db_ref)
+      MongoDoc::Collection.new(db_ref.namespace).find_one(db_ref.object_id)
     end
   end
 end

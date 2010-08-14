@@ -80,4 +80,50 @@ describe MongoDoc::References do
     end
   end
 
+  context "DBRef Reference" do
+    class Person
+      include MongoDoc::Document
+
+      db_references :address
+    end
+
+    let(:address) { Address.new(:_id => BSON::ObjectID.new) }
+    let(:person) { Person.new }
+    subject { person }
+
+    context "Object accessor" do
+      it { should respond_to(:address) }
+      it { should respond_to(:address=) }
+
+      it "is not part of the persistent key set" do
+        Person._keys.should_not include(:address)
+      end
+    end
+
+    context "DBRef accessor" do
+      it { should respond_to(:address_ref) }
+      it { should respond_to(:address_ref=) }
+
+      it "is part of the persistent key set" do
+        Person._keys.should include(:address_ref)
+      end
+    end
+
+    context "setting the object" do
+      it "sets the reference" do
+        person.address = address
+        person.address_ref.namespace.should == Address.collection_name
+        person.address_ref.object_id.should == address._id
+      end
+    end
+
+    context "setting the reference" do
+
+      it "resets the object to nil" do
+        person.address = address
+        person.address_ref = nil
+        person.address.should be_nil
+      end
+    end
+  end
 end
