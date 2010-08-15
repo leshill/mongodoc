@@ -8,20 +8,20 @@ describe MongoDoc::References do
   end
 
   context "Simple Reference" do
-    class Person
+    class SimplePerson
       include MongoDoc::Document
 
       references :address
     end
 
-    subject { Person.new }
+    subject { SimplePerson.new }
 
     context "Object accessor" do
       it { should respond_to(:address) }
       it { should respond_to(:address=) }
 
       it "is not part of the persistent key set" do
-        Person._keys.should_not include(:address)
+        SimplePerson._keys.should_not include(:address)
       end
     end
 
@@ -30,43 +30,36 @@ describe MongoDoc::References do
       it { should respond_to(:address_id=) }
 
       it "is part of the persistent key set" do
-        Person._keys.should include(:address_id)
+        SimplePerson._keys.should include(:address_id)
       end
     end
 
     context "setting the id" do
-      class Person
-        include MongoDoc::Document
-
-        references :address
-      end
-
       let(:address) { Address.new(:_id => BSON::ObjectID.new) }
-      let(:person) { Person.new }
 
       it "resets the object to nil" do
-        person.address = address
-        person.address_id = nil
-        person.address.should be_nil
+        subject.address = address
+        subject.address_id = nil
+        subject.address.should be_nil
       end
     end
   end
 
   context "Named Reference" do
-    class Person
+    class NamedPerson
       include MongoDoc::Document
 
       references :address, :as => :work_address
     end
 
-    subject { Person.new }
+    subject { NamedPerson.new }
 
     context "Object accessor" do
       it { should respond_to(:work_address) }
       it { should respond_to(:work_address=) }
 
       it "is not part of the persistent key set" do
-        Person._keys.should_not include(:work_address)
+        NamedPerson._keys.should_not include(:work_address)
       end
     end
 
@@ -75,28 +68,27 @@ describe MongoDoc::References do
       it { should respond_to(:work_address_id=) }
 
       it "is part of the persistent key set" do
-        Person._keys.should include(:work_address_id)
+        NamedPerson._keys.should include(:work_address_id)
       end
     end
   end
 
   context "DBRef Reference" do
-    class Person
+    class DBRefPerson
       include MongoDoc::Document
 
-      db_references :address
+      references :as_ref => :address
     end
 
     let(:address) { Address.new(:_id => BSON::ObjectID.new) }
-    let(:person) { Person.new }
-    subject { person }
+    subject { DBRefPerson.new }
 
     context "Object accessor" do
       it { should respond_to(:address) }
       it { should respond_to(:address=) }
 
       it "is not part of the persistent key set" do
-        Person._keys.should_not include(:address)
+        DBRefPerson._keys.should_not include(:address)
       end
     end
 
@@ -105,24 +97,24 @@ describe MongoDoc::References do
       it { should respond_to(:address_ref=) }
 
       it "is part of the persistent key set" do
-        Person._keys.should include(:address_ref)
+        DBRefPerson._keys.should include(:address_ref)
       end
     end
 
     context "setting the object" do
       it "sets the reference" do
-        person.address = address
-        person.address_ref.namespace.should == Address.collection_name
-        person.address_ref.object_id.should == address._id
+        subject.address = address
+        subject.address_ref.namespace.should == Address.collection_name
+        subject.address_ref.object_id.should == address._id
       end
     end
 
     context "setting the reference" do
 
       it "resets the object to nil" do
-        person.address = address
-        person.address_ref = nil
-        person.address.should be_nil
+        subject.address = address
+        subject.address_ref = nil
+        subject.address.should be_nil
       end
     end
   end

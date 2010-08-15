@@ -1,14 +1,44 @@
 module MongoDoc
   module References
-    # Declare a reference to another +Document+. Use this when you have a
-    # simple reference or a single polymorphic collection.
+
+    # Dereference a DBRef and return the Object
+    def dereference(db_ref)
+      MongoDoc::Collection.new(db_ref.namespace).find_one(db_ref.object_id)
+    end
+
+    # Declare a reference to another +Document+. The reference can either be an
+    # +ObjectID+ reference, or a +BSON::DBRef+
+    #
+    # Use an +ObjectID+ reference when you have a simple reference or will be
+    # referencing a single polymorphic collection. Example:
+    #
+    # +references :address
+    # +references :address, :as => :work_address+
     #
     # * classname:: name of +Document+ type as an +underscore+ symbol or string
-    # * options:: +:as+ specifies the name of the attribute
-    def references(classname, options = {})
-      klass = classname.to_s.camelize
-      attr_name = options[:as] || klass.to_s.demodulize.downcase
+    # * options:: +:as+ specifies the name of the attribute, defaults to
+    # classname
+    #
+    # Use a +BSON::DBRef+ when you need a reference to multiple collections.
+    # Example:
+    #
+    # +references :as_ref => :work_address+
+    #
+    # * options:: +:as_ref+ name of the attribute
+    def references(*args)
+      options = args.extract_options!
 
+      if options.has_key?(:as_ref)
+        references_by_dbref(options[:as_ref])
+      else
+        klass = args[0].to_s.camelize
+        references_by_id(klass, options[:as] || klass.to_s.demodulize.downcase)
+      end
+    end
+
+    private
+
+    def references_by_id(klass, attr_name)
       attr_accessor "#{attr_name}_id".to_sym, :type => ::BSON::ObjectID
 
       module_eval(<<-RUBY, __FILE__, __LINE__)
@@ -34,13 +64,7 @@ module MongoDoc
       alias_method_chain "#{attr_name}_id=", :reference
     end
 
-
-    # Declare a +DBRef+ to another +Document+. A +DBRef+ can be in any
-    # collection and can point to an instance of any class.
-    #
-    # * name:: name of the attribute
-    def db_references(name)
-
+    def references_by_dbref(name)
       attr_accessor "#{name}_ref".to_sym, :type => ::BSON::DBRef
 
       module_eval(<<-RUBY, __FILE__, __LINE__)
@@ -69,10 +93,6 @@ module MongoDoc
       RUBY
 
       alias_method_chain "#{name}_ref=", :reference
-    end
-
-    def dereference(db_ref)
-      MongoDoc::Collection.new(db_ref.namespace).find_one(db_ref.object_id)
     end
   end
 end

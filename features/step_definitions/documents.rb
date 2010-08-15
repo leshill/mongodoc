@@ -57,5 +57,5 @@ class Character
   include MongoDoc::Document
 
   attr_accessor :name
-  db_references :address
+  references :as_ref => :address
 end
