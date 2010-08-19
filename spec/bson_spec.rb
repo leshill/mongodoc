@@ -157,7 +157,7 @@ describe "BSON for Mongo (BSON)" do
       attr_accessor :value
     end
 
-    class Complex
+    class Contained
       attr_accessor :array_of_simple
     end
 
@@ -168,7 +168,7 @@ describe "BSON for Mongo (BSON)" do
       @value2 = 'value2'
       @simple2 = Simple.new
       @simple2.value = @value2
-      @complex = Complex.new
+      @complex = Contained.new
       @complex.array_of_simple = [@simple1, @simple2]
     end
 
@@ -177,15 +177,15 @@ describe "BSON for Mongo (BSON)" do
     end
 
     it "renders a json representation of an object with embedded objects" do
-      @complex.to_bson.should be_bson_eql({MongoDoc::BSON::CLASS_KEY => Complex.name, "array_of_simple" => [@simple1.to_bson, @simple2.to_bson]})
+      @complex.to_bson.should be_bson_eql({MongoDoc::BSON::CLASS_KEY => Contained.name, "array_of_simple" => [@simple1.to_bson, @simple2.to_bson]})
     end
 
     it "ignores a class hash when the :raw_json option is used" do
-      Complex.bson_create(@complex.to_bson.except(MongoDoc::BSON::CLASS_KEY), :raw_json => true).array_of_simple.first.should == @simple1.to_bson
+      Contained.bson_create(@complex.to_bson.except(MongoDoc::BSON::CLASS_KEY), :raw_json => true).array_of_simple.first.should == @simple1.to_bson
     end
 
     it "roundtrips the object" do
-      MongoDoc::BSON.decode(@complex.to_bson).should be_kind_of(Complex)
+      MongoDoc::BSON.decode(@complex.to_bson).should be_kind_of(Contained)
     end
 
     it "allows for embedded arrays of objects" do

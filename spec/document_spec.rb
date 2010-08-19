@@ -424,19 +424,19 @@ describe "MongoDoc::Document" do
   end
 
   context "misc class methods" do
-    class ClassMethods
+    class MiscClassMethods
       include MongoDoc::Document
     end
 
     it ".collection_name returns the name of the collection for this class" do
-      ClassMethods.collection_name.should == ClassMethods.to_s.tableize.gsub('/', '.')
+      MiscClassMethods.collection_name.should == MiscClassMethods.to_s.tableize.gsub('/', '.')
     end
 
     it ".collection returns a wrapped MongoDoc::Collection" do
       db = stub('db')
-      db.should_receive(:collection).with(ClassMethods.to_s.tableize.gsub('/', '.'))
+      db.should_receive(:collection).with(MiscClassMethods.to_s.tableize.gsub('/', '.'))
       MongoDoc::Connection.should_receive(:database).and_return(db)
-      MongoDoc::Collection.should === ClassMethods.collection
+      MongoDoc::Collection.should === MiscClassMethods.collection
     end
   end
 

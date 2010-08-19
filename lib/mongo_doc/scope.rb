@@ -21,7 +21,9 @@ module MongoDoc
     end
 
     class CriteriaProxy
-      undef id
+      if RUBY_VERSION.starts_with?('1.8')
+        undef id
+      end
 
       attr_accessor :criteria, :klass, :parent_scope
 
