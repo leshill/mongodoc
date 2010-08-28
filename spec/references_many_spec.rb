@@ -14,7 +14,8 @@ describe MongoDoc::ReferencesMany do
       references_many :addresses
     end
 
-    subject { Person.new }
+    let(:person) { Person.new }
+    subject { person }
 
     context "Object accessor" do
       it { should respond_to(:addresses) }
@@ -31,6 +32,42 @@ describe MongoDoc::ReferencesMany do
 
       it "is part of the persistent key set" do
         Person._keys.should include('address_ids')
+      end
+    end
+
+    context "setting the ids" do
+      let(:address) { Address.new(:_id => BSON::ObjectID.new) }
+
+      context "to" do
+        before do
+          person.addresses = [address]
+        end
+
+        context "nil" do
+          before do
+            person.address_ids = nil
+          end
+
+          it "sets the ids to []" do
+            person.address_ids.should == []
+          end
+
+          it "resets the objects to nil" do
+            person.addresses.should == []
+          end
+        end
+
+        it "[] resets the objects to []" do
+          person.address_ids = []
+          person.addresses.should == []
+        end
+      end
+
+      context "to strings" do
+        it "converts the strings to ids" do
+          person.address_ids = [address._id.to_s]
+          person.address_ids.should == [address._id]
+        end
       end
     end
   end
@@ -63,46 +100,4 @@ describe MongoDoc::ReferencesMany do
     end
   end
 
-  describe "setting the ids" do
-    class Person
-      include MongoDoc::Document
-
-      references_many :address
-    end
-
-    let(:address) { Address.new(:_id => BSON::ObjectID.new) }
-    let(:person) { Person.new }
-
-    context "to" do
-      before do
-        person.addresses = [address]
-      end
-
-      context "nil" do
-        before do
-          person.address_ids = nil
-        end
-
-        it "sets the ids to []" do
-          person.address_ids.should == []
-        end
-
-        it "resets the objects to nil" do
-          person.addresses.should == []
-        end
-      end
-
-      it "[] resets the objects to []" do
-        person.address_ids = []
-        person.addresses.should == []
-      end
-    end
-
-    context "to strings" do
-      it "converts the strings to ids" do
-        person.address_ids = [address._id.to_s]
-        person.address_ids.should == [address._id]
-      end
-    end
-  end
 end
