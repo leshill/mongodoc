@@ -1,10 +1,6 @@
 module MongoDoc
   module ReferencesMany
 
-    def self.dereference(db_ref)
-      MongoDoc::Collection.new(db_ref.namespace).find_one(db_ref.object_id)
-    end
-
     def self.ids_from_objects(objects)
       if objects.blank?
         []
@@ -39,7 +35,7 @@ module MongoDoc
       if refs.blank?
         []
       else
-        refs.map {|ref| ReferencesMany.dereference(ref) }
+        refs.map {|ref| References.dereference(ref) }
       end
     end
 

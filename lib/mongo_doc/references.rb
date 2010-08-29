@@ -2,7 +2,7 @@ module MongoDoc
   module References
 
     # Dereference a DBRef and return the Object
-    def dereference(db_ref)
+    def self.dereference(db_ref)
       MongoDoc::Collection.new(db_ref.namespace).find_one(db_ref.object_id)
     end
 
@@ -77,7 +77,7 @@ module MongoDoc
           @#{name} ||= if #{name}_ref.nil?        # @address ||= if address_name_ref.nil?
               nil                                 #     nil
             else                                  #   else
-              self.class.dereference(#{name}_ref) #     self.class.dereference(address_name_ref)
+              References.dereference(#{name}_ref) #     References.dereference(address_name_ref)
             end                                   #   end
         end
 
