@@ -1,14 +1,38 @@
 module MongoDoc
   module ReferencesMany
 
-    def self.cast_array(array)
-      array.nil? ? [] : array.map do |item|
-        String === item ? ::BSON::ObjectID.cast_from_string(item) : item
+    def self.dereference(db_ref)
+      MongoDoc::Collection.new(db_ref.namespace).find_one(db_ref.object_id)
+    end
+
+    def self.ids_from_objects(objects)
+      if objects.blank?
+        []
+      else
+        objects.map {|obj| obj._id }
       end
     end
 
-    def self.dereference(db_ref)
-      MongoDoc::Collection.new(db_ref.namespace).find_one(db_ref.object_id)
+    def self.ids_from_strings_or_ids(ids_or_strings)
+      if ids_or_strings.blank?
+        []
+      else
+        ids_or_strings.map do |item|
+          if String === item
+            ::BSON::ObjectID.cast_from_string(item)
+          else
+            item
+          end
+        end
+      end
+    end
+
+    def self.objects_from_ids(klass, ids)
+      if ids.blank?
+        []
+      else
+        klass.find(*ids).entries
+      end
     end
 
     def self.objects_from_refs(refs)
@@ -91,24 +115,19 @@ module MongoDoc
       _keys << ids_name unless _keys.include?(ids_name)
 
       module_eval(<<-RUBY, __FILE__, __LINE__)
-        def #{objects_name}=(array)           # def addresses=(array)
-          @#{objects_name} = array            #   @addresses = array
-          self.#{ids_name} = array.map(&:_id) #   self.address_ids = array.map(&:_id)
-        end                                   # end
+        def #{objects_name}=(objects)                                 # def addresses=(objects)
+          @#{objects_name} = objects                                  #   @addresses = objects
+          self.#{ids_name} = ReferencesMany.ids_from_objects(objects) #   self.address_ids = ReferencesMany.ids_from_objects(objects)
+        end                                                           # end
 
-        def #{objects_name}                          # def addresses
-          @#{objects_name} ||= if #{ids_name}.empty? #   @addresses ||= if address_ids.empty?
-              []                                     #     []
-            else                                     #   else
-              "#{klass}".constantize.                #     "Address".constantize.
-                find(*#{ids_name}).entries           #       find(*address_ids).entries
-            end                                      #   end
-        end
+        def #{objects_name}                                                           # def addresses
+          @#{objects_name} ||= ReferencesMany.objects_from_ids(#{klass}, #{ids_name}) #   @addresses||= ReferencesMany.objects_from_ids(Address, address_ids)
+        end                                                                           # end
 
-        def #{ids_name}=(array)                           # def address_ids=(array)
-          @#{objects_name} = nil                          #   @addresses = nil
-          @#{ids_name} = ReferencesMany.cast_array(array) #   @address_ids = ReferencesMany.cast_array(array)
-        end                                               # end
+        def #{ids_name}=(ids_or_strings)                                        # def address_ids=(ids_or_strings)
+          @#{objects_name} = nil                                                #   @addresses = nil
+          @#{ids_name} = ReferencesMany.ids_from_strings_or_ids(ids_or_strings) #   @address_ids = ReferencesMany.ids_from_strings_or_ids(ids_or_strings)
+        end                                                                     # end
 
         def #{ids_name}       # def address_ids
           @#{ids_name} ||= [] #  @address_ids ||= []
