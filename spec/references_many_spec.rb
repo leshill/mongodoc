@@ -137,4 +137,84 @@ describe MongoDoc::ReferencesMany do
       end
     end
   end
+
+  context "DBRef reference" do
+    class PersonDBRef
+      include MongoDoc::Document
+
+      references_many :as_ref => :addresses
+    end
+
+    let(:address) { Address.new(:_id => BSON::ObjectID.new) }
+    let(:person) { PersonDBRef.new }
+
+    subject { person }
+
+    context "Object accessor" do
+      it { should respond_to(:addresses) }
+      it { should respond_to(:addresses=) }
+
+      it "is not part of the persistent key set" do
+        PersonDBRef._keys.should_not include('addresses')
+      end
+    end
+
+    context "DBRef accessor" do
+      it { should respond_to(:address_refs) }
+      it { should respond_to(:address_refs=) }
+
+      it "is part of the persistent key set" do
+        PersonDBRef._keys.should include('address_refs')
+      end
+    end
+
+    context "setting the collection" do
+      before do
+        person.addresses = [address]
+      end
+
+      it "sets the refs to an array of refs]" do
+        person.address_refs.first.namespace.should == Address.collection_name
+        person.address_refs.first.object_id.should == address._id
+      end
+    end
+
+    context "setting the refs" do
+      before do
+        person.addresses = [address]
+      end
+
+      context "to nil" do
+        before do
+          person.address_refs = nil
+        end
+
+        it "sets the refs to []" do
+          person.address_refs.should == []
+        end
+
+        its(:addresses) { should == [] }
+      end
+
+      context "to []" do
+        before do
+          person.address_refs = []
+        end
+
+        its(:addresses) { should == [] }
+      end
+
+      context "to an array of references" do
+        let(:dbref) { ::BSON::DBRef.new(Address.collection_name, address._id) }
+
+        before do
+          person.address_refs = [dbref]
+        end
+
+        it "sets the addresses to nil" do
+          person.instance_variable_get('@addresses').should be_nil
+        end
+      end
+    end
+  end
 end
