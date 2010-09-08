@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe MongoDoc::References do
-  class Address
+  class PostalAddress
     include MongoDoc::Document
 
     attr_accessor :state
@@ -11,36 +11,36 @@ describe MongoDoc::References do
     class SimplePerson
       include MongoDoc::Document
 
-      references :address
+      references :postal_address
     end
 
     subject { SimplePerson.new }
 
     context "Object accessor" do
-      it { should respond_to(:address) }
-      it { should respond_to(:address=) }
+      it { should respond_to(:postal_address) }
+      it { should respond_to(:postal_address=) }
 
       it "is not part of the persistent key set" do
-        SimplePerson._keys.should_not include(:address)
+        SimplePerson._keys.should_not include(:postal_address)
       end
     end
 
     context "Object Id accessor" do
-      it { should respond_to(:address_id) }
-      it { should respond_to(:address_id=) }
+      it { should respond_to(:postal_address_id) }
+      it { should respond_to(:postal_address_id=) }
 
       it "is part of the persistent key set" do
-        SimplePerson._keys.should include(:address_id)
+        SimplePerson._keys.should include(:postal_address_id)
       end
     end
 
     context "setting the id" do
-      let(:address) { Address.new(:_id => BSON::ObjectID.new) }
+      let(:postal_address) { PostalAddress.new(:_id => BSON::ObjectID.new) }
 
       it "resets the object to nil" do
-        subject.address = address
-        subject.address_id = nil
-        subject.address.should be_nil
+        subject.postal_address = postal_address
+        subject.postal_address_id = nil
+        subject.postal_address.should be_nil
       end
     end
   end
@@ -49,7 +49,7 @@ describe MongoDoc::References do
     class NamedPerson
       include MongoDoc::Document
 
-      references :address, :as => :work_address
+      references :postal_address, :as => :work_address
     end
 
     subject { NamedPerson.new }
@@ -80,7 +80,7 @@ describe MongoDoc::References do
       references :as_ref => :address
     end
 
-    let(:address) { Address.new(:_id => BSON::ObjectID.new) }
+    let(:address) { PostalAddress.new(:_id => BSON::ObjectID.new) }
     subject { DBRefPerson.new }
 
     context "Object accessor" do
@@ -104,7 +104,7 @@ describe MongoDoc::References do
     context "setting the object" do
       it "sets the reference" do
         subject.address = address
-        subject.address_ref.namespace.should == Address.collection_name
+        subject.address_ref.namespace.should == PostalAddress.collection_name
         subject.address_ref.object_id.should == address._id
       end
     end

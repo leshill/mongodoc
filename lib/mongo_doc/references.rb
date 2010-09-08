@@ -32,7 +32,7 @@ module MongoDoc
         references_by_dbref(options[:as_ref])
       else
         klass = args[0].to_s.camelize
-        references_by_id(klass, options[:as] || klass.to_s.demodulize.downcase)
+        references_by_id(klass, options[:as] || klass.to_s.demodulize.underscore)
       end
     end
 

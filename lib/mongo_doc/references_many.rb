@@ -73,7 +73,7 @@ module MongoDoc
         references_many_by_dbref(options[:as_ref].to_s)
       else
         klass = args[0].to_s.singularize.camelize
-        references_many_by_id(klass, options[:as].try(:to_s) || klass.demodulize.downcase.pluralize)
+        references_many_by_id(klass, options[:as].try(:to_s) || klass.demodulize.underscore.pluralize)
       end
     end
 
