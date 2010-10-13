@@ -1,6 +1,7 @@
 require 'mongo_doc/ext/array'
 require 'mongo_doc/ext/binary'
 require 'mongo_doc/ext/boolean_class'
+require 'mongo_doc/ext/code'
 require 'mongo_doc/ext/date'
 require 'mongo_doc/ext/date_time'
 require 'mongo_doc/ext/dbref'
