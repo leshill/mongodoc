@@ -133,9 +133,9 @@ describe "MongoDoc::Connection.Connections" do
       host = 'host'
       port = 'port'
       options = 'options'
-      MongoDoc::Connection.stub(:host).and_return(host)
-      MongoDoc::Connection.stub(:port).and_return(port)
-      MongoDoc::Connection.stub(:options).and_return(options)
+      MongoDoc::Connection.host = host
+      MongoDoc::Connection.port = port
+      MongoDoc::Connection.options = options
       Mongo::Connection.should_receive(:new).with(host, port, options).and_return(connection)
       MongoDoc::Connection.send(:connect)
     end
