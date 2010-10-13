@@ -4,8 +4,8 @@ begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
     gem.name = "mongo_doc"
-    gem.summary = %Q{ODM for MongoDB}
-    gem.description = %Q{ODM for MongoDB}
+    gem.summary = "ODM for MongoDB"
+    gem.description = "ODM for MongoDB"
     gem.email = "leshill@gmail.com"
     gem.homepage = "http://github.com/leshill/mongodoc"
     gem.authors = ["Les Hill"]
