@@ -10,15 +10,15 @@ begin
     gem.homepage = "http://github.com/leshill/mongodoc"
     gem.authors = ["Les Hill"]
     gem.files.include('lib/**/*.task')
-    gem.add_dependency "activesupport", ">= 3.0.0.beta.4"
-    gem.add_dependency "activemodel", ">=3.0.0.beta.4"
-    gem.add_dependency "bson", ">= 1.0.0"
-    gem.add_dependency "bson_ext", ">= 1.0.0"
+    gem.add_dependency "activesupport", ">= 3.0.0"
+    gem.add_dependency "activemodel", ">=3.0.0"
+    gem.add_dependency "bson", "= 1.0.4"
+    gem.add_dependency "bson_ext", "= 1.0.4"
     gem.add_dependency "mongo", ">= 1.0.0"
     gem.add_dependency "tzinfo", ">= 0.3.22"
     gem.add_development_dependency "cucumber", ">= 0.8.5"
     gem.add_development_dependency "jeweler", ">= 1.4.0"
-    gem.add_development_dependency "rspec", ">= 2.0.0.beta.18"
+    gem.add_development_dependency "rspec", ">= 2.0.0"
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end
   Jeweler::GemcutterTasks.new
