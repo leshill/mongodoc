@@ -21,6 +21,19 @@ end
 
 describe "MongoDoc::Connection.Connections" do
 
+  before do
+    MongoDoc::Connection.reset
+  end
+
+  describe "#connection" do
+    let(:conn) { mock }
+
+    it "allows the connection to be set" do
+      MongoDoc::Connection.connection = conn
+      MongoDoc::Connection.connection.should == conn
+    end
+  end
+
   context "Non-rails environment" do
 
     it "does not see Rails" do
@@ -35,7 +48,6 @@ describe "MongoDoc::Connection.Connections" do
       let(:connection) { stub('connection') }
 
       before do
-        MongoDoc::Connection.reset
         MongoDoc::Connection.stub(:connect).and_return(connection)
       end
 
@@ -92,7 +104,6 @@ describe "MongoDoc::Connection.Connections" do
       let(:connection) { stub('connection') }
 
       before do
-        MongoDoc::Connection.reset
         MongoDoc::Connection.stub(:connect).and_return(connection)
       end
 
@@ -111,14 +122,18 @@ describe "MongoDoc::Connection.Connections" do
   context ".verify_server_version" do
     let(:connection) { stub('connection') }
 
+    before do
+      MongoDoc::Connection.connection = connection
+    end
+
     it "raises when the server version is unsupported" do
       connection.stub(:server_version).and_return(Mongo::ServerVersion.new('1.3.4'))
-      lambda { MongoDoc::Connection.send(:verify_server_version, connection) }.should raise_error(MongoDoc::UnsupportedServerVersionError)
+      lambda { MongoDoc::Connection.send(:verify_server_version) }.should raise_error(MongoDoc::UnsupportedServerVersionError)
     end
 
     it "returns when the server version is supported" do
       connection.stub(:server_version).and_return(Mongo::ServerVersion.new('1.4.0'))
-      lambda { MongoDoc::Connection.send(:verify_server_version, connection) }.should_not raise_error(MongoDoc::UnsupportedServerVersionError)
+      lambda { MongoDoc::Connection.send(:verify_server_version) }.should_not raise_error(MongoDoc::UnsupportedServerVersionError)
     end
   end
 

@@ -6,7 +6,7 @@ module MongoDoc
 
     extend self
 
-    attr_writer :config_path, :default_name, :env, :host, :name, :options, :port, :strict
+    attr_writer :config_path, :connection, :default_name, :env, :host, :name, :options, :port, :strict
 
     def config_path
       @config_path || './mongodb.yml'
@@ -55,13 +55,12 @@ module MongoDoc
     private
 
     def connect
-      connection = Mongo::Connection.new(host, port, options)
-      raise NoConnectionError unless connection
-      verify_server_version(connection)
+      self.connection = Mongo::Connection.new(host, port, options) || (raise NoConnectionError.new)
+      verify_server_version
       connection
     end
 
-    def verify_server_version(connection)
+    def verify_server_version
       raise UnsupportedServerVersionError.new('MongoDoc requires at least mongoDB version 1.4.0') unless connection.server_version >= "1.4.0"
     end
   end
