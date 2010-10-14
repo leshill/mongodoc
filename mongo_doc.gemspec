@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Les Hill"]
-  s.date = %q{2010-09-08}
+  s.date = %q{2010-10-13}
   s.description = %q{ODM for MongoDB}
   s.email = %q{leshill@gmail.com}
   s.extra_rdoc_files = [
@@ -86,6 +86,7 @@ Gem::Specification.new do |s|
      "lib/mongo_doc/ext/array.rb",
      "lib/mongo_doc/ext/binary.rb",
      "lib/mongo_doc/ext/boolean_class.rb",
+     "lib/mongo_doc/ext/code.rb",
      "lib/mongo_doc/ext/date.rb",
      "lib/mongo_doc/ext/date_time.rb",
      "lib/mongo_doc/ext/dbref.rb",
@@ -234,36 +235,36 @@ Gem::Specification.new do |s|
     s.specification_version = 3
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
-      s.add_runtime_dependency(%q<activesupport>, [">= 3.0.0.beta.4"])
-      s.add_runtime_dependency(%q<activemodel>, [">= 3.0.0.beta.4"])
-      s.add_runtime_dependency(%q<bson>, [">= 1.0.0"])
-      s.add_runtime_dependency(%q<bson_ext>, [">= 1.0.0"])
+      s.add_runtime_dependency(%q<activesupport>, [">= 3.0.0"])
+      s.add_runtime_dependency(%q<activemodel>, [">= 3.0.0"])
+      s.add_runtime_dependency(%q<bson>, ["= 1.0.4"])
+      s.add_runtime_dependency(%q<bson_ext>, ["= 1.0.4"])
       s.add_runtime_dependency(%q<mongo>, [">= 1.0.0"])
       s.add_runtime_dependency(%q<tzinfo>, [">= 0.3.22"])
       s.add_development_dependency(%q<cucumber>, [">= 0.8.5"])
       s.add_development_dependency(%q<jeweler>, [">= 1.4.0"])
-      s.add_development_dependency(%q<rspec>, [">= 2.0.0.beta.18"])
+      s.add_development_dependency(%q<rspec>, [">= 2.0.0"])
     else
-      s.add_dependency(%q<activesupport>, [">= 3.0.0.beta.4"])
-      s.add_dependency(%q<activemodel>, [">= 3.0.0.beta.4"])
-      s.add_dependency(%q<bson>, [">= 1.0.0"])
-      s.add_dependency(%q<bson_ext>, [">= 1.0.0"])
+      s.add_dependency(%q<activesupport>, [">= 3.0.0"])
+      s.add_dependency(%q<activemodel>, [">= 3.0.0"])
+      s.add_dependency(%q<bson>, ["= 1.0.4"])
+      s.add_dependency(%q<bson_ext>, ["= 1.0.4"])
       s.add_dependency(%q<mongo>, [">= 1.0.0"])
       s.add_dependency(%q<tzinfo>, [">= 0.3.22"])
       s.add_dependency(%q<cucumber>, [">= 0.8.5"])
       s.add_dependency(%q<jeweler>, [">= 1.4.0"])
-      s.add_dependency(%q<rspec>, [">= 2.0.0.beta.18"])
+      s.add_dependency(%q<rspec>, [">= 2.0.0"])
     end
   else
-    s.add_dependency(%q<activesupport>, [">= 3.0.0.beta.4"])
-    s.add_dependency(%q<activemodel>, [">= 3.0.0.beta.4"])
-    s.add_dependency(%q<bson>, [">= 1.0.0"])
-    s.add_dependency(%q<bson_ext>, [">= 1.0.0"])
+    s.add_dependency(%q<activesupport>, [">= 3.0.0"])
+    s.add_dependency(%q<activemodel>, [">= 3.0.0"])
+    s.add_dependency(%q<bson>, ["= 1.0.4"])
+    s.add_dependency(%q<bson_ext>, ["= 1.0.4"])
     s.add_dependency(%q<mongo>, [">= 1.0.0"])
     s.add_dependency(%q<tzinfo>, [">= 0.3.22"])
     s.add_dependency(%q<cucumber>, [">= 0.8.5"])
     s.add_dependency(%q<jeweler>, [">= 1.4.0"])
-    s.add_dependency(%q<rspec>, [">= 2.0.0.beta.18"])
+    s.add_dependency(%q<rspec>, [">= 2.0.0"])
   end
 end
 
