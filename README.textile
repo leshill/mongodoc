@@ -1,6 +1,6 @@
 h1. MongoDoc
 
-Version: 0.6.22 2010/09/08
+Version: 0.6.23 2010/10/13
 
 h2. Notes
 
@@ -155,6 +155,10 @@ h3. Programmatically setting the database connection information
 Finally, if you do not want to use the database configuration file, you can also set the database name, host, port, options, and strict values directly; for example, to set the database name to @stats@:
 
 bc. MongoDoc::Connection.name = 'stats'
+
+And if that is not enough control,  perhaps you are using authentication, just set the connection directly:
+
+bc. MongoDoc::Connection.connection = Mongo::Connection.from_uri("mongodb://user:password@localhost/db")
 
 h2. Cleaning the database during testing
 
