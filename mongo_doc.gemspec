@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{mongo_doc}
-  s.version = "0.6.22"
+  s.version = "0.6.23"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Les Hill"]
-  s.date = %q{2010-10-13}
+  s.date = %q{2010-10-14}
   s.description = %q{ODM for MongoDB}
   s.email = %q{leshill@gmail.com}
   s.extra_rdoc_files = [
@@ -32,6 +32,7 @@ Gem::Specification.new do |s|
      "examples/simple_document.rb",
      "examples/simple_object.rb",
      "features/collections.feature",
+     "features/connection.feature",
      "features/db_references.feature",
      "features/embed_hash.feature",
      "features/finders.feature",
@@ -46,6 +47,7 @@ Gem::Specification.new do |s|
      "features/saving_an_object.feature",
      "features/scopes.feature",
      "features/step_definitions/collection_steps.rb",
+     "features/step_definitions/connection_steps.rb",
      "features/step_definitions/document_steps.rb",
      "features/step_definitions/documents.rb",
      "features/step_definitions/embed_hash_steps.rb",
