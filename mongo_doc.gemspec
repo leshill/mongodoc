@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{mongo_doc}
-  s.version = "0.6.23"
+  s.version = "0.6.24"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Les Hill"]
-  s.date = %q{2010-10-14}
+  s.date = %q{2010-10-17}
   s.description = %q{ODM for MongoDB}
   s.email = %q{leshill@gmail.com}
   s.extra_rdoc_files = [
@@ -108,7 +108,7 @@ Gem::Specification.new do |s|
      "lib/mongo_doc/polymorphic_collection.rb",
      "lib/mongo_doc/railtie.rb",
      "lib/mongo_doc/railties/config.rb",
-     "lib/mongo_doc/railties/db_prepare.task",
+     "lib/mongo_doc/railties/db.task",
      "lib/mongo_doc/references.rb",
      "lib/mongo_doc/references_many.rb",
      "lib/mongo_doc/root.rb",
