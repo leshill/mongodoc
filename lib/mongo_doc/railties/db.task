@@ -1,0 +1,92 @@
+namespace :db do
+
+  if not Rake::Task.task_defined?("db:create")
+    desc 'mongo_doc noop'
+    task :create => :environment do
+    end
+  end
+
+  if not Rake::Task.task_defined?("db:drop")
+    desc 'mongo_doc noop'
+    task :drop => :environment do
+    end
+  end
+
+  if not Rake::Task.task_defined?("db:fixtures:load")
+    namespace :fixtures do
+      desc 'mongo_doc noop'
+      task :load do
+      end
+    end
+  end
+
+  if not Rake::Task.task_defined?("db:migrate")
+    desc 'mongo_doc noop'
+    task :migrate => :environment do
+    end
+  end
+
+  if not Rake::Task.task_defined?("db:migrate:status")
+    namespace :migrate do
+      desc 'mongo_doc noop'
+      task :status do
+      end
+    end
+  end
+
+  if not Rake::Task.task_defined?("db:rollback")
+    desc 'mongo_doc noop'
+    task :rollback => :environment do
+    end
+  end
+
+  if not Rake::Task.task_defined?("db:schema:dump")
+    namespace :schema do
+      desc 'mongo_doc noop'
+      task :dump do
+      end
+    end
+  end
+
+  if not Rake::Task.task_defined?("db:schema:load")
+    namespace :schema do
+      desc 'mongo_doc noop'
+      task :load do
+      end
+    end
+  end
+
+  if not Rake::Task.task_defined?("db:test:prepare")
+    namespace :test do
+      desc 'mongo_doc noop'
+      task :prepare do
+      end
+    end
+  end
+
+  if not Rake::Task.task_defined?("db:seed")
+    desc 'mongo_doc noop'
+    task :seed => :environment do
+    end
+  end
+
+  if not Rake::Task.task_defined?("db:setup")
+    desc 'mongo_doc noop'
+    task :setup => :environment do
+    end
+  end
+
+  if not Rake::Task.task_defined?("db:structure:dump")
+    namespace :structure do
+      desc 'mongo_doc noop'
+      task :dump do
+      end
+    end
+  end
+
+  if not Rake::Task.task_defined?("db:version")
+    desc 'mongo_doc noop'
+    task :version => :environment do
+    end
+  end
+end
