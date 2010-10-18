@@ -9,7 +9,7 @@ module MongoDoc
     end
 
     rake_tasks do
-      load File.dirname(__FILE__) + "/railties/db_prepare.task"
+      load File.dirname(__FILE__) + "/railties/db.task"
     end
   end
 end
