@@ -114,14 +114,14 @@ module MongoDoc
       self.attributes = attrs
       return save if new_record?
       return false unless valid?
-      _update_attributes(attrs, false)
+      _update_attributes(converted_attributes(attrs), false)
     end
 
     def update_attributes!(attrs)
       self.attributes = attrs
       return save! if new_record?
       raise DocumentInvalidError unless valid?
-      _update_attributes(attrs, true)
+      _update_attributes(converted_attributes(attrs), true)
     end
 
     # Update without checking validations. The +Document+ will be saved without validations if it is a new record.
@@ -131,7 +131,7 @@ module MongoDoc
         _root.send(:_save, safe) if _root
         _save(safe)
       else
-        _update_attributes(attrs, safe)
+        _update_attributes(converted_attributes(attrs), safe)
       end
     end
 
@@ -184,6 +184,14 @@ module MongoDoc
     rescue Mongo::MongoDBError => e
       notify_save_failed_observers
       raise e
+    end
+
+    def converted_attributes(attrs)
+      converted = {}
+      attrs.keys.each do |attr|
+        converted[attr] = send(attr)
+      end
+      converted
     end
 
     def hash_with_modifier_path_keys(hash)

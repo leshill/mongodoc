@@ -6,12 +6,14 @@ describe "MongoDoc::Document" do
     include MongoDoc::Document
 
     attr_accessor :child_data
+    attr_accessor :child_int, :type => Integer
   end
 
   class UpdateAttributes
     include MongoDoc::Document
 
     attr_accessor :data
+    attr_accessor :int, :type => Integer
     embed :child
   end
 
@@ -40,33 +42,34 @@ describe "MongoDoc::Document" do
     context "with a new doc" do
       it "delegates to save! if the doc is a new record" do
         new_doc.should_receive(:_save)
-        new_doc.update(:data => 'data')
+        new_doc.update(:data => 'data', :int => '1')
       end
 
       it "delegates to the root's save if the child is a new record" do
         existing_doc.should_receive(:_save)
-        new_child.update(:child_data => 'data')
+        new_child.update(:child_data => 'data', :child_int => '1')
       end
     end
 
     context "with an existing doc" do
 
-      subject { existing_doc.update(:data => 'data') }
+      subject { existing_doc.update(:data => 'data', :int => '1') }
 
       it "sets the attributes" do
         subject
         existing_doc.data.should == 'data'
+        existing_doc.int.should == 1
       end
 
       it "delegates to collection update" do
-        collection.should_receive(:update).with({'_id' => existing_doc._id}, {'$set' => {:data => 'data'}}, :safe => false)
+        collection.should_receive(:update).with({'_id' => existing_doc._id}, {'$set' => {:data => 'data', :int => 1}}, :safe => false)
         subject
       end
 
       context "that is embedded" do
         it "delegates to the root's collection update" do
-          collection.should_receive(:update).with({'_id' => existing_doc._id, 'child._id' => child._id}, {'$set' => {'child.child_data' => 'data'}}, :safe => true)
-          child.update_attributes!(:child_data => 'data')
+          collection.should_receive(:update).with({'_id' => existing_doc._id, 'child._id' => child._id}, {'$set' => {'child.child_data' => 'data', 'child.child_int' => 1}}, :safe => true)
+          child.update_attributes!(:child_data => 'data', :child_int => '1')
         end
       end
     end
@@ -75,16 +78,17 @@ describe "MongoDoc::Document" do
   describe "#update_attributes" do
     it "delegates to save if the doc is a new record" do
       new_doc.should_receive(:save)
-      new_doc.update_attributes(:data => 'data')
+      new_doc.update_attributes(:data => 'data', :int => '1')
     end
 
     context "with an existing doc" do
 
-      subject { existing_doc.update_attributes(:data => 'data') }
+      subject { existing_doc.update_attributes(:data => 'data', :int => '1') }
 
       it "sets the attributes" do
         subject
         existing_doc.data.should == 'data'
+        existing_doc.int.should == 1
       end
 
       it "validates the doc" do
@@ -98,14 +102,14 @@ describe "MongoDoc::Document" do
       end
 
       it "delegates to collection update" do
-        collection.should_receive(:update).with({'_id' => existing_doc._id}, {'$set' => {:data => 'data'}}, :safe => false)
+        collection.should_receive(:update).with({'_id' => existing_doc._id}, {'$set' => {:data => 'data', :int => 1}}, :safe => false)
         subject
       end
 
       context "that is embedded" do
         it "delegates to the root's collection update" do
-          collection.should_receive(:update).with({'_id' => existing_doc._id, 'child._id' => child._id}, {'$set' => {'child.child_data' => 'data'}}, :safe => false)
-          child.update_attributes(:child_data => 'data')
+          collection.should_receive(:update).with({'_id' => existing_doc._id, 'child._id' => child._id}, {'$set' => {'child.child_data' => 'data', 'child.child_int' => 1}}, :safe => false)
+          child.update_attributes(:child_data => 'data', :child_int => '1')
         end
       end
     end
@@ -114,16 +118,17 @@ describe "MongoDoc::Document" do
   describe "#update_attributes!" do
     it "delegates to save! if the doc is a new record" do
       new_doc.should_receive(:save!)
-      new_doc.update_attributes!(:data => 'data')
+      new_doc.update_attributes!(:data => 'data', :int => '1')
     end
 
     context "with an existing doc" do
 
-      subject { existing_doc.update_attributes!(:data => 'data') }
+      subject { existing_doc.update_attributes!(:data => 'data', :int => '1') }
 
       it "sets the attributes" do
         subject
         existing_doc.data.should == 'data'
+        existing_doc.int.should == 1
       end
 
       it "validates the doc" do
@@ -139,14 +144,14 @@ describe "MongoDoc::Document" do
       end
 
       it "delegates to collection update" do
-        collection.should_receive(:update).with({'_id' => existing_doc._id}, {'$set' => {:data => 'data'}}, :safe => true)
+        collection.should_receive(:update).with({'_id' => existing_doc._id}, {'$set' => {:data => 'data', :int => 1}}, :safe => true)
         subject
       end
 
       context "that is embedded" do
         it "delegates to the root's collection update" do
-          collection.should_receive(:update).with({'_id' => existing_doc._id, 'child._id' => child._id}, {'$set' => {'child.child_data' => 'data'}}, :safe => true)
-          child.update_attributes!(:child_data => 'data')
+          collection.should_receive(:update).with({'_id' => existing_doc._id, 'child._id' => child._id}, {'$set' => {'child.child_data' => 'data', 'child.child_int' => 1}}, :safe => true)
+          child.update_attributes!(:child_data => 'data', :child_int => '1')
         end
       end
     end
