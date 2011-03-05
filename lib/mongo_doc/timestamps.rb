@@ -12,7 +12,7 @@ module MongoDoc
       [:created_at, :updated_at].each do |name|
         _keys << name unless _keys.include?(name)
         attr_reader name
-        module_eval(<<-RUBY, __FILE__, __LINE__)
+        class_eval(<<-RUBY, __FILE__, __LINE__)
           def #{name}=(value)                       # def created_at=(value)
             if value.kind_of?(String)               #   if value.kind_of?(String)
               value = Time.cast_from_string(value)  #     value = Time.cast_from_string(value)
@@ -22,7 +22,7 @@ module MongoDoc
         RUBY
       end
 
-      module_eval do
+      class_eval(<<-RUBY, __FILE__, __LINE__)
         def _save(safe)
           if new_record?
             self.created_at = self.updated_at = Time.now
@@ -43,12 +43,13 @@ module MongoDoc
         def _update(selector, data, safe)
           original_updated_at = updated_at
           self.updated_at = Time.now
+          data[:updated_at] = updated_at
           super
         rescue Mongo::MongoDBError => e
           self.updated_at = original_updated_at
           raise e
         end
-      end
+      RUBY
     end
   end
 end
