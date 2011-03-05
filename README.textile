@@ -1,211 +1,22 @@
 h1. MongoDoc
 
-Version: 0.6.26 2010/12/06
-
-h2. Notes
-
-This version of MongoDoc works with Rails 3[1]
-
-h2. Quick Start
-
-* install MongoDB (at least 1.4.0)
-* install the Ruby driver @gem install mongo@
-* install the native extensions for BSON @gem install bson_ext@
-* install MongoDoc @gem install mongo_doc@
-* run an example from this directory @ruby -Ilib examples/simple_object.rb@
-
-h2. Introduction
-
-MongoDoc is a simple and easy to use ActiveRecord-like object mapper for "mongoDB":http://www.mongodb.org in Ruby.
-
-MongoDoc is _also_ an extension of the "Mongo Ruby Driver":http://github.com/mongodb/mongo-ruby-driver making it a snap to get Ruby in and out of mongoDB.
-
-MongoDoc is *not* ActiveRecord for mongoDB.  We do not have callbacks, nor do we have dynamic finders.  We do have associations, named scopes, and other features.
-
-MongoDoc *is* simple, easy-to-use, and fast. And it works with Rails 3.
-
-MongoDoc is designed to work with document data, if you are looking to map relational data in mongoDB, you will have to look elsewhere.
-
-h2. Ruby objects in mongoDB
-
-Lets just get right into it and save some Ruby objects in mongoDB!
-
-bc.. class Contact
-  attr_accessor :name, :addresses, :interests
-end
-
-class Address
-  attr_accessor :street, :city, :state, :zip, :phone_number
-end
-
-p. With MongoDoc, instead of saving JSON[2], we can save an object directly:
-
-bc.. contact = Contact.new
-contact.name = 'Hashrocket'
-contact.interests = ['ruby', 'rails', 'agile']
-
-address = Address.new
-address.street = '320 First Street North, #712'
-address.city = 'Jacksonville Beach'
-address.state = 'FL'
-address.zip = '32250'
-address.phone_number = '877 885 8846'
-contact.addresses = [address]
-
-collection.save(contact)
-
-p. We can query using the powerful mongoDB query syntax, and have it return Ruby objects:
-
-bc.. in_fl = collection.where('addresses.state' => 'FL')
-in_fl_hashrocket = in_fl.where('name' => /rocket/)
-puts in_fl_hashrocket.first.addresses.first.phone_number
-
-p. Take a look in the examples directory for more code.
-
-h2. Mapping Documents
-
-MongoDoc provides ActiveRecord-like persistence, associations, named scopes, and validations (from "Validatable":http://github.com/durran/validatable) as well as a mongoDB query language (from "Mongoid":http://mongoid.org/home). MongoDoc also plays nicely with Rails.
-
-@MongoDoc::Document@ provides all these features as a mixin.  A @MongoDoc::Document@ can either be a top-level mongoDB document, or an embedded document contained within a top-level document. Top-level documents are stored in collections named after their class: @Contact@ objects are stored in the 'contacts' collection (much like ActiveRecord).
-
-Lets define a @Contact@ document with an @Address@ embedded document:
-
-bc.. class Address
-  include MongoDoc::Document
-
-  attr_accessor :street
-  attr_accessor :city
-  attr_accessor :state
-  attr_accessor :zip_code
-  attr_accessor :phone_number
-end
-
-class Contact
-  include MongoDoc::Document
-
-  attr_accessor :name
-  attr_accessor :interests
-  embed_many :addresses
-
-  scope :in_state, lambda {|state| where('addresses.state' => state)}
-end
-
-p. Since a mongoDB document has no fixed schema, we define the composition of a document directly in our classes. We can also specify associations using @embed@, @embed_many@, and @embed_hash@ (similar to ActiveRecord's @has_one@ and @has_many@.
-
-Building and saving a document is easy:
-
-bc.. contact = Contact.new(:name => 'Hashrocket', :interests => ['ruby', 'rails', 'agile'])
-contact.addresses << Address.new(:street => '320 1st Street North, #712',
-  :city => 'Jacksonville Beach',
-  :state => 'FL',
-  :zip_code => '32250',
-  :phone_number => '877 885 8846')
-contact.save
-
-p. Now that we have some data, we can query using our named scope:
-
-bc.. hashrocket_in_fl = Contact.in_state('FL').where(:name => /rocket/)
-hashrocket_address = hashrocket_in_fl.first.addresses.first
-
-p. And we can even perform partial updates:
-
-bc. hashrocket_address.update_attributes(:street => '320 First Street North, #712')
-
-h2. Installation
-
-MongoDoc *requires* mongoDB v1.4.0 or later.
-
-bc. % gem install mongo_doc
-
-h2. Connecting
-
-By default, MongoDoc will read its configuration from @./mongodb.yml@. If that file does not exist, it will attempt to connect to a standard MongoDB local server setup and use a database name of @"mongodoc"@.
-
-h3. With Rails
-
-If you are using Rails, MongoDoc will look for its configuration in @config/mongodb.yml@. If that file does not exist, it will attempt to connect to a standard MongoDB local server setup and use a database name of @#{Rails.root.basename}_#{Rails.env}@.
-
-h3. Database configuration file
-
-The file is similar to the Rails database.yml file, with environment definitions containing the database configuration attributes. For example:
-
-bc. development:
-  name: development
-  host: localhost
-  port: 27017
-  options:
-    auto_reconnect: true
-test:
-  name: test
-  host: localhost
-  port: 27017
-  options:
-    auto_reconnect: true
-
-If you are not using Rails, the default environment is @development@ and you can set the current environment in your code:
-
-bc. MongoDoc::Connection.env = 'test'
-
-You can also change the location of the configuration file:
-
-bc. MongoDoc::Connection.config_path = './config/mongodb.yml'
-
-h3. Programmatically setting the database connection information
-
-Finally, if you do not want to use the database configuration file, you can also set the database name, host, port, options, and strict values directly; for example, to set the database name to @stats@:
-
-bc. MongoDoc::Connection.name = 'stats'
-
-And if that is not enough control,  perhaps you are using authentication, just set the connection directly:
-
-bc. MongoDoc::Connection.connection = Mongo::Connection.from_uri("mongodb://user:password@localhost/db")
-
-h2. Cleaning the database during testing
-
-When testing you may need to clean up and return the database to an empty state. @MongoDoc::DatabaseCleaner.clean_database@ is a helper that can be used to do this, for example with @RSpec@ (note the @require@):
-
-bc. require 'mongo_doc/database_cleaner'
-RSpec.configure do |config|
-  config.before(:each) do
-    MongoDoc::DatabaseCleaner.clean_database
-  end
-end
-
-h2. Credits
-
-Les Hill, leshill on github
-
-h3. Thanks
-
-Thanks to Sandro and Durran for some great conversations and some lovely code.
-
-Thanks to Elliot for pushing me to get Rails 3 support
-
-
-h2. Hacking on MongoDoc
-
-* Clone the project locally.
-* Use RVM, you will be happier.
-* Run: @gem install bundler --pre@
-* Run: @bundle install@
-* Make sure MongoDB is running.
-* Run the specs and features (they should all pass!): @rake spec && rake features@
-
-h2. Note on Patches/Pull Requests
-
-* Fork the project.
-* Make your feature addition or bug fix.
-* Add tests for it. This is important so I don't break it in a
-  future version unintentionally.
-* Commit, do not mess with rakefile, version, or history.
-  (if you want to have your own version, that is fine but
-  bump version in a commit by itself I can ignore when I pull)
-* Send me a pull request. Bonus points for topic branches.
+Version: 0.6.26 2011/03/05
+
+I use MongoDoc in production on my own apps, and have been using (lightly)
+MongoMapper and (heavily) Mongoid since 2008. By Summer 2010, I had come to the
+conclusion that something more 'native' was the right way to go, and I began
+to use more and more features of MongoDB directly in my code. After more than
+six months, I am convinced that 'native' is the right approach.
+
+I considered changing MongoDoc to match this 'native' approach, even going so
+far as commiting to it in an email on September 4th, 2010 (Oy!). Instead, I
+slowed down and have finally decided to stop further development of MongoDoc. I
+will make bugfixes to MongoDoc as needed, but will no longer be adding features
+(excepting some that had not yet been pushed to the public repo).
+
+If you want a full-featured ODM for Ruby, take a look at
+"mongoid":https://github.com/mongoid/mongoid .
 
 h2. Copyright
 
-Copyright (c) 2009 - 2010 Les Hill. See LICENSE for details.
-
-fn1. If you are using Rails 2.3.x you need to be using the @mongo_doc_rails2@ gem from the rails2 branch on "github":http://github.com/leshill/mongodoc/tree/rails2
-
-fn2. The Ruby driver exposes an API that understands JSON.
+Copyright (c) 2009 - 2011 Les Hill. See LICENSE for details.
