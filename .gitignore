@@ -1,8 +1,7 @@
 .bundle
 *.sw?
+*.gem
 .DS_Store
 coverage
 rdoc
-pkg
 mongod.yml
-nohup.out
