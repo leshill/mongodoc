@@ -28,6 +28,7 @@ module MongoDoc
     # <tt>Person.find_one(:conditions => {:age.gt => 25}, :order_by => [[:name,
     # :asc]])</tt>
     def find_one(conditions_or_id)
+      return nil if conditions_or_id.nil?
       if Hash === conditions_or_id
         Mongoid::Criteria.translate(self, conditions_or_id).one
       else

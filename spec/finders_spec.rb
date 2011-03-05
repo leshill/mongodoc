@@ -34,6 +34,12 @@ describe MongoDoc::Finders do
   end
 
   context ".find_one" do
+    context "with nil" do
+      it "returns nil" do
+        FindersTest.find_one(nil).should be_nil
+      end
+    end
+
     context "with an id" do
       it "delegates to translate" do
         id = 'an id'
