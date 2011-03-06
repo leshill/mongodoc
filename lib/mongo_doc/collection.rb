@@ -43,6 +43,10 @@ module MongoDoc
       end
     end
 
+    def find_and_modify(opts)
+      MongoDoc::BSON.decode(_collection.find_and_modify(opts))
+    end
+
     def find_one(spec_or_object_id = nil, options = {})
       MongoDoc::BSON.decode(_collection.find_one(spec_or_object_id, options))
     end

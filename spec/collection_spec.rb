@@ -52,6 +52,41 @@ describe "MongoDoc::Collection" do
       end
     end
 
+    context "#find_and_modify" do
+      let(:bson) { stub('bson') }
+      let(:options) { {:query => {:name => 'name'},
+                       :update => {:title => 'title'},
+                       :sort => [],
+                       :remove => false,
+                       :new => true
+      } }
+
+      before do
+        mongo_collection.stub(:find_and_modify).and_return(bson)
+      end
+
+      it "delegates to the Mongo::Collection" do
+        mongo_collection.should_receive(:find_and_modify).with(options)
+        collection.find_and_modify(options)
+      end
+
+      it "converts the result back from bson" do
+        MongoDoc::BSON.should_receive(:decode).with(bson)
+        collection.find_and_modify(options)
+      end
+
+      it "returns the converted result" do
+        obj = stub('obj')
+        MongoDoc::BSON.stub(:decode).and_return(obj)
+        collection.find_and_modify(options).should == obj
+      end
+
+      it "returns nil if the delegate returns nil" do
+        mongo_collection.stub(:find_and_modify).and_return(nil)
+        collection.find_and_modify(options).should be_nil
+      end
+    end
+
     context "#find_one" do
       let(:bson) { stub('bson') }
 
