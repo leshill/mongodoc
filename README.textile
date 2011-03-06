@@ -3,7 +3,7 @@ h1. MongoDoc
 Version: 0.6.27 2011/03/05
 
 I use MongoDoc in production on my own apps, and have been using (lightly)
-MongoMapper and (heavily) Mongoid since 2008. By Summer 2010, I had come to the
+MongoMapper and (heavily) Mongoid since 2009. By Summer 2010, I had come to the
 conclusion that something more 'native' was the right way to go, and I began
 to use more and more features of MongoDB directly in my code. After more than
 six months, I am convinced that 'native' is the right approach.
