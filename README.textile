@@ -1,6 +1,6 @@
 h1. MongoDoc
 
-Version: 0.6.27 2011/03/05
+Version: 0.6.28 2011/05/09
 
 I use MongoDoc in production on my own apps, and have been using (lightly)
 MongoMapper and (heavily) Mongoid since 2009. By Summer 2010, I had come to the
