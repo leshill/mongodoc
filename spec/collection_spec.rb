@@ -33,22 +33,43 @@ describe "MongoDoc::Collection" do
     end
 
     context "#find" do
-      let(:cursor) { MongoDoc::Cursor.new(collection, stub('cursor', :close => nil)) }
 
-      before do
-        collection.stub(:wrapped_cursor).and_return(cursor)
+      context "when no connection error is raised" do
+        let(:cursor) { MongoDoc::Cursor.new(collection, stub('cursor', :close => nil)) }
+
+        before do
+          collection.stub(:wrapped_cursor).and_return(cursor)
+        end
+
+        it "wraps the cursor" do
+          query = {'sample' => 'data'}
+          options = { :limit => 1}
+          collection.should_receive(:wrapped_cursor).with(query, options).and_return(cursor)
+          collection.find(query, options)
+        end
+
+        it "calls the block with a wrapped cursor" do
+          collection.find {|c| @result = c}
+          @result.should == cursor
+        end
       end
 
-      it "wraps the cursor" do
-        query = {'sample' => 'data'}
-        options = { :limit => 1}
-        collection.should_receive(:wrapped_cursor).with(query, options).and_return(cursor)
-        collection.find(query, options)
-      end
+      context "when a ConnectionFailure is raised" do
+        before do
+          mongo_collection.stub(:find).and_return do
+            if @raised
+              stub(:close => true)
+            else
+              @raised = true
+              raise Mongo::ConnectionFailure
+            end
+          end
+        end
 
-      it "calls the block with a wrapped cursor" do
-        collection.find {|c| @result = c}
-        @result.should == cursor
+        it "retries" do
+          collection.find { |c| @result = c }
+          @result.should_not be_nil
+        end
       end
     end
 
@@ -88,33 +109,55 @@ describe "MongoDoc::Collection" do
     end
 
     context "#find_one" do
-      let(:bson) { stub('bson') }
+      let(:spec) {{ 'sample' => 'data' }}
+      let(:options) {{:limit => 1}}
 
-      before do
-        mongo_collection.stub(:find_one).and_return(bson)
+      context "when no connection error is raised" do
+        let(:bson) { stub }
+        let(:obj) { stub }
+
+        before do
+          mongo_collection.stub(:find_one).and_return(bson)
+        end
+
+        it "delegates to the Mongo::Collection" do
+          mongo_collection.should_receive(:find_one).with(spec, options)
+          collection.find_one(spec, options)
+        end
+
+        it "converts the result back from bson" do
+          MongoDoc::BSON.should_receive(:decode).with(bson)
+          collection.find_one(spec)
+        end
+
+        it "returns the converted result" do
+          MongoDoc::BSON.stub(:decode).and_return(obj)
+          collection.find_one(spec).should == obj
+        end
+
+        it "returns nil if the delegate returns nil" do
+          mongo_collection.stub(:find_one)
+          collection.find_one(spec).should be_nil
+        end
       end
 
-      it "delegates to the Mongo::Collection" do
-        spec = { 'sample' => 'data' }
-        options = {:limit => 1}
-        mongo_collection.should_receive(:find_one).with(spec, options)
-        collection.find_one(spec, options)
-      end
+      context "when a ConnectionFailure is raised" do
+        let(:hash) {{ 'returned' => 'hash'}}
 
-      it "converts the result back from bson" do
-        MongoDoc::BSON.should_receive(:decode).with(bson)
-        collection.find_one({ 'sample' => 'data' })
-      end
+        before do
+          mongo_collection.stub(:find_one).and_return do
+            if @raised
+              hash
+            else
+              @raised = true
+              raise Mongo::ConnectionFailure
+            end
+          end
+        end
 
-      it "returns the converted result" do
-        obj = stub('obj')
-        MongoDoc::BSON.stub(:decode).and_return(obj)
-        collection.find_one({ 'sample' => 'data' }).should == obj
-      end
-
-      it "returns nil if the delegate returns nil" do
-        mongo_collection.stub(:find_one)
-        collection.find_one({ 'sample' => 'data' }).should be_nil
+        it "retries" do
+          collection.find_one(spec, options).should == hash
+        end
       end
     end
 

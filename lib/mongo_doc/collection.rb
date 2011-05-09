@@ -34,12 +34,19 @@ module MongoDoc
     end
 
     def find(query = {}, options = {})
-      cursor = wrapped_cursor(query, options)
-      if block_given?
-        yield cursor
-        cursor.close
-      else
-        cursor
+      retried = false
+      begin
+        cursor = wrapped_cursor(query, options)
+        if block_given?
+          yield cursor
+          cursor.close
+        else
+          cursor
+        end
+      rescue Mongo::ConnectionFailure
+        raise if retried
+        retried = true
+        retry
       end
     end
 
@@ -48,7 +55,14 @@ module MongoDoc
     end
 
     def find_one(spec_or_object_id = nil, options = {})
-      MongoDoc::BSON.decode(_collection.find_one(spec_or_object_id, options))
+      retried = false
+      begin
+        MongoDoc::BSON.decode(_collection.find_one(spec_or_object_id, options))
+      rescue Mongo::ConnectionFailure
+        raise if retried
+        retried = true
+        retry
+      end
     end
 
     def insert(doc_or_docs, options = {})
