@@ -7,9 +7,9 @@ module MongoDoc
     end
 
     # Declare a reference to another +Document+. The reference can either be an
-    # +ObjectID+ reference, or a +BSON::DBRef+
+    # +ObjectId+ reference, or a +BSON::DBRef+
     #
-    # Use an +ObjectID+ reference when you have a simple reference or will be
+    # Use an +ObjectId+ reference when you have a simple reference or will be
     # referencing a single polymorphic collection. Example:
     #
     # +references :address
@@ -39,7 +39,7 @@ module MongoDoc
     private
 
     def references_by_id(klass, attr_name)
-      attr_accessor "#{attr_name}_id".to_sym, :type => ::BSON::ObjectID
+      attr_accessor "#{attr_name}_id".to_sym, :type => ::BSON::ObjectId
 
       module_eval(<<-RUBY, __FILE__, __LINE__)
         def #{attr_name}_id_with_reference=(value)       # def address_id_with_reference=(value)

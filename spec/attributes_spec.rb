@@ -133,10 +133,10 @@ describe "MongoDoc::Attributes" do
 
       context "when a namespace collision exists" do
         class TestType
-          attr_accessor :bson_id, :type => ::BSON::ObjectID
+          attr_accessor :bson_id, :type => ::BSON::ObjectId
         end
 
-        let(:bson_id) { ::BSON::ObjectID.new }
+        let(:bson_id) { ::BSON::ObjectId.new }
         it "sets the value to the result of the cast" do
           object.bson_id = bson_id.to_s
           object.bson_id.should == bson_id

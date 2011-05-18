@@ -16,7 +16,7 @@ describe "MongoDoc::Contexts::Ids" do
   context "#id_criteria" do
     context "single id" do
       let(:id) { 'a' * 24 }
-      let(:obj_id) { BSON::ObjectID.from_string(id) }
+      let(:obj_id) { BSON::ObjectId.from_string(id) }
 
       it "converts strings to an object id" do
         criteria.should_receive(:id).with(obj_id)
@@ -24,7 +24,7 @@ describe "MongoDoc::Contexts::Ids" do
         context.id_criteria(id)
       end
 
-      it "delegates to one if passed a string or ObjectID" do
+      it "delegates to one if passed a string or ObjectId" do
         context.should_receive(:one)
         context.id_criteria(id)
       end
@@ -32,7 +32,7 @@ describe "MongoDoc::Contexts::Ids" do
 
     context "mutliple ids" do
       let(:ids) { ['a' * 24, 'b' * 24] }
-      let(:obj_ids) { [BSON::ObjectID.from_string(ids.first), BSON::ObjectID.from_string(ids.last)] }
+      let(:obj_ids) { [BSON::ObjectId.from_string(ids.first), BSON::ObjectId.from_string(ids.last)] }
 
       it "converts strings to an object id" do
         criteria.should_receive(:id).with(obj_ids)

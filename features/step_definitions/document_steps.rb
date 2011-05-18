@@ -42,7 +42,7 @@ end
 
 Given /^I set the id on the document '(.*)' to (.*)$/ do |doc_name, value|
   doc = instance_variable_get("@#{doc_name}")
-  doc._id = BSON::ObjectID.from_string("%024x" % value.to_i(16))
+  doc._id = BSON::ObjectId.from_string("%024x" % value.to_i(16))
 end
 
 Given /^'(.+)' has one (.+?) as (.+?) \(identified by '(.+)'\):$/ do |doc_name, class_name, assoc_name, var_name, table|

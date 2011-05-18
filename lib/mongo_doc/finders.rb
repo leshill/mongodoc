@@ -6,7 +6,7 @@ module MongoDoc
       base.extend(Criteria) unless base === Criteria
     end
 
-    # Find a +Document+ based on id (+String+ or +BSON::ObjectID+)
+    # Find a +Document+ based on id (+String+ or +BSON::ObjectId+)
     #
     # <tt>Person.find('1')</tt>
     # <tt>Person.find(obj_id_1, obj_id_2)</tt>
@@ -21,7 +21,7 @@ module MongoDoc
       criteria
     end
 
-    # Find a +Document+ based on id (+String+ or +BSON::ObjectID+)
+    # Find a +Document+ based on id (+String+ or +BSON::ObjectId+)
     # or conditions
     #
     # <tt>Person.find_one('1')</tt>

@@ -301,7 +301,7 @@ describe "MongoDoc::Document" do
     end
 
     it "includes the _id of the object" do
-      @doc._id = BSON::ObjectID.new
+      @doc._id = BSON::ObjectId.new
       @doc.to_bson.should be_bson_eql({MongoDoc::BSON::CLASS_KEY => BSONTest.name, "_id" => @doc._id.to_bson, "other" => {MongoDoc::BSON::CLASS_KEY => OtherObject.name, "value" => @value}})
     end
 

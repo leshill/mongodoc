@@ -15,7 +15,7 @@ module MongoDoc
       else
         ids_or_strings.map do |item|
           if String === item
-            ::BSON::ObjectID.cast_from_string(item)
+            ::BSON::ObjectId.cast_from_string(item)
           else
             item
           end
@@ -48,9 +48,9 @@ module MongoDoc
     end
 
     # Declare reference to an array of +Document+s. The references can be
-    # +ObjectID+ references or a +BSON::DBRef+, but cannot be both.
+    # +ObjectId+ references or a +BSON::DBRef+, but cannot be both.
     #
-    # Use an +ObjectID+ reference when you have a simple reference or will be
+    # Use an +ObjectId+ reference when you have a simple reference or will be
     # referencing a single polymorphic collection. Example:
     #
     # +references_many :addresses

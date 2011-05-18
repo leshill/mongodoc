@@ -40,8 +40,8 @@ describe MongoDoc::Criteria do
     end
 
     it "id with mutliple ids returns a new CriteriaWrapper with the id selector set" do
-      id1 = BSON::ObjectID.new
-      id2 = BSON::ObjectID.new
+      id1 = BSON::ObjectId.new
+      id2 = BSON::ObjectId.new
       returned = wrapper.id(id1, id2)
       returned.object_id.should_not == wrapper.object_id
       returned.selector[:_id].should == {'$in' => [id1, id2]}

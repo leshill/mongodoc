@@ -36,7 +36,7 @@ describe MongoDoc::ReferencesMany do
     end
 
     context "setting the ids" do
-      let(:postal_address) { PostalAddress.new(:_id => BSON::ObjectID.new) }
+      let(:postal_address) { PostalAddress.new(:_id => BSON::ObjectId.new) }
 
       before do
         person.postal_addresses = [postal_address]
@@ -99,7 +99,7 @@ describe MongoDoc::ReferencesMany do
     end
 
     context "setting the ids" do
-      let(:address) { PostalAddress.new(:_id => BSON::ObjectID.new) }
+      let(:address) { PostalAddress.new(:_id => BSON::ObjectId.new) }
 
       before do
         person.known_addresses = [address]
@@ -139,7 +139,7 @@ describe MongoDoc::ReferencesMany do
       references_many :as_ref => :addresses
     end
 
-    let(:address) { PostalAddress.new(:_id => BSON::ObjectID.new) }
+    let(:address) { PostalAddress.new(:_id => BSON::ObjectId.new) }
     let(:person) { PersonDBRef.new }
 
     subject { person }

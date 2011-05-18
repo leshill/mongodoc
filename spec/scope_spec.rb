@@ -79,7 +79,7 @@ describe MongoDoc::Scope do
       ScopeTest.active.where(:count => 1).selector.should have_entries(:count => 1, :active => true)
     end
 
-    let(:id) { BSON::ObjectID.new }
+    let(:id) { BSON::ObjectId.new }
     it "chains with id" do
       ScopeTest.active.id(id).selector.should have_entries(:active => true, :_id => id)
     end

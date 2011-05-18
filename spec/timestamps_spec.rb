@@ -9,7 +9,7 @@ describe MongoDoc::Timestamps do
     timestamps!
   end
 
-  let(:collection) { stub(:save => ::BSON::ObjectID.new, :update => true) }
+  let(:collection) { stub(:save => ::BSON::ObjectId.new, :update => true) }
   let(:document) { TimestampsTest.new }
 
   before do

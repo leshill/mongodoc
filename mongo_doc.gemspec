@@ -20,9 +20,8 @@ Gem::Specification.new do |s|
 
   s.add_runtime_dependency('activemodel', ['>= 3.0.0'])
   s.add_runtime_dependency('activesupport', ['>= 3.0.0'])
-  s.add_runtime_dependency('bson', ['= 1.0.4'])
-  s.add_runtime_dependency('bson_ext', ['= 1.0.4'])
-  s.add_runtime_dependency('mongo', ['>= 1.0.0'])
+  s.add_runtime_dependency('bson_ext', ['>= 1.3.1'])
+  s.add_runtime_dependency('mongo', ['>= 1.3.1'])
   s.add_runtime_dependency('tzinfo', ['>= 0.3.22'])
   s.add_development_dependency('cucumber', ['>= 0.10.0'])
   s.add_development_dependency('rspec', ['>= 2.5.0'])

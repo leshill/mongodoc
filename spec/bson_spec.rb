@@ -140,7 +140,7 @@ describe "BSON for Mongo (BSON)" do
   end
 
   describe "Mongo Classes" do
-    [BSON::ObjectID.new, BSON::DBRef.new('ns', 1), BSON::Code.new('code'), BSON::Binary.new, BSON::MinKey.new, BSON::MaxKey.new].each do |obj|
+    [BSON::ObjectId.new, BSON::DBRef.new('ns', 1), BSON::Code.new('code'), BSON::Binary.new, BSON::MinKey.new, BSON::MaxKey.new].each do |obj|
       it "#to_bson for #{obj.class.name} returns self" do
         obj.to_bson.should == obj
       end

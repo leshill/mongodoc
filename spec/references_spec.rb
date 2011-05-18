@@ -35,7 +35,7 @@ describe MongoDoc::References do
     end
 
     context "setting the id" do
-      let(:postal_address) { PostalAddress.new(:_id => BSON::ObjectID.new) }
+      let(:postal_address) { PostalAddress.new(:_id => BSON::ObjectId.new) }
 
       it "resets the object to nil" do
         subject.postal_address = postal_address
@@ -80,7 +80,7 @@ describe MongoDoc::References do
       references :as_ref => :address
     end
 
-    let(:address) { PostalAddress.new(:_id => BSON::ObjectID.new) }
+    let(:address) { PostalAddress.new(:_id => BSON::ObjectId.new) }
     subject { DBRefPerson.new }
 
     context "Object accessor" do
