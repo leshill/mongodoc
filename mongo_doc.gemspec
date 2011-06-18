@@ -25,4 +25,5 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency('tzinfo', ['>= 0.3.22'])
   s.add_development_dependency('cucumber', ['>= 0.10.0'])
   s.add_development_dependency('rspec', ['>= 2.5.0'])
+  s.add_development_dependency('ruby-debug19', ['>= 0.11.6'])
 end

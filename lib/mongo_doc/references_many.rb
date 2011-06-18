@@ -82,7 +82,7 @@ module MongoDoc
     def references_many_by_dbref(objects_name)
       refs_name = "#{objects_name.singularize}_refs"
 
-      _keys << refs_name unless _keys.include?(refs_name)
+      _add_key(refs_name)
 
       module_eval(<<-RUBY, __FILE__, __LINE__)
         def #{objects_name}=(objects)                                   # def addresses=(objects)
@@ -108,7 +108,7 @@ module MongoDoc
     def references_many_by_id(klass, objects_name)
       ids_name = "#{objects_name.singularize}_ids"
 
-      _keys << ids_name unless _keys.include?(ids_name)
+      _add_key(ids_name)
 
       module_eval(<<-RUBY, __FILE__, __LINE__)
         def #{objects_name}=(objects)                                 # def addresses=(objects)

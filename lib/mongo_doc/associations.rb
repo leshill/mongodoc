@@ -13,7 +13,7 @@ module MongoDoc
       end
 
       args.each do |name|
-        _associations << name unless _associations.include?(name)
+        _add_association(name)
 
         attr_reader name
 
@@ -41,7 +41,7 @@ module MongoDoc
       end
 
       args.each do |name|
-        _associations << name unless _associations.include?(name)
+        _add_association(name)
 
         define_method("#{name}") do
           association = instance_variable_get("@#{name}")
@@ -75,7 +75,7 @@ module MongoDoc
       end
 
       args.each do |name|
-        _associations << name unless _associations.include?(name)
+        _add_association(name)
 
         define_method("#{name}") do
           association = instance_variable_get("@#{name}")

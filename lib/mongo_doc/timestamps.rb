@@ -10,7 +10,7 @@ module MongoDoc
     # +updated_at+:: set on every save
     def timestamps!
       [:created_at, :updated_at].each do |name|
-        _keys << name unless _keys.include?(name)
+        _add_key(name)
         attr_reader name
         class_eval(<<-RUBY, __FILE__, __LINE__)
           def #{name}=(value)                       # def created_at=(value)

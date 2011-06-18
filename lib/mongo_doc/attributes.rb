@@ -2,9 +2,9 @@ module MongoDoc
   module Attributes
     def self.included(klass)
       klass.class_eval do
-        class_inheritable_array :_keys
+        class_attribute :_keys
         self._keys = []
-        class_inheritable_array :_associations
+        class_attribute :_associations
         self._associations = []
 
         attr_accessor :_id
@@ -35,6 +35,14 @@ module MongoDoc
         end
       end
 
+      def _add_key(key)
+        self._keys += [key] unless _keys.include?(key)
+      end
+
+      def _add_association(association)
+        self._associations += [association] unless _associations.include?(association)
+      end
+
       def _attributes
         _keys + _associations
       end
@@ -45,7 +53,7 @@ module MongoDoc
         default = opts.delete(:default)
         type = opts.delete(:type)
         args.each do |name|
-          _keys << name unless _keys.include?(name)
+          _add_key(name)
           attr_writer name
 
           unless default.nil?

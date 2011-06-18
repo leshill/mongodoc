@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe "MongoDoc::Attributes attributes accessor" do
-  class AttributesTest
+  class AttributesAccessorTest
     include MongoDoc::Attributes
 
     attr_accessor :name
@@ -11,7 +11,7 @@ describe "MongoDoc::Attributes attributes accessor" do
 
   context "#attributes" do
     subject do
-      AttributesTest.new.attributes
+      AttributesAccessorTest.new.attributes
     end
 
     it "returns a hash of the given attributes" do
@@ -22,7 +22,7 @@ describe "MongoDoc::Attributes attributes accessor" do
   end
 
   context "#attributes=" do
-    let(:object) { AttributesTest.new }
+    let(:object) { AttributesAccessorTest.new }
 
     it "sets attributes from a hash" do
       name = 'name'

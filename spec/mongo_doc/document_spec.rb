@@ -276,8 +276,6 @@ describe "MongoDoc::Document" do
     end
 
     class BSONDerived < BSONTest
-      include MongoDoc::Document
-
       attr_accessor :derived
     end
 
