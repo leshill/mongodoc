@@ -3,8 +3,12 @@ require 'spec_helper'
 describe "MongoDoc::Root" do
   class RootTest
     include MongoDoc::Root
-    attr_accessor_with_default(:_associations) {[]}
+    attr_accessor :_associations
     attr_accessor :association
+
+    def initialize
+      self._associations = []
+    end
   end
 
   let(:doc) { RootTest.new }
