@@ -44,7 +44,7 @@ describe MongoDoc::Scope do
     end
 
     it "has set the conditions on the criteria" do
-      ScopeTest.active.selector.should has_entry(:active => true)
+      ScopeTest.active.selector.should include(:active => true)
     end
 
     it "sets the association extension by block" do
@@ -57,7 +57,7 @@ describe MongoDoc::Scope do
 
     context "when using a lambda" do
       it "accepts parameters to the criteria" do
-        ScopeTest.at_least_count(3).selector.should has_entry(:count => {'$gt' => 3})
+        ScopeTest.at_least_count(3).selector.should include(:count => {'$gt' => 3})
       end
     end
   end
@@ -72,16 +72,16 @@ describe MongoDoc::Scope do
     end
 
     it "merges the criteria" do
-      ScopeTest.active.count_gt_one.selector.should have_entries(:count => {'$gt' => 1}, :active => true)
+      ScopeTest.active.count_gt_one.selector.should include(:count => {'$gt' => 1}, :active => true)
     end
 
     it "chains with other criteria" do
-      ScopeTest.active.where(:count => 1).selector.should have_entries(:count => 1, :active => true)
+      ScopeTest.active.where(:count => 1).selector.should include(:count => 1, :active => true)
     end
 
     let(:id) { BSON::ObjectId.new }
     it "chains with id" do
-      ScopeTest.active.id(id).selector.should have_entries(:active => true, :_id => id)
+      ScopeTest.active.id(id).selector.should include(:active => true, :_id => id)
     end
   end
 end
