@@ -2,20 +2,13 @@ h1. MongoDoc
 
 Version: 0.6.30 2011/06/18
 
-MongoDoc is not actively supported for anything but my own apps.
+MongoDoc is not actively supported.
 
-I use MongoDoc in production on my own apps, and have been using MongoMapper
-(lightly) and Mongoid (heavily) since 2009. By June 2010, I had come to the
-conclusion that something more 'native' was the right way to go, and I began to
-use more and more features of MongoDB directly in my code irrespective of which
-ODM I was using (Mongoid, MongoDoc, or MongoMapper). After more than six
-months, I am convinced that 'native' is the right approach.
+I have been using MongoMapper (lightly) and Mongoid (heavily) since 2009. By June 2010, I had come to the conclusion that something more 'native' was the right way to go, and I began to use more and more features of MongoDB directly in my code irrespective of which ODM I was using (Mongoid, MongoDoc, or MongoMapper). After more than six months, I am convinced that 'native' is the right approach.
 
-Instead I am no longer actively mainting MongoDoc. If I emailed you in the
-summer of 2010 saying MongoDoc was going 'native', apologies.
+I will no longer be actively maintaining MongoDoc.
 
-If you want a full-featured ODM for Ruby, take a look at
-"mongoid":https://github.com/mongoid/mongoid .
+If you want a full-featured ODM for Ruby, take a look at "mongoid":https://github.com/mongoid/mongoid .
 
 h2. Copyright
 
