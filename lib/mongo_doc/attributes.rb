@@ -57,7 +57,7 @@ module MongoDoc
           attr_writer name
 
           unless default.nil?
-            define_method("_default_#{name}", default.kind_of?(Proc) ? default : proc { default })
+            define_method("_default_#{name}", default.kind_of?(Proc) ? default : proc { default.duplicable? ? default.dup : default })
             private "_default_#{name}"
 
             module_eval(<<-RUBY, __FILE__, __LINE__)

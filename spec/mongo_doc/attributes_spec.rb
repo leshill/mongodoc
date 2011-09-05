@@ -74,6 +74,7 @@ describe "MongoDoc::Attributes" do
         include MongoDoc::Attributes
 
         attr_accessor :with_default, :default => 'value'
+        attr_accessor :array_default, :type => Array, :default => []
         attr_accessor :boolean_default, :type => Boolean, :default => false
       end
 
@@ -100,6 +101,16 @@ describe "MongoDoc::Attributes" do
 
       it "allows a false default for booleans" do
         object.boolean_default.should == false
+      end
+
+      context "default value is evaluated at load time" do
+        let(:first) { TestDefault.new }
+        let(:second) { TestDefault.new }
+
+        it "so we dup the default value" do
+          first.array_default << 1
+          second.array_default.should be_empty
+        end
       end
     end
 
