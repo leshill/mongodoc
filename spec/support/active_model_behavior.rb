@@ -1,7 +1,7 @@
 module ActiveModelBehavior
   share_as :AnActiveModel do
     def be_a_boolean
-      ::Rspec::Matchers::Matcher.new :be_a_boolean do
+      ::RSpec::Matchers::Matcher.new :be_a_boolean do
         match do |value|
           [ true, false ].include?( value )
         end

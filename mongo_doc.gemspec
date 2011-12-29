@@ -26,4 +26,6 @@ Gem::Specification.new do |s|
   s.add_development_dependency('cucumber', ['>= 0.10.0'])
   s.add_development_dependency('rspec', ['>= 2.5.0'])
   s.add_development_dependency('ruby-debug19', ['>= 0.11.6'])
+  s.add_development_dependency('rake', ['>= 0.9.2.2'])
+  s.add_development_dependency('rdoc', ['>= 2.4.2'])
 end

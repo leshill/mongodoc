@@ -1,3 +1,4 @@
+require 'bundler/setup'
 require 'rake'
 
 require 'cucumber/rake/task'
@@ -23,8 +24,8 @@ end
 
 task :default => :spec
 
-require 'rake/rdoctask'
-Rake::RDocTask.new do |rdoc|
+require 'rdoc/task'
+RDoc::Task.new do |rdoc|
   if File.exist?('VERSION')
     version = File.read('VERSION')
   else
