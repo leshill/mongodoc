@@ -95,6 +95,9 @@ module MongoDoc
         self.class._attributes.each do |name|
           bson_hash[name.to_s] = send(name).to_bson(args)
         end
+        if MongoDoc::Configuration.dynamic_attributes && dynamic_attributes.any?
+          bson_hash.merge!(dynamic_attributes)
+        end
       end
     end
 
@@ -139,7 +142,16 @@ module MongoDoc
       def bson_create(bson_hash, options = {})
         allocate.tap do |obj|
           bson_hash.each do |name, value|
-            obj.send("#{name}=", MongoDoc::BSON.decode(value, options))
+            if MongoDoc::Configuration.dynamic_attributes
+              if _attributes.include?(name.to_sym)
+                obj.send("#{name}=", MongoDoc::BSON.decode(value, options))
+              else
+                obj.send(:dynamic_attributes)[name] = MongoDoc::BSON.decode(value, options)
+                obj.singleton_class.module_eval ("def #{name}; dynamic_attributes[#{name.inspect}]; end")
+              end
+            else
+              obj.send("#{name}=", MongoDoc::BSON.decode(value, options))
+            end
           end
         end
       end
@@ -192,6 +204,10 @@ module MongoDoc
         converted[attr] = send(attr)
       end
       converted
+    end
+
+    def dynamic_attributes
+      @dynamic_attributes ||= {}
     end
 
     def hash_with_modifier_path_keys(hash)

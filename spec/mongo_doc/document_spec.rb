@@ -268,6 +268,44 @@ describe "MongoDoc::Document" do
     end
   end
 
+  context "dynamic attributes" do
+    class DynamicExample
+      include MongoDoc::Document
+
+      attr_accessor :known
+    end
+
+    let(:attribute_data) { {'known' => 'known', 'unknown' => true} }
+
+    context "when allowed" do
+      before { MongoDoc::Configuration.dynamic_attributes = true }
+      after { MongoDoc::Configuration.dynamic_attributes = false }
+
+      it "creates the object" do
+        DynamicExample.bson_create(attribute_data).should be_instance_of(DynamicExample)
+      end
+
+      it "adds a read accessor for the attribute" do
+        doc = DynamicExample.bson_create(attribute_data)
+        doc.should respond_to(:unknown)
+        doc.unknown.should be_true
+      end
+
+      it "writes the attribute back out" do
+        doc = DynamicExample.bson_create(attribute_data)
+        doc.to_bson.should include({'unknown' => true})
+      end
+    end
+
+    context "when not allowed" do
+      it "raises NoMethodError" do
+        expect do
+          DynamicExample.bson_create(attribute_data)
+        end.to raise_error(NoMethodError)
+      end
+    end
+  end
+
   describe "bson" do
     class BSONTest
       include MongoDoc::Document
