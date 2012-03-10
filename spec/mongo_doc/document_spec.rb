@@ -275,7 +275,7 @@ describe "MongoDoc::Document" do
       attr_accessor :known
     end
 
-    let(:attribute_data) { {'known' => 'known', 'unknown' => true} }
+    let(:attribute_data) { {'_id' => BSON::ObjectId.new, 'known' => 'known', 'unknown' => true} }
 
     context "when allowed" do
       before { MongoDoc::Configuration.dynamic_attributes = true }
@@ -283,6 +283,10 @@ describe "MongoDoc::Document" do
 
       it "creates the object" do
         DynamicExample.bson_create(attribute_data).should be_instance_of(DynamicExample)
+      end
+
+      it "sets the id" do
+        DynamicExample.bson_create(attribute_data).id.should be_instance_of(BSON::ObjectId)
       end
 
       it "adds a read accessor for the attribute" do

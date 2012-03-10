@@ -143,7 +143,7 @@ module MongoDoc
         allocate.tap do |obj|
           bson_hash.each do |name, value|
             if MongoDoc::Configuration.dynamic_attributes
-              if _attributes.include?(name.to_sym)
+              if _attributes.include?(name.to_sym) || name == '_id'
                 obj.send("#{name}=", MongoDoc::BSON.decode(value, options))
               else
                 obj.send(:dynamic_attributes)[name] = MongoDoc::BSON.decode(value, options)
