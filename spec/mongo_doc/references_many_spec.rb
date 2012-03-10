@@ -22,7 +22,7 @@ describe MongoDoc::ReferencesMany do
       it { should respond_to(:postal_addresses=) }
 
       it "is not part of the persistent key set" do
-        PersonSimple._keys.should_not include('postal_addresses')
+        PersonSimple._keys.should_not include(:postal_addresses)
       end
     end
 
@@ -31,7 +31,7 @@ describe MongoDoc::ReferencesMany do
       it { should respond_to(:postal_address_ids=) }
 
       it "is part of the persistent key set" do
-        PersonSimple._keys.should include('postal_address_ids')
+        PersonSimple._keys.should include(:postal_address_ids)
       end
     end
 
@@ -85,7 +85,7 @@ describe MongoDoc::ReferencesMany do
       it { should respond_to(:known_addresses=) }
 
       it "is not part of the persistent key set" do
-        PersonNamed._keys.should_not include('known_addresses')
+        PersonNamed._keys.should_not include(:known_addresses)
       end
     end
 
@@ -94,7 +94,7 @@ describe MongoDoc::ReferencesMany do
       it { should respond_to(:known_address_ids=) }
 
       it "is part of the persistent key set" do
-        PersonNamed._keys.should include('known_address_ids')
+        PersonNamed._keys.should include(:known_address_ids)
       end
     end
 
@@ -149,7 +149,7 @@ describe MongoDoc::ReferencesMany do
       it { should respond_to(:addresses=) }
 
       it "is not part of the persistent key set" do
-        PersonDBRef._keys.should_not include('addresses')
+        PersonDBRef._keys.should_not include(:addresses)
       end
     end
 
@@ -158,7 +158,7 @@ describe MongoDoc::ReferencesMany do
       it { should respond_to(:address_refs=) }
 
       it "is part of the persistent key set" do
-        PersonDBRef._keys.should include('address_refs')
+        PersonDBRef._keys.should include(:address_refs)
       end
     end
 

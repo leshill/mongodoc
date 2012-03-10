@@ -80,7 +80,7 @@ module MongoDoc
     private
 
     def references_many_by_dbref(objects_name)
-      refs_name = "#{objects_name.singularize}_refs"
+      refs_name = "#{objects_name.singularize}_refs".to_sym
 
       _add_key(refs_name)
 
@@ -106,7 +106,7 @@ module MongoDoc
     end
 
     def references_many_by_id(klass, objects_name)
-      ids_name = "#{objects_name.singularize}_ids"
+      ids_name = "#{objects_name.singularize}_ids".to_sym
 
       _add_key(ids_name)
 
