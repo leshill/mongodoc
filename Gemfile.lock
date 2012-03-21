@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    mongo_doc (0.6.33)
+    mongo_doc (0.6.34)
       activemodel (>= 3.2.0)
       activesupport (>= 3.2.0)
       bson_ext (>= 1.6.1)
