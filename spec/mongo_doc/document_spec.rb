@@ -488,14 +488,14 @@ describe "MongoDoc::Document" do
     let(:model) { ActiveModelComplianceTest.new }
 
     describe "#to_param" do
-      let(:string_id) { mock }
+      let(:id) { BSON::ObjectId.new }
 
-      before(:each) do
-        model.instance_variable_set(:@_id, mock(:oid, :to_s => string_id))
+      before do
+        model._id = id
       end
 
       it "returns the string form of the document id" do
-        model.to_param.should == string_id
+        model.to_param.should == id.to_s
       end
     end
 

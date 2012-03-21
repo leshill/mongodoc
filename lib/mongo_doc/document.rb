@@ -36,6 +36,7 @@ module MongoDoc
         extend ReferencesMany
         include ::ActiveModel::Validations
         extend ::ActiveModel::Naming
+        include ::ActiveModel::Conversion
         extend Validations
 
         alias id _id
@@ -99,18 +100,6 @@ module MongoDoc
           bson_hash.merge!(dynamic_attributes)
         end
       end
-    end
-
-    def to_key
-      persisted? ? [_id] : nil
-    end
-
-    def to_model
-      self
-    end
-
-    def to_param
-      persisted? ? _id.to_s : nil
     end
 
     def update_attributes(attrs)
