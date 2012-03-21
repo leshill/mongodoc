@@ -1,6 +1,6 @@
 Given /^an empty (\w+) document collection$/ do |doc|
   klass = doc.constantize
-  Given "an empty #{klass.collection_name} collection"
+  step "an empty #{klass.collection_name} collection"
 end
 
 Given /^an? (\w+) document named '(.*)' :$/ do |doc, name, table|

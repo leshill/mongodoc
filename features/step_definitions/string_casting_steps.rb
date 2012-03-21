@@ -19,7 +19,7 @@ Given /^a class (.+)$/ do |type_name|
 end
 
 Given /^I create an (.+) '(.+)' with:$/ do |klass_name, object_name, table|
-  Given "an #{klass_name} document named '#{object_name}' :", table
+  step "an #{klass_name} document named '#{object_name}' :", table
 end
 
 Then /^the object '(.+)' has an attribute '(.+)' of type (.*)$/ do |object_name, attr_name, type_name|

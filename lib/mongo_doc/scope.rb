@@ -1,8 +1,12 @@
 # Based on ActiveRecord::NamedScope
 module MongoDoc
   module Scope
+    def self.extended(klass)
+      klass.class_attribute :_scopes
+    end
+
     def scopes
-      read_inheritable_attribute(:scopes) || write_inheritable_attribute(:scopes, {})
+      self._scopes ||= {}
     end
 
     def scope(name, *args, &block)

@@ -1,10 +1,8 @@
 module ActiveModelBehavior
   share_as :AnActiveModel do
-    def be_a_boolean
-      ::RSpec::Matchers::Matcher.new :be_a_boolean do
-        match do |value|
-          [ true, false ].include?( value )
-        end
+    ::RSpec::Matchers.define :be_a_boolean do
+      match do |actual|
+        [ true, false ].include?(actual)
       end
     end
 
